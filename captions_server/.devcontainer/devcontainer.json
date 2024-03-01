@@ -1,0 +1,13 @@
+{
+    "name": "Captions Server Development",
+    "context": "..",
+    "dockerFile": "Dockerfile",
+
+    "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ],
+    "forwardPorts": [ 5000 ],
+    "remoteUser": "root",
+    "workspaceFolder": "/app"
+}
