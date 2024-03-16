@@ -1,6 +1,6 @@
 {
     "name": "Captions Server Development",
-    "context": "..",
+    "context": "../captions_server",
     "dockerFile": "Dockerfile",
 
     "extensions": [
