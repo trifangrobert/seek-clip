@@ -7,20 +7,24 @@ import {
   Grid,
   TextField,
   Button,
+  Link,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import React, { useState } from 'react';
-import  { validateForm } from "../../utils/validation";
+import React, { useState } from "react";
+import { validateForm } from "../../utils/validation";
 import { FormValues, FormErrors } from "../../types/validationTypes";
 
 export default function SignUp() {
-  const [formValues, setFormValues] = useState<FormValues>({email: '', password: ''});
+  const [formValues, setFormValues] = useState<FormValues>({
+    email: "",
+    password: "",
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value} = event.target;
-    setFormValues(prev => ({...prev, [name]: value }));
-  }
+    const { name, value } = event.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,7 +35,6 @@ export default function SignUp() {
       // Form is valid, proceed with submission
       console.log("Form submission", formValues);
     }
-
   };
 
   return (
@@ -85,14 +88,21 @@ export default function SignUp() {
                 />
               </Grid>
             </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign Up
-              </Button>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign Up
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="/signin" variant="body1">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
           </Box>
         </Box>
       </Container>
