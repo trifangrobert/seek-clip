@@ -12,9 +12,12 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React, { useState } from "react";
 import { validateForm } from "../../utils/validation";
-import { FormValues, FormErrors } from "../../models/validationTypes";
+import { FormValues, FormErrors } from "../../models/ValidationTypes";
+import { useAuthContext } from "../../context/AuthContext";
+
 
 export default function SignUp() {
+  const { registerUser } = useAuthContext();
   const [formValues, setFormValues] = useState<FormValues>({
     email: "",
     password: "",
@@ -26,7 +29,7 @@ export default function SignUp() {
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const validationErrors = validateForm(formValues);
     setErrors(validationErrors);
@@ -34,6 +37,7 @@ export default function SignUp() {
     if (Object.keys(validationErrors).length === 0) {
       // Form is valid, proceed with submission
       console.log("Form submission", formValues);
+      registerUser(formValues.email, formValues.password);
     }
   };
 

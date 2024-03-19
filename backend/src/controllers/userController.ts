@@ -14,9 +14,8 @@ const createToken = (_id: string) => {
 const registerUser = async (req: any, res: any) => {
     const {email, password} = req.body;
     try {
-        console.log(User);
         const user = await User.register(email, password);
-        console.log("this is the user:" ,user);
+        console.log("this is the user:", user);
         const token = createToken(user._id);
         res.status(201).json({ user: user._id, token });
 
@@ -29,6 +28,7 @@ const loginUser = async (req: any, res: any) => {
     const {email, password} = req.body;
     try {
         const user = await User.login(email, password);
+        console.log("this is the user:", user);
         const token = createToken(user._id);
         res.status(200).json({ user: user._id, token });
 

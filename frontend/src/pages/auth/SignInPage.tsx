@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { FormValues, FormErrors } from "../../models/validationTypes";
+import { FormValues, FormErrors } from "../../models/ValidationTypes";
 import { validateForm } from "../../utils/validation";
 import { Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography } from "@mui/material";
 import LoginIcon from '@mui/icons-material/Login';
+import { useAuthContext } from "../../context/AuthContext";
 
 export default function SignIn() {
+  const { loginUser } = useAuthContext();
     const [formValues, setFormValues] = useState<FormValues>({
         email: "",
         password: "",
@@ -24,6 +26,7 @@ export default function SignIn() {
         if (Object.keys(validationErrors).length === 0) {
           // Form is valid, proceed with submission
           console.log("Form submission", formValues);
+          loginUser(formValues.email, formValues.password);
         }
       };
       return (

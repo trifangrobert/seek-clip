@@ -1,4 +1,4 @@
-import { FormValues, FormErrors } from "../models/validationTypes";
+import { FormValues, FormErrors } from "../models/ValidationTypes";
 
 export const validateForm = (values: FormValues): FormErrors => {
   let errors: FormErrors = {};
