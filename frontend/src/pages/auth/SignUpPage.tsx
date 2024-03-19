@@ -27,6 +27,10 @@ export default function SignUp() {
     const validationErrors = validateForm(formValues);
     setErrors(validationErrors);
     console.log(validationErrors);
+    if (Object.keys(validationErrors).length === 0) {
+      // Form is valid, proceed with submission
+      console.log("Form submission", formValues);
+    }
 
   };
 
