@@ -1,4 +1,4 @@
-import { FormValues, FormErrors } from "../types/validationTypes";
+import { FormValues, FormErrors } from "../models/validationTypes";
 
 export const validateForm = (values: FormValues): FormErrors => {
   let errors: FormErrors = {};
@@ -12,8 +12,8 @@ export const validateForm = (values: FormValues): FormErrors => {
   if (!values.password) {
     errors.password = "Password is required.";
   }
-  else if (values.password.length < 7) {
-    errors.password = "Password must be at least 7 characters long.";
+  else if (values.password.length < 8) {
+    errors.password = "Password must be at least 8 characters long.";
   }
   return errors;
 };

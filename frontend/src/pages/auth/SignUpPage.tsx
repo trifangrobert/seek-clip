@@ -12,7 +12,7 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React, { useState } from "react";
 import { validateForm } from "../../utils/validation";
-import { FormValues, FormErrors } from "../../types/validationTypes";
+import { FormValues, FormErrors } from "../../models/validationTypes";
 
 export default function SignUp() {
   const [formValues, setFormValues] = useState<FormValues>({

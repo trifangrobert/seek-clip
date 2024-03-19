@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormValues, FormErrors } from "../../types/validationTypes";
+import { FormValues, FormErrors } from "../../models/validationTypes";
 import { validateForm } from "../../utils/validation";
 import { Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography } from "@mui/material";
 import LoginIcon from '@mui/icons-material/Login';
