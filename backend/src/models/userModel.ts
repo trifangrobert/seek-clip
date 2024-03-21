@@ -48,7 +48,7 @@ userSchema.statics.register = async function (email: string, password: string) {
   const existing = await this.findOne({ email });
 
   if (existing) {
-    throw new Error("Email already exists");
+    throw {message: "Email already exists", code: 11000};
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);

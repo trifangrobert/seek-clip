@@ -20,7 +20,13 @@ const registerUser = async (req: any, res: any) => {
         res.status(201).json({ user: user._id, token });
 
     } catch (error: any) {
-        res.status(400).json({ error: error.message });
+        console.log(error);
+        if (error.code === 11000) {
+            return res.status(409).json({ error: error.message });
+        }
+        else if (error.message === 'ValidationError') {
+            return res.status(400).json({ error: error.message });
+        }
     }
 }
 

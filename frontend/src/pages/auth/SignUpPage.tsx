@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { validateForm } from "../../utils/validation";
 import { FormValues, FormErrors } from "../../models/ValidationTypes";
 import { useAuthContext } from "../../context/AuthContext";
+import { ToastContainer } from "react-toastify";
 
 
 export default function SignUp() {
@@ -109,6 +110,7 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
+        <ToastContainer />
       </Container>
     </>
   );

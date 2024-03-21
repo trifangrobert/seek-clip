@@ -2,7 +2,8 @@ import { createContext, useEffect, useState } from "react";
 import { UserProfile } from "../models/Users";
 import axios from "axios";
 import { registerAPI, loginAPI } from "../services/AuthService";
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import React from "react";
 
 type UserContextType = {
@@ -50,11 +51,29 @@ export const AuthProvider = ({ children }: Props) => {
           localStorage.setItem("user", JSON.stringify(userObj));
           setToken(res?.data.token!);
           setUser(userObj);
-          toast.success("User registered successfully");
+          toast.success('User registered successfully!', {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light"
+            });
         }
       })
       .catch((error) => {
-        toast.error(error.response.data.error);
+        toast.error('User registration failed!', {
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light"
+          });
       });
   };
   
@@ -67,13 +86,33 @@ export const AuthProvider = ({ children }: Props) => {
             email: res?.data.email,
           };
           localStorage.setItem("user", JSON.stringify(userObj));
+          console.log("this is the user:", userObj);
+          console.log("this is the token:", res?.data.token);
           setToken(res?.data.token!);
           setUser(userObj);
-          toast.success("User logged in successfully");
+          toast.success('User logged in successfully!', {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light"
+            });
         }
       })
       .catch((error) => {
-        toast.error(error.response.data.error);
+        toast.error('User login failed!', {
+          position: "bottom-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light"
+          });
       });
   };
 
