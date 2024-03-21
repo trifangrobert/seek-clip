@@ -24,7 +24,7 @@ const userSchema = new Schema(
       minlength: 8,
     },
   },
-  { timestamps: true }
+  { collection: "users", timestamps: true }
 );
 
 // check if the email and password are valid
