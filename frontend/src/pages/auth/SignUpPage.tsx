@@ -10,15 +10,17 @@ import {
   Link,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { validateForm } from "../../utils/validation";
 import { FormValues, FormErrors } from "../../models/ValidationTypes";
 import { useAuthContext } from "../../context/AuthContext";
 import { ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 
 export default function SignUp() {
-  const { registerUser } = useAuthContext();
+  const navigate = useNavigate();
+  const { registerUser, user } = useAuthContext();
   const [formValues, setFormValues] = useState<FormValues>({
     email: "",
     password: "",
@@ -29,6 +31,14 @@ export default function SignUp() {
     const { name, value } = event.target;
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
+
+  // check if user is already logged in with useEffect
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
+    }
+  }
+  , [user, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }: Props) => {
     console.log("Hello from registerUser")
     await registerAPI(email, password)
       .then((res) => {
+        console.log("Response for registerUser: ", res)
         if (res) {
           localStorage.setItem("token", JSON.stringify(res?.data.token));
           const userObj = {
@@ -61,6 +62,7 @@ export const AuthProvider = ({ children }: Props) => {
             progress: undefined,
             theme: "light"
             });
+            return true;
         }
       })
       .catch((error) => {
@@ -74,7 +76,9 @@ export const AuthProvider = ({ children }: Props) => {
           progress: undefined,
           theme: "light"
           });
+          return false;
       });
+
   };
   
   const loginUser = async (email: string, password: string) => {
@@ -103,6 +107,7 @@ export const AuthProvider = ({ children }: Props) => {
         }
       })
       .catch((error) => {
+        console.log(error);
         toast.error('User login failed!', {
           position: "bottom-center",
           autoClose: 3000,

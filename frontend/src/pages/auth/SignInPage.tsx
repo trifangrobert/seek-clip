@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormValues, FormErrors } from "../../models/ValidationTypes";
 import { validateForm } from "../../utils/validation";
 import {
@@ -15,9 +15,11 @@ import {
 import LoginIcon from "@mui/icons-material/Login";
 import { useAuthContext } from "../../context/AuthContext";
 import { ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
-  const { loginUser } = useAuthContext();
+  const { loginUser, user } = useAuthContext();
+  const navigate = useNavigate();
   const [formValues, setFormValues] = useState<FormValues>({
     email: "",
     password: "",
@@ -28,6 +30,13 @@ export default function SignIn() {
     const { name, value } = event.target;
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
+    }
+  }
+  , [user, navigate]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
