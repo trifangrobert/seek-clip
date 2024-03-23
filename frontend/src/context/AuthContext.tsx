@@ -9,7 +9,7 @@ import React from "react";
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
-  registerUser: (email: string, password: string) => void;
+  registerUser: (email: string, password: string, firstName: string, lastName: string) => void;
   loginUser: (email: string, password: string) => void;
   logoutUser: () => void;
   isLoggedIn: () => boolean;
@@ -39,15 +39,17 @@ export const AuthProvider = ({ children }: Props) => {
     setLoading(false);
   }, []);
 
-  const registerUser = async (email: string, password: string) => {
+  const registerUser = async (email: string, password: string, firstName: string, lastName: string) => {
     console.log("Hello from registerUser")
-    await registerAPI(email, password)
+    await registerAPI(email, password, firstName, lastName)
       .then((res) => {
         console.log("Response for registerUser: ", res)
         if (res) {
           localStorage.setItem("token", JSON.stringify(res?.data.token));
           const userObj = {
-            email: res?.data.email,
+            email: res.data.email,
+            firstName: res.data.firstName,
+            lastName: res.data.lastName
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           setToken(res?.data.token!);
@@ -87,7 +89,9 @@ export const AuthProvider = ({ children }: Props) => {
         if (res) {
           localStorage.setItem("token", JSON.stringify(res?.data.token));
           const userObj = {
-            email: res?.data.email,
+            email: res.data.email,
+            firstName: res.data.firstName,
+            lastName: res.data.lastName
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           console.log("this is the user:", userObj);

@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React, { useEffect, useState } from "react";
-import { validateForm } from "../../utils/validation";
-import { FormValues, FormErrors } from "../../models/ValidationTypes";
+import { validateRegisterForm } from "../../utils/validation";
+import { RegisterFormValues, RegisterFormErrors } from "../../models/ValidationTypes";
 import { useAuthContext } from "../../context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -21,14 +21,17 @@ import { useNavigate } from "react-router-dom";
 export default function SignUp() {
   const navigate = useNavigate();
   const { registerUser, user } = useAuthContext();
-  const [formValues, setFormValues] = useState<FormValues>({
+  const [formValues, setFormValues] = useState<RegisterFormValues>({
     email: "",
     password: "",
+    firstName: "",
+    lastName: "",
   });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<RegisterFormErrors>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    console.log(name, value);
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -42,13 +45,13 @@ export default function SignUp() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const validationErrors = validateForm(formValues);
+    const validationErrors = validateRegisterForm(formValues);
     setErrors(validationErrors);
     console.log(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
       // Form is valid, proceed with submission
       console.log("Form submission", formValues);
-      registerUser(formValues.email, formValues.password);
+      registerUser(formValues.email, formValues.password, formValues.firstName, formValues.lastName);
     }
   };
 
@@ -72,6 +75,36 @@ export default function SignUp() {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
             <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField 
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  name="firstName"
+                  autoComplete="firstName"
+                  autoFocus
+                  value={formValues.firstName}
+                  onChange={handleChange}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName}
+                  />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField 
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  autoComplete="lastName"
+                  value={formValues.lastName}
+                  onChange={handleChange}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName}
+                  />
+              </Grid>
+                
               <Grid item xs={12}>
                 <TextField
                   required
@@ -80,7 +113,6 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
-                  autoFocus
                   value={formValues.email}
                   onChange={handleChange}
                   error={!!errors.email}

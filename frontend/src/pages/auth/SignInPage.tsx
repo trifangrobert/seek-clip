@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FormValues, FormErrors } from "../../models/ValidationTypes";
-import { validateForm } from "../../utils/validation";
+import { LoginFormValues, LoginFormErrors } from "../../models/ValidationTypes";
+import { validateLoginForm } from "../../utils/validation";
 import {
   Avatar,
   Box,
@@ -20,11 +20,11 @@ import { useNavigate } from "react-router-dom";
 export default function SignIn() {
   const { loginUser, user } = useAuthContext();
   const navigate = useNavigate();
-  const [formValues, setFormValues] = useState<FormValues>({
+  const [formValues, setFormValues] = useState<LoginFormValues>({
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<LoginFormErrors>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -40,7 +40,7 @@ export default function SignIn() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const validationErrors = validateForm(formValues);
+    const validationErrors = validateLoginForm(formValues);
     setErrors(validationErrors);
     console.log(validationErrors);
     if (Object.keys(validationErrors).length === 0) {

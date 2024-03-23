@@ -8,7 +8,10 @@ const Document = mongoose.Document;
 interface IUser extends Document {
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
 }
+
 
 const userSchema = new Schema(
   {
@@ -23,14 +26,22 @@ const userSchema = new Schema(
       required: true,
       minlength: 8,
     },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
   },
   { collection: "users", timestamps: true }
 );
 
 // check if the email and password are valid
-userSchema.statics.register = async function (email: string, password: string) {
-  if (!email || !password) {
-    throw new Error("Email and password are required");
+userSchema.statics.register = async function (email: string, password: string, firstName: string, lastName: string) {
+  if (!email || !password || !firstName || !lastName) {
+    throw new Error("All fields are required");
   }
 
   if (!validator.isEmail(email)) {
@@ -56,6 +67,8 @@ userSchema.statics.register = async function (email: string, password: string) {
   const user = await this.create({
     email,
     password: hashedPassword,
+    firstName,
+    lastName,
   });
 
   return user;
