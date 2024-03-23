@@ -4,17 +4,22 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import SignUp from "./pages/auth/SignUpPage";
 import SignIn from "./pages/auth/SignInPage";
 import HomePage from "./pages/Home";
+import { useAuthContext } from "./context/AuthContext";
+import Navbar from "./components/Navbar";
 
 function App() {
+  const { user } = useAuthContext();
   return (
-    <Routes>
-      {/* <Navbar /> */}
-      <Route path="/home" element={<HomePage />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/signin" element={<SignIn />} />
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/home" element={<HomePage />} />
+        {!user && <Route path="/signup" element={<SignUp />} />}
+        {!user && <Route path="/signin" element={<SignIn />} />}
 
-      <Route path="*" element={<SignUp />} />
-    </Routes>
+        <Route path="*" element={<HomePage />} />
+      </Routes>
+    </>
   );
 }
 

@@ -2,13 +2,13 @@ import mongoose, { Schema } from "mongoose";
 import {Document} from "mongoose";
 
 interface IVideo extends Document {
-    filePath: string;
+    url: string;
     title: string;
     author: Schema.Types.ObjectId;
 }
 
 const videoSchema = new Schema({
-    filePath: {
+    url: {
         type: String,
         required: true,
     },

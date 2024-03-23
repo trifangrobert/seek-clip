@@ -17,16 +17,20 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
     return res.status(401).json({ error: "Used ID missing" });
   }
 
-  const filePath = req.file.path;
+  const url = req.file.path;
   const title = req.body.title;
   const author = req.userId;
 
-  console.log("filePath: ", filePath);
+  console.log("url: ", url);
   console.log("title: ", title);
   console.log("author: ", author);
 
+  if (!title) {
+    return res.status(400).json({ error: "Title is required" });
+  }
+
   try {
-    const newVideo = new Video({ filePath, title, author });
+    const newVideo = new Video({ url, title, author });
     await newVideo.save();
     res.status(201).json({ message: "Video uploaded successfully" });
   } catch (error) {
@@ -34,6 +38,31 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// TODO - Add a function to get videos (all or by user ID)
+const getAllVideos = async (req: Request, res: Response) => {
+  console.log("getting all videos...");
+  try {
+    const videos = await Video.find();
+    const videoUrls = videos.map((video: any) => {
+      return {
+        ...video._doc,
+        url: process.env.BASE_URL + video.url,
+      }
+    });
+    res.status(200).json(videoUrls);
+  } catch (error) {
+    res.status(500).json({ message: "Error getting videos" });
+  }
+}
 
-export { uploadVideo };
+const getVideosByUser = async (req: Request, res: Response) => {
+  console.log("getting videos by user...");
+  const  { userId } = req.params;
+  try {
+    const videos = await Video.find({ author: userId });
+    res.status(200).json(videos);
+  } catch (error) {
+    res.status(500).json({ message: "Error getting videos" });
+  }
+}
+
+export { uploadVideo, getAllVideos, getVideosByUser };
