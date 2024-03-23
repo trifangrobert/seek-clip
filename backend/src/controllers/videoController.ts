@@ -1,7 +1,9 @@
 const Video = require("../models/videoModel");
+const User = require("../models/userModel");
 import { Request, Response } from "express";
 import multer from "multer";
 import { AuthRequest } from "../middleware/authenticate";
+const ObjectId = require("mongoose").Types.ObjectId;
 
 interface VideoRequest extends Request {
   file: Express.Multer.File;
@@ -42,11 +44,31 @@ const getAllVideos = async (req: Request, res: Response) => {
   console.log("getting all videos...");
   try {
     const videos = await Video.find();
+    const authorIds = videos.map((video: any) => video.author.toString());
+    // console.log("authorIds: ", authorIds);
+    // get unique author ids
+    const uniqueAuthorIds = [...new Set(authorIds)];
+    // console.log("uniqueAuthorIds: ", uniqueAuthorIds);
+
+    // get authors
+    const authors = await User.find({ _id: { $in: uniqueAuthorIds } });
+    // console.log("authors: ", authors);
+
+    // create author map
+    const authorMap = authors.reduce((acc: any, author: any) => {
+      acc[author._id] = author;
+      return acc;
+    }, {});
+
     const videoUrls = videos.map((video: any) => {
       return {
         ...video._doc,
         url: process.env.BASE_URL + video.url,
-      }
+        author:
+          authorMap[video.author].firstName +
+          " " +
+          authorMap[video.author].lastName,
+      };
     });
     // simulate slow network
     // setTimeout(() => {
@@ -56,17 +78,17 @@ const getAllVideos = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({ message: "Error getting videos" });
   }
-}
+};
 
 const getVideosByUser = async (req: Request, res: Response) => {
   console.log("getting videos by user...");
-  const  { userId } = req.params;
+  const { userId } = req.params;
   try {
     const videos = await Video.find({ author: userId });
     res.status(200).json(videos);
   } catch (error) {
     res.status(500).json({ message: "Error getting videos" });
   }
-}
+};
 
 export { uploadVideo, getAllVideos, getVideosByUser };

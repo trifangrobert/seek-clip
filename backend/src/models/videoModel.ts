@@ -1,26 +1,29 @@
 import mongoose, { Schema } from "mongoose";
-import {Document} from "mongoose";
+import { Document } from "mongoose";
 
 interface IVideo extends Document {
-    url: string;
-    title: string;
-    author: Schema.Types.ObjectId;
+  url: string;
+  title: string;
+  author: Schema.Types.ObjectId;
 }
 
-const videoSchema = new Schema({
+const videoSchema = new Schema(
+  {
     url: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     title: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     author: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
-}, { collection: "videos", timestamps: true });
+  },
+  { collection: "videos", timestamps: true }
+);
 
 const Video = mongoose.model<IVideo>("Video", videoSchema);
 

@@ -39,6 +39,9 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
         <Typography gutterBottom variant="h6" component="div">
           {video.title}
         </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {video.author}
+        </Typography>
       </CardContent>
     </Card>
   );

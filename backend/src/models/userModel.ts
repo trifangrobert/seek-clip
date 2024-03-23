@@ -12,7 +12,6 @@ interface IUser extends Document {
   lastName: string;
 }
 
-
 const userSchema = new Schema(
   {
     email: {
@@ -39,7 +38,12 @@ const userSchema = new Schema(
 );
 
 // check if the email and password are valid
-userSchema.statics.register = async function (email: string, password: string, firstName: string, lastName: string) {
+userSchema.statics.register = async function (
+  email: string,
+  password: string,
+  firstName: string,
+  lastName: string
+) {
   if (!email || !password || !firstName || !lastName) {
     throw new Error("All fields are required");
   }
@@ -59,7 +63,7 @@ userSchema.statics.register = async function (email: string, password: string, f
   const existing = await this.findOne({ email });
 
   if (existing) {
-    throw {message: "Email already exists", code: 11000};
+    throw { message: "Email already exists", code: 11000 };
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
