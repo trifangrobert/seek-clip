@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { LoginFormValues, LoginFormErrors } from "../../models/ValidationTypes";
-import { validateLoginForm } from "../../utils/validation";
+import { LoginFormValues, LoginFormErrors } from "../../models/AuthFormType";
+import { validateLoginForm } from "../../utils/Validation";
 import {
   Avatar,
   Box,
@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import { useAuthContext } from "../../context/AuthContext";
-import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
@@ -46,13 +45,15 @@ export default function SignIn() {
     if (Object.keys(validationErrors).length === 0) {
       // Form is valid, proceed with submission
       console.log("Form submission", formValues);
-      loginUser(formValues.email, formValues.password);
+      setTimeout(() => {
+        loginUser(formValues.email, formValues.password);
+      }, 2000);
     }
   };
   return (
     <>
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
+        {/* <CssBaseline /> */}
         <Box
           sx={{
             marginTop: 25,
@@ -117,7 +118,6 @@ export default function SignIn() {
             </Grid>
           </Box>
         </Box>
-        <ToastContainer />
       </Container>
     </>
   );

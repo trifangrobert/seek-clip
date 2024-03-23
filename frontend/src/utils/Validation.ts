@@ -1,4 +1,5 @@
-import { RegisterFormValues, RegisterFormErrors, LoginFormErrors, LoginFormValues } from "../models/ValidationTypes";
+import { RegisterFormValues, RegisterFormErrors, LoginFormErrors, LoginFormValues } from "../models/AuthFormType";
+import { VideoFormErrors, VideoFormValues } from "../models/VideoFormType";
 
 export const validateRegisterForm = (values: RegisterFormValues): RegisterFormErrors => {
   let errors: RegisterFormErrors = {};
@@ -46,6 +47,20 @@ export const validateLoginForm = (values: LoginFormValues): LoginFormErrors => {
   }
   else if (values.password.length < 8) {
     errors.password = "Password must be at least 8 characters long.";
+  }
+
+  return errors;
+}
+
+export const validateVideoForm = (values: VideoFormValues): VideoFormErrors => {
+  let errors: VideoFormErrors = {};
+
+  if (!values.title) {
+    errors.title = "Title is required";
+  }
+
+  if (!values.url) {
+    errors.url = "URL is required";
   }
 
   return errors;

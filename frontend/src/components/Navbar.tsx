@@ -10,6 +10,7 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import LoginIcon from "@mui/icons-material/Login";
+import { Type } from "react-toastify/dist/utils";
 
 const Navbar = () => {
   const { logoutUser, user } = useAuthContext();
@@ -31,6 +32,10 @@ const Navbar = () => {
           My App
         </Typography>
         {user ? (
+          <>
+          <Typography variant="h6" component="div">
+            {user.firstName + " " + user.lastName}
+          </Typography>
           <IconButton
             size="large"
             edge="end"
@@ -40,6 +45,7 @@ const Navbar = () => {
           >
             <LogoutIcon />
           </IconButton>
+          </>
         ) : (
           <IconButton
             size="large"

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { UserProfile } from "../models/Users";
+import { UserProfile } from "../models/UserType";
 import axios from "axios";
 import { registerAPI, loginAPI } from "../services/AuthService";
 import { toast } from 'react-toastify';
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: Props) => {
           setUser(userObj);
           toast.success('User registered successfully!', {
             position: "bottom-center",
-            autoClose: 3000,
+            autoClose: 2000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: Props) => {
       .catch((error) => {
         toast.error('User registration failed!', {
           position: "bottom-center",
-          autoClose: 3000,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }: Props) => {
           setUser(userObj);
           toast.success('User logged in successfully!', {
             position: "bottom-center",
-            autoClose: 3000,
+            autoClose: 2000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }: Props) => {
         console.log(error);
         toast.error('User login failed!', {
           position: "bottom-center",
-          autoClose: 3000,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,

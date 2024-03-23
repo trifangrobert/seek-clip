@@ -6,7 +6,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import { Video } from "../models/Video";
+import { Video } from "../models/VideoType";
 
 interface VideoItemProps {
   video: Video;

@@ -6,6 +6,7 @@ import SignIn from "./pages/auth/SignInPage";
 import HomePage from "./pages/Home";
 import { useAuthContext } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const { user } = useAuthContext();
@@ -19,6 +20,7 @@ function App() {
 
         <Route path="*" element={<HomePage />} />
       </Routes>
+      <ToastContainer />
     </>
   );
 }

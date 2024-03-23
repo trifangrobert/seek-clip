@@ -11,10 +11,9 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React, { useEffect, useState } from "react";
-import { validateRegisterForm } from "../../utils/validation";
-import { RegisterFormValues, RegisterFormErrors } from "../../models/ValidationTypes";
+import { validateRegisterForm } from "../../utils/Validation";
+import { RegisterFormValues, RegisterFormErrors } from "../../models/AuthFormType";
 import { useAuthContext } from "../../context/AuthContext";
-import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 
@@ -31,7 +30,6 @@ export default function SignUp() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    console.log(name, value);
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -152,7 +150,6 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <ToastContainer />
       </Container>
     </>
   );

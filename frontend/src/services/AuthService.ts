@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UserProfileToken } from "../models/Users";
+import { UserProfileToken } from "../models/UserType";
 
 const authApi = process.env.REACT_APP_API_URL + "/api/auth";
 

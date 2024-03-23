@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid } from "@mui/material";
 import VideoItem from "./VideoItem";
-import { Video } from "../models/Video";
+import { Video } from "../models/VideoType";
 
 interface VideoGridProps {
   videos: Video[];

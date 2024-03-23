@@ -1,4 +1,4 @@
-import { Video } from "../models/Video";
+import { Video } from "../models/VideoType";
 
 const videoAPI = process.env.REACT_APP_API_URL + "/api/video";
 

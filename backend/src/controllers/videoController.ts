@@ -48,6 +48,10 @@ const getAllVideos = async (req: Request, res: Response) => {
         url: process.env.BASE_URL + video.url,
       }
     });
+    // simulate slow network
+    // setTimeout(() => {
+    //   res.status(200).json(videoUrls);
+    // }, 1000);
     res.status(200).json(videoUrls);
   } catch (error) {
     res.status(500).json({ message: "Error getting videos" });
