@@ -16,3 +16,24 @@ export const getAllVideos = async (): Promise<Video[]> => {
         throw error;
     }
 }
+
+export const uploadVideo = async(title: string, url: File): Promise<String> => {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("url", url);
+    const token = localStorage.getItem("token");
+    const response = await fetch(videoAPI + "/upload", {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error("Error uploading video!");
+    }
+
+    const data = await response.json();
+    return data;
+}

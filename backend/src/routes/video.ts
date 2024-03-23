@@ -5,7 +5,7 @@ import authenticate from "../middleware/authenticate";
 
 const router = express.Router();
 
-router.post("/upload", authenticate, upload.single("video"), uploadVideo);
+router.post("/upload", authenticate, upload.single("url"), uploadVideo);
 router.get("/all", getAllVideos);
 router.get("/user/:userId", getVideosByUser);
 

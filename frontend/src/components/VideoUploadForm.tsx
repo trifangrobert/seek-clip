@@ -4,6 +4,8 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { VideoFormErrors, VideoFormValues } from "../models/VideoFormType";
 import { validateVideoForm } from "../utils/Validation";
+import { uploadVideo } from "../services/VideoService";
+import { toast } from "react-toastify";
 
 const VideoUploadForm = () => {
   const [formValues, setFormValues] = useState<VideoFormValues>({
@@ -15,7 +17,6 @@ const VideoUploadForm = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = event.target;
-    console.log(name, value, files);
 
     if (name === "url" && files) {
       const file = files[0];
@@ -26,15 +27,29 @@ const VideoUploadForm = () => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const validationErrors = validateVideoForm(formValues);
     setFormErrors(validationErrors);
-    console.log(formValues);
-    if (Object.keys(validationErrors).length === 0) {
+    // console.log(formValues);
+    if (Object.keys(validationErrors).length === 0 && formValues.url) {
       // Form is valid, proceed with submission
-      console.log("Successful submission", formValues);
-      // TODO: Call the service to upload the video
+      try {
+        const data = await uploadVideo(formValues.title, formValues.url);
+        // console.log("Video uploaded successfully");
+        toast.success("Video uploaded successfully", {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            });
+      } catch (error) {
+        // console.log("Error uploading video: ", error);
+        toast.error("Error uploading video", {
+            position: "bottom-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            });
+      }
     }
   };
 
@@ -99,7 +114,7 @@ const VideoUploadForm = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2, bgcolor: "#222831", color: "#ffffff"}}
+            sx={{ mt: 3, mb: 2, bgcolor: "#222831", color: "#ffffff" }}
           >
             Upload
           </Button>
