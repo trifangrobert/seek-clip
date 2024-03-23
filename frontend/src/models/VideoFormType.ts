@@ -1,5 +1,5 @@
 export interface VideoFormValues {
-    url: string;
+    url: File | null;
     title: string;
 }
 
