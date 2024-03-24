@@ -17,7 +17,7 @@ import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 
-export default function SignUp() {
+export default function SignUpPage() {
   const navigate = useNavigate();
   const { registerUser, user } = useAuthContext();
   const [formValues, setFormValues] = useState<RegisterFormValues>({

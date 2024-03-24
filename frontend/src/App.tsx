@@ -1,29 +1,27 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import SignUp from "./pages/auth/SignUpPage";
-import SignIn from "./pages/auth/SignInPage";
+import SignUpPage from "./pages/auth/SignUpPage";
+import SignInPage from "./pages/auth/SignInPage";
 import HomePage from "./pages/HomePage";
-import { useAuthContext } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
 import UploadVideoPage from "./pages/UploadVideoPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const { user } = useAuthContext();
   // if the route is protected, we will use the ProtectedRoute component
   const routes = [
-    { path: "/home", element: <HomePage />, protected: true },
-    { path: "/signup", element: <SignUp />, protected: false },
-    { path: "/signin", element: <SignIn />, protected: false },
-    { path: "/upload-video", element: <UploadVideoPage />, protected: true },
+    { path: "/signup", element: <SignUpPage />, isProtected: false },
+    { path: "/signin", element: <SignInPage />, isProtected: false },
+    { path: "/home", element: <HomePage />, isProtected: true },
+    { path: "/upload-video", element: <UploadVideoPage />, isProtected: true },
+    { path: "*", element: <HomePage />, isProtected: true },
   ];
   return (
     <>
       <Navbar />
       <Routes>
-        {routes.map(({ path, element, protected: isProtected }) =>
+        {routes.map(({ path, element, isProtected }) =>
           isProtected ? (
             <Route
               key={path}

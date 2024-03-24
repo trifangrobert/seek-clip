@@ -16,7 +16,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-export default function SignIn() {
+export default function SignInPage() {
   const { loginUser, user } = useAuthContext();
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState<LoginFormValues>({

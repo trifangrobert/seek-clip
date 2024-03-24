@@ -9,6 +9,7 @@ import React from "react";
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
+  loading: boolean;
   registerUser: (email: string, password: string, firstName: string, lastName: string) => void;
   loginUser: (email: string, password: string) => void;
   logoutUser: () => void;
@@ -137,7 +138,7 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, registerUser, loginUser, logoutUser, isLoggedIn }}>
+    <AuthContext.Provider value={{ user, token, loading, registerUser, loginUser, logoutUser, isLoggedIn }}>
       {children}  
     </AuthContext.Provider>
   )
