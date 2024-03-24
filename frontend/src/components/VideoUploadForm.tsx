@@ -6,8 +6,10 @@ import { VideoFormErrors, VideoFormValues } from "../models/VideoFormType";
 import { validateVideoForm } from "../utils/Validation";
 import { uploadVideo } from "../services/VideoService";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const VideoUploadForm = () => {
+  const navigate = useNavigate();
   const [formValues, setFormValues] = useState<VideoFormValues>({
     url: null,
     title: "",
@@ -42,6 +44,9 @@ const VideoUploadForm = () => {
             autoClose: 2000,
             hideProgressBar: false,
             });
+          // redirect to home page
+          navigate("/home", { replace: true });
+
       } catch (error) {
         // console.log("Error uploading video: ", error);
         toast.error("Error uploading video", {

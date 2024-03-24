@@ -1,9 +1,7 @@
 import {
   Box,
   Card,
-  CardActionArea,
   CardContent,
-  CardMedia,
   Typography,
 } from "@mui/material";
 import { Video } from "../models/VideoType";
