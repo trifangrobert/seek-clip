@@ -36,7 +36,7 @@ export default function SignUp() {
   // check if user is already logged in with useEffect
   useEffect(() => {
     if (user) {
-      navigate("/home");
+      navigate("/home", { replace: true });
     }
   }
   , [user, navigate]);

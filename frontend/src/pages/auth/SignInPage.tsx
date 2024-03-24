@@ -32,7 +32,7 @@ export default function SignIn() {
 
   useEffect(() => {
     if (user) {
-      navigate("/home");
+      navigate("/home", { replace: true });
     }
   }
   , [user, navigate]);
@@ -45,9 +45,7 @@ export default function SignIn() {
     if (Object.keys(validationErrors).length === 0) {
       // Form is valid, proceed with submission
       console.log("Form submission", formValues);
-      setTimeout(() => {
-        loginUser(formValues.email, formValues.password);
-      }, 2000);
+      loginUser(formValues.email, formValues.password);
     }
   };
   return (

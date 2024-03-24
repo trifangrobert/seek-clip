@@ -14,7 +14,7 @@ export const useVideos = () => {
                 const fetchedVideos = await getAllVideos();
                 setVideos(fetchedVideos);
                 setError(null);
-                console.log("fetchedVideos: ", fetchedVideos);
+                // console.log("fetchedVideos: ", fetchedVideos);
             }
             catch (error) {
                 setError("Error fetching videos");
