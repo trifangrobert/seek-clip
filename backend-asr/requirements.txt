@@ -1,0 +1,7 @@
+https://github.com/kpu/kenlm/archive/master.zip
+Flask==3.0.2
+transformers==4.39.1
+soundfile==0.12.1
+torch==2.2.1
+resampy==0.4.3
+pyctcdecode==0.5.0 
