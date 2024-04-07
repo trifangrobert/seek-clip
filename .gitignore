@@ -3,3 +3,7 @@
 **/node_modules
 /mongodb
 .env
+/kenlm
+id_rsa
+id_rsa.pub
+/captions

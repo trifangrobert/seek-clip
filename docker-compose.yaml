@@ -7,6 +7,15 @@ services:
       - mongodb_data:/data/db
     ports:
       - "27017:27017"
+  backend-asr:
+    build: ./backend-asr
+    container_name: speech-to-text-server
+    ports: 
+      - "5001:5001"
+    depends_on:
+      - mongodb
+    working_dir: /app/src
+    command: ["python", "app.py"]
 
 volumes:
   mongodb_data:
