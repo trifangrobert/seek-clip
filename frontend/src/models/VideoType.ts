@@ -3,4 +3,5 @@ export interface Video {
   url: string;
   title: string;
   author: string;
+  thumbnail?: string;
 }

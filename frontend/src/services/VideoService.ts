@@ -17,6 +17,21 @@ export const getAllVideos = async (): Promise<Video[]> => {
     }
 }
 
+export const getVideoById = async (id: string): Promise<Video> => {
+    try {
+        const response = await fetch(videoAPI + `/${id}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching video ${id}`);
+        }
+        const video: Video = await response.json();
+        return video;
+    }
+    catch (error) {
+        console.log(`Error fetching video ${id}`, error);
+        throw error;
+    }
+}
+
 export const uploadVideo = async(title: string, url: File): Promise<String> => {
     const formData = new FormData();
     formData.append("title", title);

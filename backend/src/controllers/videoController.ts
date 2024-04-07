@@ -80,6 +80,20 @@ const getAllVideos = async (req: Request, res: Response) => {
   }
 };
 
+const getVideoById = async (req: Request, res: Response) => {
+  const { videoId } = req.params;
+  console.log(`getting video ${videoId}`);
+  try {
+    const video = await Video.findById(videoId);
+    const videoUrl = process.env.BASE_URL + video.url;
+    video.url = videoUrl;
+    res.status(200).json(video);
+  }
+  catch (error) {
+    res.status(500).json({ message: "Error getting video" });
+  }
+}
+
 const getVideosByUser = async (req: Request, res: Response) => {
   console.log("getting videos by user...");
   const { userId } = req.params;
@@ -91,4 +105,4 @@ const getVideosByUser = async (req: Request, res: Response) => {
   }
 };
 
-export { uploadVideo, getAllVideos, getVideosByUser };
+export { uploadVideo, getAllVideos, getVideosByUser, getVideoById };

@@ -1,18 +1,19 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import { Video } from "../models/VideoType";
+import { useNavigate } from "react-router-dom";
 
 interface VideoItemProps {
   video: Video;
 }
 
 const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
+  console.log("video from VideoItem: ", video);
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/video/${video._id}`);
+  };
   return (
-    <Card sx={{ maxWidth: 400 }}>
+    <Card sx={{ maxWidth: 400 }} onClick={handleClick}>
       <Box
         sx={{
           width: "100%",
@@ -21,14 +22,18 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
           position: "relative",
         }}
       >
-        <video controls width="100%" style={{ 
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-         }}>
+        <video
+          width="100%"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+          // poster={video.thumbnail}
+        >
           <source src={video.url} type="video/mp4" />
           Your browser does not support the video tag.
         </video>

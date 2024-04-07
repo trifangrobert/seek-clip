@@ -8,7 +8,7 @@ export const useVideos = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const loadVideos = async() => {
+        const fetchVideos = async() => {
             setLoading(true);
             try {
                 const fetchedVideos = await getAllVideos();
@@ -24,7 +24,7 @@ export const useVideos = () => {
             }
         }
 
-        loadVideos();
+        fetchVideos();
     }, []);
 
     return { videos, loading, error };

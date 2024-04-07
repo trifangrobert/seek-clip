@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import SignUpPage from "./pages/auth/SignUpPage";
 import SignInPage from "./pages/auth/SignInPage";
+import VideoPage from "./pages/VideoPage";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
@@ -15,6 +16,7 @@ function App() {
     { path: "/signin", element: <SignInPage />, isProtected: false },
     { path: "/home", element: <HomePage />, isProtected: true },
     { path: "/upload-video", element: <UploadVideoPage />, isProtected: true },
+    { path: "/video/:id", element: <VideoPage />, isProtected: true },
     { path: "*", element: <HomePage />, isProtected: true },
   ];
   return (

@@ -20,6 +20,22 @@ const videoSchema = new Schema(
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    dislikes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    transcription: {
+      type: String,
     },
   },
   { collection: "videos", timestamps: true }
