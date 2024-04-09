@@ -36,6 +36,7 @@ export const uploadVideo = async(title: string, url: File): Promise<String> => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("url", url);
+    console.log(formData)
     const token = localStorage.getItem("token");
     const response = await fetch(videoAPI + "/upload", {
         method: "POST",

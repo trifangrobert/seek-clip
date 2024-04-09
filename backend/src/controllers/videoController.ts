@@ -1,13 +1,8 @@
 const Video = require("../models/videoModel");
 const User = require("../models/userModel");
 import { Request, Response } from "express";
-import multer from "multer";
 import { AuthRequest } from "../middleware/authenticate";
-const ObjectId = require("mongoose").Types.ObjectId;
-
-interface VideoRequest extends Request {
-  file: Express.Multer.File;
-}
+import { getTranscription } from "../utils/transcription";
 
 const uploadVideo = async (req: AuthRequest, res: Response) => {
   console.log("uploading video...");
@@ -16,23 +11,26 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   }
 
   if (!req.userId) {
-    return res.status(401).json({ error: "Used ID missing" });
+    return res.status(401).json({ error: "User ID missing" });
   }
-
+  const file = req.file;
   const url = req.file.path;
   const title = req.body.title;
-  const author = req.userId;
+  const authorId = req.userId;
 
   console.log("url: ", url);
   console.log("title: ", title);
-  console.log("author: ", author);
+  console.log("author: ", authorId);
 
   if (!title) {
-    return res.status(400).json({ error: "Title is required" });
+    return res.status(400).json({ error: "Invalid input" });
   }
 
+  const transcription = await getTranscription(file);
+  console.log("transcription: ", transcription);
+
   try {
-    const newVideo = new Video({ url, title, author });
+    const newVideo = new Video({ url, title, authorId, likes: [], dislikes: [], transcription });
     await newVideo.save();
     res.status(201).json({ message: "Video uploaded successfully" });
   } catch (error) {
@@ -44,7 +42,7 @@ const getAllVideos = async (req: Request, res: Response) => {
   console.log("getting all videos...");
   try {
     const videos = await Video.find();
-    const authorIds = videos.map((video: any) => video.author.toString());
+    const authorIds = videos.map((video: any) => video.authorId.toString());
     // console.log("authorIds: ", authorIds);
     // get unique author ids
     const uniqueAuthorIds = [...new Set(authorIds)];
@@ -52,22 +50,23 @@ const getAllVideos = async (req: Request, res: Response) => {
 
     // get authors
     const authors = await User.find({ _id: { $in: uniqueAuthorIds } });
-    // console.log("authors: ", authors);
 
     // create author map
     const authorMap = authors.reduce((acc: any, author: any) => {
       acc[author._id] = author;
       return acc;
     }, {});
-
     const videoUrls = videos.map((video: any) => {
+      console.log(process.env.BASE_URL);
+      console.log(video.url);
+      console.log(video);
       return {
         ...video._doc,
         url: process.env.BASE_URL + video.url,
         author:
-          authorMap[video.author].firstName +
+          authorMap[video.authorId].firstName +
           " " +
-          authorMap[video.author].lastName,
+          authorMap[video.authorId].lastName,
       };
     });
     // simulate slow network
@@ -85,6 +84,10 @@ const getVideoById = async (req: Request, res: Response) => {
   console.log(`getting video ${videoId}`);
   try {
     const video = await Video.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
     const videoUrl = process.env.BASE_URL + video.url;
     video.url = videoUrl;
     res.status(200).json(video);

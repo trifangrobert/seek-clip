@@ -4,12 +4,15 @@ import torch
 import resampy
 from itertools import groupby
 
+from flask_cors import CORS
+
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor, Wav2Vec2ProcessorWithLM
 from transformers import pipeline
 
 fix_spelling = pipeline("text2text-generation", model="oliverguhr/spelling-correction-english-base")
 
 app = Flask(__name__)
+CORS(app)
 
 asr_repos = {
     "base-960h": "facebook/wav2vec2-base-960h",
@@ -99,6 +102,8 @@ def speech_to_text(audio, sample_rate, asr_repo="base-960h", boost_lm=True, spel
         transcription = processor.batch_decode(predicted_ids)[0]
         
         # make_subtitles(transcription, predicted_ids, input_values, sample_rate)
+    
+    transcription = transcription.lower()
         
     # spell check the transcription
     if not spell_check:
@@ -109,6 +114,8 @@ def speech_to_text(audio, sample_rate, asr_repo="base-960h", boost_lm=True, spel
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
+    print(request.files)
+    print(request.files['audio'])
     if 'audio' not in request.files:
         return "Audio file is required", 400
     
@@ -119,22 +126,31 @@ def transcribe():
     
     # check if the file is a valid audio file
     if file_extension not in ["wav", "flac", "mp3"]:
-        return "Invalid file format. Only wav and flac files are accepted", 400
+        return "Invalid file format. Only wav, mp3 or flac files are accepted", 400
     
     audio, sample_rate = sf.read(audio_file) 
+    if len(audio.shape) > 1:
+        audio = audio[:, 0]
+        
+    print(audio)
+    print(sample_rate)
+
+    # save audio
+    sf.write("audio.wav", audio, sample_rate)
+    
     
     #  convert the audio to 16kHz if it is not
     if sample_rate != 16000:
         audio = resampy.resample(audio, sample_rate, 16000)
         sample_rate = 16000
     
-    transcription = speech_to_text(audio, sample_rate, asr_repo="base-960h", boost_lm=False, spell_check=True)
+    transcription = speech_to_text(audio, sample_rate, asr_repo="base-960h", boost_lm=False, spell_check=False)
     return jsonify({"transcription": transcription})
 
 
 if __name__ == "__main__":
     # app.run(debug=True, port=5001)
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    app.run(host='0.0.0.0', port=5003, debug=True)
     # audio_path = "./data/84-121550-0000.flac"
     # transcription = speech_to_text(audio_path)
     # print(transcription)

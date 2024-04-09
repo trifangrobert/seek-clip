@@ -1,8 +1,6 @@
 import { useAuthContext } from "../context/AuthContext";
 import {
   AppBar,
-  Button,
-  Icon,
   IconButton,
   Toolbar,
   Typography,
@@ -10,7 +8,6 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import LoginIcon from "@mui/icons-material/Login";
-import { Type } from "react-toastify/dist/utils";
 
 const Navbar = () => {
   const { logoutUser, user } = useAuthContext();
@@ -26,7 +23,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ bgcolor: "#222831" }}>
+    <AppBar position="sticky" sx={{ bgcolor: "#222831" }}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           My App

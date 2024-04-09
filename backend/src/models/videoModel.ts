@@ -4,7 +4,10 @@ import { Document } from "mongoose";
 interface IVideo extends Document {
   url: string;
   title: string;
-  author: Schema.Types.ObjectId;
+  authorId: Schema.Types.ObjectId;
+  likes: Schema.Types.ObjectId[];
+  dislikes: Schema.Types.ObjectId[];
+  transcription?: string;
 }
 
 const videoSchema = new Schema(
@@ -17,7 +20,7 @@ const videoSchema = new Schema(
       type: String,
       required: true,
     },
-    author: {
+    authorId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
