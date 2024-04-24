@@ -84,13 +84,14 @@ const getVideoById = async (req: Request, res: Response) => {
   console.log(`getting video ${videoId}`);
   try {
     const video = await Video.findById(videoId);
+    const author = await User.findById(video.authorId);
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
     }
 
     const videoUrl = process.env.BASE_URL + video.url;
     video.url = videoUrl;
-    res.status(200).json(video);
+    res.status(200).json({ ...video._doc, author: author.firstName + " " + author.lastName });
   }
   catch (error) {
     res.status(500).json({ message: "Error getting video" });
