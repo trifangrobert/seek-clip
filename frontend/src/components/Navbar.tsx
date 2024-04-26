@@ -22,10 +22,14 @@ const Navbar = () => {
     navigate("/signin");
   };
 
+  const handleClickLogo = () => {
+    navigate("/home");
+  }
+
   return (
     <AppBar position="sticky" sx={{ bgcolor: "#222831" }}>
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography onClick={handleClickLogo}variant="h6" component="div" sx={{ flexGrow: 1 }}>
           My App
         </Typography>
         {user ? (

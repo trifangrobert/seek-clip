@@ -17,6 +17,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   const url = req.file.path;
   const title = req.body.title;
   const authorId = req.userId;
+  const subtitles = "captions/" + url.split("/")[1].replace(".mp4", ".vtt");
 
   console.log("url: ", url);
   console.log("title: ", title);
@@ -30,7 +31,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   console.log("transcription: ", transcription);
 
   try {
-    const newVideo = new Video({ url, title, authorId, likes: [], dislikes: [], transcription });
+    const newVideo = new Video({ url, title, authorId, likes: [], dislikes: [], transcription, subtitles });
     await newVideo.save();
     res.status(201).json({ message: "Video uploaded successfully" });
   } catch (error) {
@@ -57,9 +58,9 @@ const getAllVideos = async (req: Request, res: Response) => {
       return acc;
     }, {});
     const videoUrls = videos.map((video: any) => {
-      console.log(process.env.BASE_URL);
-      console.log(video.url);
-      console.log(video);
+      // console.log(process.env.BASE_URL);
+      // console.log(video.url);
+      // console.log(video);
       return {
         ...video._doc,
         url: process.env.BASE_URL + video.url,

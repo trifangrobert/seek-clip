@@ -8,6 +8,7 @@ interface IVideo extends Document {
   likes: Schema.Types.ObjectId[];
   dislikes: Schema.Types.ObjectId[];
   transcription?: string;
+  subtitles?: string;
 }
 
 const videoSchema = new Schema(
@@ -38,6 +39,9 @@ const videoSchema = new Schema(
       },
     ],
     transcription: {
+      type: String,
+    },
+    subtitles: {
       type: String,
     },
   },

@@ -1,8 +1,11 @@
+import datetime
 from flask import Flask, request, jsonify
 import soundfile as sf
 import torch
 import resampy
 from itertools import groupby
+import os
+from flask import send_file
 
 from flask_cors import CORS
 
@@ -28,7 +31,20 @@ lm_boosted_repos = {
 asr = None
 processor = None
 
-def make_subtitles(transcription, predicted_ids, input_values, sample_rate):
+def format_timestamp(seconds):
+    td = datetime.timedelta(seconds=seconds)
+    # keep only 3 decimal places
+    td_seconds, td_microseconds = str(td).split(".")
+    td_microseconds = td_microseconds[:min(3, len(td_microseconds))]
+    if len(td_microseconds) < 3:
+        td_microseconds = td_microseconds + "0" * (3 - len(td_microseconds))
+    # print(td_seconds)
+    # print(td_microseconds)
+    td = f"0{td_seconds}.{td_microseconds}"
+    # print(td)
+    return td
+
+def make_subtitles(transcription, predicted_ids, input_values, sample_rate, filename):
     words = [w for w in transcription.split(" ") if len(w) > 0]
     predicted_ids = predicted_ids[0].tolist()
     duration_sec = input_values.shape[1] / sample_rate
@@ -67,18 +83,22 @@ def make_subtitles(transcription, predicted_ids, input_values, sample_rate):
         text = " ".join([w[0] for w in group])
         group_timestamps.append((text, (start_group_time, end_group_time)))
             
+    # create a file name with the date and time
+    save_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    save_path = os.path.join(save_path, "captions")
+    filepath = os.path.join(save_path, filename)
+            
     # create a vtt file
-    with open("output.vtt", "w") as f:
+    with open(filepath, "w") as f:
         f.write("WEBVTT\n\n")
         for i, (text, (start_time, end_time)) in enumerate(group_timestamps):
-            f.write(f"{i+1}\n")
-            f.write(f"{start_time:.3f} --> {end_time:.3f}\n")
+            start_formatted = format_timestamp(start_time)
+            end_formatted = format_timestamp(end_time)
+            f.write(f"{start_formatted} --> {end_formatted}\n")
             f.write(f"{text}\n\n")
-        
-    return group_timestamps
     
 
-def speech_to_text(audio, sample_rate, asr_repo="base-960h", boost_lm=True, spell_check=True):
+def speech_to_text(audio, audio_filename, sample_rate, asr_repo="base-960h", boost_lm=True, spell_check=True, subtitles=False):
     global asr, processor
     
     if asr is None:
@@ -100,8 +120,9 @@ def speech_to_text(audio, sample_rate, asr_repo="base-960h", boost_lm=True, spel
         # take argmax and decode
         predicted_ids = torch.argmax(logits, dim=-1)
         transcription = processor.batch_decode(predicted_ids)[0]
-        
-        # make_subtitles(transcription, predicted_ids, input_values, sample_rate)
+        if subtitles:
+            vtt_filename = f"{audio_filename.split('.')[0]}.vtt"
+            make_subtitles(transcription, predicted_ids, input_values, sample_rate, vtt_filename)
     
     transcription = transcription.lower()
         
@@ -111,6 +132,17 @@ def speech_to_text(audio, sample_rate, asr_repo="base-960h", boost_lm=True, spel
     
     transcription = fix_spelling(transcription, max_length=2048)[0]["generated_text"]
     return transcription
+
+@app.route("/vtt/<filename>", methods=["GET"])
+def get_vtt_file(filename):
+    save_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    save_path = os.path.join(save_path, "captions")
+    filepath = os.path.join(save_path, filename)
+    
+    if not os.path.exists(filepath):
+        return "File not found", 404
+    
+    return send_file(filepath, as_attachment=True)
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
@@ -138,19 +170,25 @@ def transcribe():
     # save audio
     sf.write("audio.wav", audio, sample_rate)
     
-    
     #  convert the audio to 16kHz if it is not
     if sample_rate != 16000:
         audio = resampy.resample(audio, sample_rate, 16000)
         sample_rate = 16000
     
-    transcription = speech_to_text(audio, sample_rate, asr_repo="base-960h", boost_lm=False, spell_check=False)
+    transcription = speech_to_text(audio, audio_file.filename, sample_rate, asr_repo="base-960h", boost_lm=False, spell_check=False, subtitles=True)
+    
+    # delete the audio file
+    # os.remove("audio.wav")
+    
     return jsonify({"transcription": transcription})
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, port=5001)
-    app.run(host='0.0.0.0', port=5003, debug=True)
+    # 5002 is for the local machine
+    app.run(debug=True, port=5002)
+    
+    # 5001 is for the docker container
+    # app.run(host='0.0.0.0', port=5001)
     # audio_path = "./data/84-121550-0000.flac"
     # transcription = speech_to_text(audio_path)
     # print(transcription)
