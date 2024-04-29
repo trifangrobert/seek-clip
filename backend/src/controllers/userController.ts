@@ -16,7 +16,7 @@ const registerUser = async (req: any, res: any) => {
     const user = await User.register(email, password, firstName, lastName);
     console.log("this is the user:", user);
     const token = createToken(user._id);
-    res.status(200).json({email: user["email"], firstName: user["firstName"], lastName: user["lastName"], token});
+    res.status(200).json({email: user["email"], firstName: user["firstName"], lastName: user["lastName"], token, userId: user["_id"]});
   } catch (error: any) {
     console.log(error);
     if (error.code === 11000) {
@@ -33,7 +33,7 @@ const loginUser = async (req: any, res: any) => {
     const user = await User.login(email, password);
     console.log("this is the user:", user);
     const token = createToken(user._id);
-    res.status(200).json({email: user["email"], firstName: user["firstName"], lastName: user["lastName"], token});
+    res.status(200).json({email: user["email"], firstName: user["firstName"], lastName: user["lastName"], token, userId: user["_id"]});
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

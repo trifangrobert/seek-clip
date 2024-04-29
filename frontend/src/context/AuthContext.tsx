@@ -50,7 +50,8 @@ export const AuthProvider = ({ children }: Props) => {
           const userObj = {
             email: res.data.email,
             firstName: res.data.firstName,
-            lastName: res.data.lastName
+            lastName: res.data.lastName,
+            userId: res.data.userId
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           setToken(res?.data.token!);
@@ -92,7 +93,8 @@ export const AuthProvider = ({ children }: Props) => {
           const userObj = {
             email: res.data.email,
             firstName: res.data.firstName,
-            lastName: res.data.lastName
+            lastName: res.data.lastName,
+            userId: res.data.userId
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           console.log("this is the user:", userObj);

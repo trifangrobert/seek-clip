@@ -178,17 +178,17 @@ def transcribe():
     transcription = speech_to_text(audio, audio_file.filename, sample_rate, asr_repo="base-960h", boost_lm=False, spell_check=False, subtitles=True)
     
     # delete the audio file
-    # os.remove("audio.wav")
+    os.remove("audio.wav")
     
     return jsonify({"transcription": transcription})
 
 
 if __name__ == "__main__":
     # 5002 is for the local machine
-    app.run(debug=True, port=5002)
+    # app.run(debug=True, port=5002)
     
     # 5001 is for the docker container
-    # app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=5001)
     # audio_path = "./data/84-121550-0000.flac"
     # transcription = speech_to_text(audio_path)
     # print(transcription)

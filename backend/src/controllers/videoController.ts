@@ -31,7 +31,15 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   console.log("transcription: ", transcription);
 
   try {
-    const newVideo = new Video({ url, title, authorId, likes: [], dislikes: [], transcription, subtitles });
+    const newVideo = new Video({
+      url,
+      title,
+      authorId,
+      likes: [],
+      dislikes: [],
+      transcription,
+      subtitles,
+    });
     await newVideo.save();
     res.status(201).json({ message: "Video uploaded successfully" });
   } catch (error) {
@@ -92,12 +100,16 @@ const getVideoById = async (req: Request, res: Response) => {
 
     const videoUrl = process.env.BASE_URL + video.url;
     video.url = videoUrl;
-    res.status(200).json({ ...video._doc, author: author.firstName + " " + author.lastName });
-  }
-  catch (error) {
+    res
+      .status(200)
+      .json({
+        ...video._doc,
+        author: author.firstName + " " + author.lastName,
+      });
+  } catch (error) {
     res.status(500).json({ message: "Error getting video" });
   }
-}
+};
 
 const getVideosByUser = async (req: Request, res: Response) => {
   console.log("getting videos by user...");
@@ -110,4 +122,130 @@ const getVideosByUser = async (req: Request, res: Response) => {
   }
 };
 
-export { uploadVideo, getAllVideos, getVideosByUser, getVideoById };
+// access endpoint: POST /api/video/:id/like
+const likeVideo = async (req: AuthRequest, res: Response) => {
+  console.log("User: ", req.userId);
+  console.log("Liking video: ", req.params.videoId);
+  const videoId = req.params.videoId;
+  const userId = req.userId;
+  try {
+    const video = await Video.findById(videoId);
+
+    // check if video exists
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    let resMessage = "Video liked";
+
+    // check if user has already liked the video
+    if (video.likes.includes(userId)) {
+      video.likes = video.likes.filter(
+        (id: string) => id.toString() !== userId
+      );
+      resMessage = "Like removed";
+    } else {
+      // check if user has disliked the video and remove the dislike
+      if (video.dislikes.includes(userId)) {
+        video.dislikes = video.dislikes.filter(
+          (id: string) => id.toString() !== userId
+        );
+      }
+      video.likes.push(userId);
+    }
+
+    await video.save();
+    res.status(200).json({ message: resMessage });
+  } catch (error) {
+    res.status(500).json({ message: "Error liking video" });
+  }
+};
+
+// access endpoint: POST /api/video/:videoId/dislike
+const dislikeVideo = async (req: AuthRequest, res: Response) => {
+  console.log("User: ", req.userId);
+  console.log("Disliking video: ", req.params.videoId);
+  const videoId = req.params.videoId;
+  const userId = req.userId;
+  try {
+    const video = await Video.findById(videoId);
+
+    // check if video exists
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    let resMessage = "Video disliked";
+
+    // check if user has already disliked the video
+    if (video.dislikes.includes(userId)) {
+      video.dislikes = video.dislikes.filter(
+        (id: string) => id.toString() !== userId
+      );
+      resMessage = "Dislike removed";
+    } else {
+      // check if user has liked the video and remove the like
+      if (video.likes.includes(userId)) {
+        video.likes = video.likes.filter(
+          (id: string) => id.toString() !== userId
+        );
+      }
+      video.dislikes.push(userId);
+    }
+    await video.save();
+
+    res.status(200).json({ message: resMessage });
+  } catch (error) {
+    res.status(500).json({ message: "Error disliking video" });
+  }
+};
+
+// access endpoint: POST /api/video/:videoId/likes
+// returns the ids of users who liked the video
+const getLikes = async (req: Request, res: Response) => {
+  const videoId = req.params.videoId;
+  console.log("getting likes for video: ", videoId);
+  try {
+    const video = await Video.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    const likes = video.likes;
+    res.status(200).json(likes);
+  }
+  catch (error) {
+    res.status(500).json({ message: "Error getting likes" });
+  }
+}
+
+// access endpoint: POST /api/video/:videoId/dislikes
+// returns the ids of users who disliked the video
+const getDislikes = async (req: Request, res: Response) => {
+  const videoId = req.params.videoId;
+  console.log("getting dislikes for video: ", videoId);
+  try {
+    const video = await Video.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    const dislikes = video.dislikes;
+    res.status(200).json(dislikes);
+  }
+  catch (error) {
+    res.status(500).json({ message: "Error getting dislikes" });
+  }
+}
+    
+
+export {
+  uploadVideo,
+  getAllVideos,
+  getVideosByUser,
+  getVideoById,
+  likeVideo,
+  dislikeVideo,
+  getLikes,
+  getDislikes,
+};
