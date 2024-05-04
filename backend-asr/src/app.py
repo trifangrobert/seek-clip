@@ -19,5 +19,8 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    # Configure the appropriate port and debug settings here
-    app.run(debug=True, port=5002)
+    # this is for local development
+    # app.run(debug=True, port=5002)
+    
+    # this is for docker
+    app.run(host="0.0.0.0", port=5001)

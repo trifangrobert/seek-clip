@@ -4,15 +4,14 @@ import resampy
 import librosa
 from tqdm import tqdm
 from utils import format_timestamp
-from config import BOOSTED_LM, SPELL_CHECK, SAMPLE_RATE
+from config import BOOSTED_LM, SPELL_CHECK, SAMPLE_RATE, BLOCK_SIZE
 import os
 import torch
 from itertools import groupby
-from flask import send_file, current_app as app
+from flask import current_app as app
 
-# Functions like speech_to_text, make_subtitles, process_audio, etc.
 
-def make_subtitles(transcription, predicted_ids, input_values, filename):
+def make_subtitles(transcription, predicted_ids, input_values, offset=0.0):
     processor = app.processor
     
     words = [w for w in transcription.split(" ") if len(w) > 0]
@@ -66,19 +65,28 @@ def make_subtitles(transcription, predicted_ids, input_values, filename):
         text = " ".join([w[0] for w in group])
         group_timestamps.append((text, (start_group_time, end_group_time)))
             
-    # create a file name with the date and time
+            
+    subtitles = []        
+    for text, (start_time, end_time) in group_timestamps:
+        start_formatted = format_timestamp(offset + start_time)
+        end_formatted = format_timestamp(offset + end_time)
+        subtitles.append((text, (start_formatted, end_formatted)))
+    
+    return subtitles
+            
+
+def save_subtitles(subtitles, filename):
     save_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     save_path = os.path.join(save_path, "captions")
     filepath = os.path.join(save_path, filename)
-            
-    # create a vtt file
+    
+    print(f"Saving subtitles to {filepath}...")
     with open(filepath, "w") as f:
         f.write("WEBVTT\n\n")
-        for i, (text, (start_time, end_time)) in enumerate(group_timestamps):
-            start_formatted = format_timestamp(start_time)
-            end_formatted = format_timestamp(end_time)
-            f.write(f"{start_formatted} --> {end_formatted}\n")
+        for text, (start_time, end_time) in subtitles:
+            f.write(f"{start_time} --> {end_time}\n")
             f.write(f"{text}\n\n")
+    
     
 
 def speech_to_text(audio):
@@ -121,16 +129,17 @@ def process_audio(audio_file):
     sf.write("audio.wav", audio, sample_rate)
         
     print(f'Audio sample rate must be {SAMPLE_RATE} and it is {librosa.get_samplerate("audio.wav")}')
-    stream = librosa.stream("audio.wav", block_length=30, frame_length=16000, hop_length=16000)
+    stream = librosa.stream("audio.wav", block_length=BLOCK_SIZE, frame_length=16000, hop_length=16000)
     
     try:
         transcription = ""
         predicted_ids = torch.tensor([])
         input_values = torch.tensor([])
         stream = [s for s in stream]
+        subtitles = []
         
-        for speech in tqdm(stream, desc="Processing audio"):
-            if speech.shape[0] < 30 * 16000:
+        for idx, speech in tqdm(enumerate(stream), desc="Processing audio"):
+            if speech.shape[0] < BLOCK_SIZE * SAMPLE_RATE:
                 continue
             
             curr_transcription, curr_predicted_ids, curr_input_values = speech_to_text(speech)
@@ -141,13 +150,16 @@ def process_audio(audio_file):
             transcription += curr_transcription
             predicted_ids = torch.cat([predicted_ids, curr_predicted_ids], dim=1)
             input_values = torch.cat([input_values, curr_input_values], dim=1)
+            
+            subtitles += make_subtitles(curr_transcription, curr_predicted_ids, curr_input_values, offset=idx * BLOCK_SIZE)
+            
     except Exception as e:
         print(e)
         return "Error occurred while processing the audio"
         
     try:
         vtt_filename = f"{audio_filename.split('.')[0]}.vtt"
-        make_subtitles(transcription, predicted_ids, input_values, vtt_filename)
+        save_subtitles(subtitles, vtt_filename)
     except Exception as e:
         print(e)
         return "Error occurred while generating subtitles"
