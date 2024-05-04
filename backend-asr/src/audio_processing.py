@@ -139,7 +139,7 @@ def process_audio(audio_file):
         subtitles = []
         
         for idx, speech in tqdm(enumerate(stream), desc="Processing audio"):
-            if speech.shape[0] < BLOCK_SIZE * SAMPLE_RATE:
+            if speech.shape[0] < 100: # skip short audio segments
                 continue
             
             curr_transcription, curr_predicted_ids, curr_input_values = speech_to_text(speech)
