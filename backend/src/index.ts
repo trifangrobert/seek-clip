@@ -26,8 +26,11 @@ mongoose
   .connect(process.env.MONGO_URI as string)
   .then(() => {
     console.log("Connected to MongoDB database successfully");
-    app.listen(port, () =>
+    app.listen(port, () => {
       console.log(`Server running on http://localhost:${port}`)
+      console.log(`Using backend-asr at: ${process.env.BACKEND_ASR_URL}`)
+      console.log(`Using backend-topic at: ${process.env.BACKEND_TOPIC_URL}`)
+    }
     );
   })
   .catch((error: Error) => console.log(error));
