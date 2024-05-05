@@ -5,4 +5,6 @@ export interface Video {
   author: string;
   thumbnail?: string;
   subtitles?: string;
+  topic: string;
+  createdAt: string;
 }
