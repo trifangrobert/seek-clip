@@ -3,6 +3,7 @@ export interface Video {
   url: string;
   title: string;
   author: string;
+  authorId: string;
   thumbnail?: string;
   subtitles?: string;
   topic: string;

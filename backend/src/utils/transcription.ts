@@ -69,5 +69,11 @@ export const getTranscription = async (video: any): Promise<string> => {
     // console.log("Captions file written to: ", captionsFilepath);
 
     console.log("transcription: ", transcription);
+
+    const deleteCaptions = await axios.delete(backend_asr_url + `/vtt/delete/${captionsFilename}`);
+    if (deleteCaptions.status !== 200) {
+        throw new Error("Error deleting captions");
+    }
+
     return transcription;
 };

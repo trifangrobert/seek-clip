@@ -32,10 +32,12 @@ export const getVideoById = async (id: string): Promise<Video> => {
 
 export const uploadVideo = async (
   title: string,
+  description: string,
   url: File
 ): Promise<String> => {
   const formData = new FormData();
   formData.append("title", title);
+  formData.append("description", description);
   formData.append("url", url);
   console.log(formData);
   const token = localStorage.getItem("token");

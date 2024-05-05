@@ -3,6 +3,19 @@ import os
 from audio_processing import process_audio
 
 def register_routes(app):
+    @app.route("/vtt/delete/<filename>", methods=["DELETE"])
+    def delete_vtt_file(filename):
+        save_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        save_path = os.path.join(save_path, "captions")
+        filepath = os.path.join(save_path, filename)
+        
+        if not os.path.exists(filepath):
+            return "File not found", 404
+        
+        os.remove(filepath)
+        
+        return "File deleted successfully"
+    
     @app.route("/vtt/<filename>", methods=["GET"])
     def get_vtt_file(filename):
         save_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
