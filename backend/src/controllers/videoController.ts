@@ -3,6 +3,7 @@ const User = require("../models/userModel");
 import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/authenticate";
 import { getTranscription } from "../utils/transcription";
+import { getTopic } from "../utils/topic";
 
 const uploadVideo = async (req: AuthRequest, res: Response) => {
   console.log("uploading video...");
@@ -30,6 +31,9 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   const transcription = await getTranscription(file);
   console.log("transcription: ", transcription);
 
+  const topic = await getTopic(title + transcription);
+  console.log("topic: ", topic);
+
   try {
     const newVideo = new Video({
       url,
@@ -39,6 +43,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
       dislikes: [],
       transcription,
       subtitles,
+      topic,
     });
     await newVideo.save();
     res.status(201).json({ message: "Video uploaded successfully" });

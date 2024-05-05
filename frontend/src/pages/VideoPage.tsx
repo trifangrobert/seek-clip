@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { Video } from "../models/VideoType";
-import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Chip, Stack, Typography } from "@mui/material";
 import { useVideo } from "../hooks/useVideo";
 import ReactPlayer from "react-player";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import {
 } from "../services/VideoService";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
+import { topicColorMap } from "../utils/TopicColors";
 
 const VideoPage: React.FC = () => {
   const videoId: string = useParams<{ id: string }>().id || "";
@@ -95,6 +96,8 @@ const VideoPage: React.FC = () => {
     }
   };
 
+  const topicColor = video && topicColorMap[video.topic.toLowerCase()] || '#757575';
+
   // console.log("video: ", video);
   return (
     <Card sx={{ maxWidth: 1200, margin: "auto", mt: 4, overflow: "hidden" }}>
@@ -125,6 +128,7 @@ const VideoPage: React.FC = () => {
             }}
           />
         )}
+        <Chip label={video?.topic || 'Unknown Topic'} sx={{ position: 'absolute', top: 20, left: 20, bgcolor: topicColor, color: '#fff', borderRadius: '8px' }} />
       </Box>
       <CardContent>
         <Stack

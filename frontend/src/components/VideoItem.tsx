@@ -1,6 +1,7 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { Video } from "../models/VideoType";
 import { useNavigate } from "react-router-dom";
+import { topicColorMap } from "../utils/TopicColors";
 
 interface VideoItemProps {
   video: Video;
@@ -12,8 +13,11 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
   const handleClick = () => {
     navigate(`/video/${video._id}`);
   };
+
+  const topicColor = topicColorMap[video.topic.toLowerCase()] || "#222831";
+
   return (
-    <Card sx={{ maxWidth: 400 }} onClick={handleClick}>
+    <Card sx={{ maxWidth: 400, borderLeft: `6px solid ${topicColor}` }} onClick={handleClick}>
       <Box
         sx={{
           width: "100%",
@@ -39,7 +43,11 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
         </video>
       </Box>
       <CardContent>
-        <Typography gutterBottom variant="h6" component="div">
+        <Typography gutterBottom variant="h6" component="div" sx={{
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+        }}>
           {video.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">

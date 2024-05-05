@@ -1,5 +1,10 @@
 import AddIcon from "@mui/icons-material/Add";
-import { IconButton, InputAdornment, TextField } from "@mui/material";
+import {
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
 import { Box, Button, Container, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { VideoFormErrors, VideoFormValues } from "../models/VideoFormType";
@@ -16,6 +21,7 @@ const VideoUploadForm = () => {
   });
   const [selectedFileName, setSelectedFileName] = useState<string>("");
   const [formErrors, setFormErrors] = useState<VideoFormErrors>({});
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = event.target;
@@ -35,25 +41,27 @@ const VideoUploadForm = () => {
     setFormErrors(validationErrors);
     // console.log(formValues);
     if (Object.keys(validationErrors).length === 0 && formValues.url) {
+      setUploading(true);
       // Form is valid, proceed with submission
       try {
         const data = await uploadVideo(formValues.title, formValues.url);
         // console.log("Video uploaded successfully");
         toast.success("Video uploaded successfully", {
-            position: "bottom-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            });
-          // redirect to home page
-          navigate("/home", { replace: true });
-
+          position: "bottom-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+        });
+        // redirect to home page
+        navigate("/home", { replace: true });
+        setUploading(false);
       } catch (error) {
         // console.log("Error uploading video: ", error);
         toast.error("Error uploading video", {
-            position: "bottom-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            });
+          position: "bottom-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+        });
+        setUploading(false);
       }
     }
   };
@@ -115,14 +123,26 @@ const VideoUploadForm = () => {
               ),
             }}
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2, bgcolor: "#222831", color: "#ffffff" }}
-          >
-            Upload
-          </Button>
+          {uploading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress color="primary" size={24} />
+            </Box>
+          ) : (
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, bgcolor: "#222831", color: "#ffffff" }}
+            >
+              Upload
+            </Button>
+          )}
         </Box>
       </Box>
     </Container>

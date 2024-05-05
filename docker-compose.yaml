@@ -23,6 +23,19 @@ services:
       mynet:
         ipv4_address: 172.28.1.5
 
+  backend-topic:
+    build: ./backend-topic
+    container_name: topic-server
+    ports: 
+      - "5003:5003"
+    depends_on:
+      - mongodb
+    working_dir: /app/src
+    command: ["python", "app.py"]
+    networks:
+      mynet:
+        ipv4_address: 172.28.1.6
+
 volumes:
   mongodb_data:
 

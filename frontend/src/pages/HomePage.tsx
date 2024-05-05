@@ -13,13 +13,14 @@ const HomePage = () => {
     <>
       <Box sx={{
         display: "flex",
-        justifyContent: "space-between",
+        // justifyContent: "space-between",
+        justifyContent: "center",
         alignItems: "center",
         m: 4,
       }}>
-        <Typography component="h1" variant="h4" sx={{ m: 1 }}>
+        {/* <Typography component="h1" variant="h4" sx={{ m: 1 }}>
           Home Page
-        </Typography>
+        </Typography> */}
         <Tooltip title="Upload Video" placement="right">
           <IconButton onClick={() => navigate("/upload-video")} sx={{padding: "10px"}}>
             <AddCircleOutlineIcon
