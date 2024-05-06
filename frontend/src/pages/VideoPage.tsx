@@ -1,6 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { Video } from "../models/VideoType";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Card,
@@ -22,6 +25,8 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import { topicColorMap } from "../utils/TopicColors";
 import EditIcon from "@mui/icons-material/Edit";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { DescriptionAccordion } from "../components/DescriptionAccordion";
 
 const VideoPage: React.FC = () => {
   const navigate = useNavigate();
@@ -34,19 +39,19 @@ const VideoPage: React.FC = () => {
   const [dislikeCount, setDislikeCount] = useState<number>(0);
   const [showEdit, setShowEdit] = useState<boolean>(false);
 
-  console.log("video from VideoPage: ", video);
+  // console.log("video from VideoPage: ", video);
 
   useEffect(() => {
     if (video) {
       setSubtitlesURL(process.env.REACT_APP_API_URL + "/" + video.subtitles);
       const user = localStorage.getItem("user");
       const userId = user ? JSON.parse(user).userId : null;
-      console.log("CHECK userId: ", userId);
-      console.log("CHECK video.authorId: ", video.authorId);
-      console.log(
-        "CHECK userId === video.authorId: ",
-        userId === video.authorId
-      );
+      // console.log("CHECK userId: ", userId);
+      // console.log("CHECK video.authorId: ", video.authorId);
+      // console.log(
+      //   "CHECK userId === video.authorId: ",
+      //   userId === video.authorId
+      // );
       if (userId && video.authorId === userId) setShowEdit(true);
     }
   }, [video]);
@@ -56,14 +61,14 @@ const VideoPage: React.FC = () => {
   }, [video, liked, disliked]);
 
   const checkUserReaction = async () => {
-    console.log("videoId: ", videoId);
+    // console.log("videoId: ", videoId);
     const likesList = (await getLikes(videoId)).toString();
     const dislikesList = (await getDislikes(videoId)).toString();
 
     const user = localStorage.getItem("user");
     const userId = JSON.parse(user!).userId;
 
-    console.log("userId: ", userId);
+    // console.log("userId: ", userId);
 
     if (likesList.includes(userId.toString())) {
       setLiked(true);
@@ -73,8 +78,8 @@ const VideoPage: React.FC = () => {
       setDisliked(true);
     }
 
-    console.log("likesList: ", likesList);
-    console.log("dislikesList: ", dislikesList);
+    // console.log("likesList: ", likesList);
+    // console.log("dislikesList: ", dislikesList);
 
     if (likesList === "") {
       setLikeCount(0);
@@ -168,44 +173,53 @@ const VideoPage: React.FC = () => {
       </Box>
       <CardContent>
         <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
+          direction="column" // Changed to column to stack vertically
+          spacing={2} // Adds space between items in the stack
         >
-          <Box>
-          <Typography gutterBottom variant="h5" component="h2" sx={{ display: 'inline-flex', alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+              sx={{ flexGrow: 1 }}
+            >
               {video?.title || "Loading title..."}
               {showEdit && (
                 <Button
                   startIcon={<EditIcon />}
                   onClick={goToEditPage}
                   size="small"
-                  // color should be black
-                  color="inherit"
-                  sx={{ ml: 2 }}
+                  sx={{ ml: 2, color: "inherit" }} // Ensured color inherits from theme
                 >
                   Edit
                 </Button>
               )}
             </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              {video?.author || "Loading author..."}
-            </Typography>
+            <Box>
+              <Button onClick={handleLike}>
+                <Typography component="span" sx={{ mr: 1 }}>
+                  {likeCount}
+                </Typography>
+                <ThumbUpAltIcon color={liked ? "success" : "action"} />
+              </Button>
+              <Button onClick={handleDislike}>
+                <Typography component="span" sx={{ mr: 1 }}>
+                  {dislikeCount}
+                </Typography>
+                <ThumbDownAltIcon color={disliked ? "error" : "action"} />
+              </Button>
+            </Box>
           </Box>
-          <Box>
-            <Button onClick={handleLike}>
-              <Typography component="span" sx={{ mr: 1 }}>
-                {likeCount}
-              </Typography>
-              <ThumbUpAltIcon color={liked ? "success" : "action"} />
-            </Button>
-            <Button onClick={handleDislike}>
-              <Typography component="span" sx={{ mr: 1 }}>
-                {dislikeCount}
-              </Typography>
-              <ThumbDownAltIcon color={disliked ? "error" : "action"} />
-            </Button>
-          </Box>
+          <Typography variant="subtitle1" color="text.secondary">
+            {video?.author || "Loading author..."}
+          </Typography>
+          <DescriptionAccordion description={video?.description || ""} />
         </Stack>
       </CardContent>
     </Card>

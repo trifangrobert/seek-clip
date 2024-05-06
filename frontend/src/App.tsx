@@ -9,33 +9,69 @@ import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
 import UploadVideoPage from "./pages/UploadVideoPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import OwnerProtectedRoute from "./components/OwnerProtectedRoute";
 
 function App() {
   // if the route is protected, we will use the ProtectedRoute component
   const routes = [
-    { path: "/signup", element: <SignUpPage />, isProtected: false },
-    { path: "/signin", element: <SignInPage />, isProtected: false },
-    { path: "/home", element: <HomePage />, isProtected: true },
-    { path: "/upload-video", element: <UploadVideoPage />, isProtected: true },
-    { path: "/video/:id", element: <VideoPage />, isProtected: true },
-    { path: "/edit/:id", element: <EditVideoPage />, isProtected: true },
-    { path: "*", element: <HomePage />, isProtected: true },
+    {
+      path: "/signup",
+      element: <SignUpPage />,
+      isUserProtected: false,
+      isVideoOwnerProtected: false,
+    },
+    {
+      path: "/signin",
+      element: <SignInPage />,
+      isUserProtected: false,
+      isVideoOwnerProtected: false,
+    },
+    {
+      path: "/home",
+      element: <HomePage />,
+      isUserProtected: true,
+      isVideoOwnerProtected: false,
+    },
+    {
+      path: "/upload-video",
+      element: <UploadVideoPage />,
+      isUserProtected: true,
+      isVideoOwnerProtected: false,
+    },
+    {
+      path: "/video/:id",
+      element: <VideoPage />,
+      isUserProtected: true,
+      isVideoOwnerProtected: false,
+    },
+    {
+      path: "/edit/:id",
+      element: <EditVideoPage />,
+      isUserProtected: true,
+      isVideoOwnerProtected: true,
+    },
+    {
+      path: "*",
+      element: <HomePage />,
+      isUserProtected: true,
+      isVideoOwnerProtected: false,
+    },
   ];
   return (
     <>
       <Navbar />
       <Routes>
-        {routes.map(({ path, element, isProtected }) =>
-          isProtected ? (
-            <Route
-              key={path}
-              path={path}
-              element={<ProtectedRoute element={element} />}
-            />
-          ) : (
-            <Route key={path} path={path} element={element} />
-          )
-        )}
+        {routes.map(({ path, element, isUserProtected, isVideoOwnerProtected }) => {
+          if (isVideoOwnerProtected) {
+            return <Route key={path} path={path} element={<OwnerProtectedRoute element={element} />} />;
+          }
+          
+          if (isUserProtected) {
+            return <Route key={path} path={path} element={<ProtectedRoute element={element} />} />;
+          }
+
+          return <Route key={path} path={path} element={element} />;
+        })}
       </Routes>
       <ToastContainer />
     </>

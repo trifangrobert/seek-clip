@@ -57,6 +57,46 @@ export const uploadVideo = async (
   return data;
 };
 
+export const updateVideo = async (
+  title: string,
+  description: string,
+  id: string
+): Promise<void> => {
+  const token = localStorage.getItem("token");
+  const response = await fetch(videoAPI + `/update/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ title, description }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error updating video");
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export const deleteVideo = async (id: string): Promise<void> => {
+  const token = localStorage.getItem("token");
+  const response = await fetch(videoAPI + `/delete/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error deleting video");
+  }
+
+  const data = await response.json();
+  return data;
+}
+
 // endpoint: POST /api/video/:id/like
 export const likeVideo = async (id: string): Promise<void> => {
   const token = localStorage.getItem("token");

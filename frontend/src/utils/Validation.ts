@@ -1,5 +1,5 @@
 import { RegisterFormValues, RegisterFormErrors, LoginFormErrors, LoginFormValues } from "../models/AuthFormType";
-import { VideoFormErrors, VideoFormValues } from "../models/VideoFormType";
+import { EditVideoFormErrors, EditVideoFormValues, VideoFormErrors, VideoFormValues } from "../models/VideoFormType";
 
 export const validateRegisterForm = (values: RegisterFormValues): RegisterFormErrors => {
   let errors: RegisterFormErrors = {};
@@ -59,8 +59,26 @@ export const validateVideoForm = (values: VideoFormValues): VideoFormErrors => {
     errors.title = "Title is required";
   }
 
+  if (!values.description) {
+    errors.description = "Description is required";
+  }
+
   if (!values.url) {
     errors.url = "URL is required";
+  }
+
+  return errors;
+}
+
+export const validateEditVideoForm = (values: EditVideoFormValues): EditVideoFormErrors => {
+  let errors: EditVideoFormErrors = {};
+
+  if (!values.title) {
+    errors.title = "Title is required";
+  }
+
+  if (!values.description) {
+    errors.description = "Description is required";
   }
 
   return errors;
