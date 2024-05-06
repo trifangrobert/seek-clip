@@ -8,7 +8,7 @@ interface VideoItemProps {
 }
 
 const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
-  console.log("video from VideoItem: ", video);
+  // console.log("video from VideoItem: ", video);
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/video/${video._id}`);
@@ -17,7 +17,7 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
   const topicColor = topicColorMap[video.topic.toLowerCase()] || "#222831";
 
   return (
-    <Card sx={{ maxWidth: 400, borderLeft: `6px solid ${topicColor}` }} onClick={handleClick}>
+    <Card sx={{ maxWidth: 450, borderLeft: `6px solid ${topicColor}` }} onClick={handleClick}>
       <Box
         sx={{
           width: "100%",

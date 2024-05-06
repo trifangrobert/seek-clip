@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/authenticate";
 import { getTranscription } from "../utils/transcription";
 import { getTopic } from "../utils/topic";
+import { promises as fs } from "fs";
 
 const uploadVideo = async (req: AuthRequest, res: Response) => {
   console.log("uploading video...");
@@ -17,6 +18,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   const file = req.file;
   const url = req.file.path;
   const title = req.body.title;
+  const description = req.body.description;
   const authorId = req.userId;
   const subtitles = "captions/" + url.split("/")[1].replace(".mp4", ".vtt");
 
@@ -38,6 +40,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
     const newVideo = new Video({
       url,
       title,
+      description,
       authorId,
       likes: [],
       dislikes: [],
@@ -51,6 +54,79 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Error uploading video" });
   }
 };
+
+// only the creator of the video can update it
+const updateVideo = async (req: AuthRequest, res: Response) => {
+  console.log("updating video...");
+  const { videoId } = req.params;
+  const title = req.body.title;
+  const description = req.body.description;
+  console.log(req.body);
+  try {
+    const video = await Video.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    if (video.authorId.toString() !== req.userId) {
+      return res.status(403).json({ message: "Not authorized to update video" });
+    }
+
+    console.log("Old title: ", video.title);
+    console.log("Old description: ", video.description);
+
+    console.log("New title: ", title);
+    console.log("New description: ", description);
+
+    video.title = title || video.title;
+    video.description = description || video.description;
+    console.log("Updated video: ", video)
+
+    await video.save();
+    res.status(200).json({ message: "Video updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating video" });
+  }
+  
+};
+
+// only the creator of the video can delete it
+const deleteVideo = async (req: AuthRequest, res: Response) => {
+  console.log("deleting video...");
+  const { videoId } = req.params;
+  try {
+    const video = await Video.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+    
+    console.log("video.authorId: ", video.authorId.toString());
+    console.log("req.userId: ", req.userId);
+
+    if (video.authorId.toString() !== req.userId) {
+      return res.status(403).json({ message: "Not authorized to delete video" });
+    }
+
+    const videoPath = video.url;
+    const audioPath = videoPath.replace(".mp4", ".mp3");
+    const captionsPath = video.subtitles;
+
+    try {
+      await fs.unlink(videoPath);
+      await fs.unlink(audioPath);
+      await fs.unlink(captionsPath);
+      console.log("Files deleted successfully");
+    }
+    catch (error) {
+      console.log("Error deleting files from disk: ", error);
+    }
+
+    await Video.findByIdAndDelete(videoId);
+    res.status(200).json({ message: "Video deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting video" });
+  }
+}
 
 const getAllVideos = async (req: Request, res: Response) => {
   console.log("getting all videos...");
@@ -105,12 +181,10 @@ const getVideoById = async (req: Request, res: Response) => {
 
     const videoUrl = process.env.BASE_URL + video.url;
     video.url = videoUrl;
-    res
-      .status(200)
-      .json({
-        ...video._doc,
-        author: author.firstName + " " + author.lastName,
-      });
+    res.status(200).json({
+      ...video._doc,
+      author: author.firstName + " " + author.lastName,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error getting video" });
   }
@@ -218,11 +292,10 @@ const getLikes = async (req: Request, res: Response) => {
 
     const likes = video.likes;
     res.status(200).json(likes);
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ message: "Error getting likes" });
   }
-}
+};
 
 // access endpoint: POST /api/video/:videoId/dislikes
 // returns the ids of users who disliked the video
@@ -237,15 +310,15 @@ const getDislikes = async (req: Request, res: Response) => {
 
     const dislikes = video.dislikes;
     res.status(200).json(dislikes);
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ message: "Error getting dislikes" });
   }
-}
-    
+};
 
 export {
   uploadVideo,
+  updateVideo,
+  deleteVideo,
   getAllVideos,
   getVideosByUser,
   getVideoById,

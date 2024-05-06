@@ -18,6 +18,7 @@ const VideoUploadForm = () => {
   const [formValues, setFormValues] = useState<VideoFormValues>({
     url: null,
     title: "",
+    description: "",
   });
   const [selectedFileName, setSelectedFileName] = useState<string>("");
   const [formErrors, setFormErrors] = useState<VideoFormErrors>({});
@@ -44,7 +45,7 @@ const VideoUploadForm = () => {
       setUploading(true);
       // Form is valid, proceed with submission
       try {
-        const data = await uploadVideo(formValues.title, formValues.url);
+        const data = await uploadVideo(formValues.title, formValues.description, formValues.url);
         // console.log("Video uploaded successfully");
         toast.success("Video uploaded successfully", {
           position: "bottom-center",
@@ -92,6 +93,20 @@ const VideoUploadForm = () => {
             onChange={handleChange}
             error={!!formErrors.title}
             helperText={formErrors.title}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="description"
+            label="Description"
+            type="description"
+            id="description"
+            autoComplete="description"
+            value={formValues.description}
+            onChange={handleChange}
+            error={!!formErrors.description}
+            helperText={formErrors.description}
           />
           <TextField
             fullWidth
