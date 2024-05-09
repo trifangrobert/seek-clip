@@ -1,7 +1,10 @@
+version: '3.8'
+
 services:
   mongodb:
     image: mongo
     container_name: bt-mongo
+    command: mongod --replSet "rs0"
     volumes:
       - mongodb_data:/data/db
     ports:
@@ -13,12 +16,12 @@ services:
   backend-asr:
     build: ./backend-asr
     container_name: speech-to-text-server
-    ports: 
+    ports:
       - "5001:5001"
     depends_on:
       - mongodb
     working_dir: /app/src
-    command: ["python", "app.py"]
+    command: [ "python", "app.py" ]
     networks:
       mynet:
         ipv4_address: 172.28.1.5
@@ -26,18 +29,65 @@ services:
   backend-topic:
     build: ./backend-topic
     container_name: topic-server
-    ports: 
+    ports:
       - "5003:5003"
     depends_on:
       - mongodb
     working_dir: /app/src
-    command: ["python", "app.py"]
+    command: [ "python", "app.py" ]
     networks:
       mynet:
         ipv4_address: 172.28.1.6
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    container_name: bt-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      mynet:
+        ipv4_address: 172.28.1.7
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.2
+    container_name: bt-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      mynet:
+        ipv4_address: 172.28.1.8
+
+  mongo-connector:
+    build: 
+      context: ./mongo-connector
+      dockerfile: Dockerfile
+    container_name: bt-mongo-connector
+    links:
+      - mongodb
+      - elasticsearch
+    depends_on:
+      - mongodb
+      - elasticsearch
+    volumes:
+      - mongo_connector_log:/var/log/mongo-connector
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      mynet:
+        ipv4_address: 172.28.1.9
+
 volumes:
   mongodb_data:
+  elasticsearch_data:
+  mongo_connector_log:
+
 
 networks:
   mynet:
