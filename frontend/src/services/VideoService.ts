@@ -152,3 +152,13 @@ export const getDislikes = async (id: string): Promise<number> => {
   const data = await response.json();
   return data;
 };
+
+//endpoint: GET /api/video/search
+export const searchVideo = async (query: string): Promise<Video[]> => {
+  const response = await fetch(videoAPI + `/search?query=${query}`);
+  if (!response.ok) {
+    throw new Error("Error searching videos");
+  }
+  const data = await response.json();
+  return data;
+}
