@@ -1,0 +1,28 @@
+{
+    "mainAddress": "mongodb:27017",
+    "oplogFile": "/var/log/mongo-connector/oplog.timestamp",
+    "noDump": false,
+    "batchSize": 500,
+    "verbosity": 2,
+    "continueOnError": true,
+    "logging": {
+      "type": "file",
+      "filename": "/var/log/mongo-connector/mongo-connector.log"
+    },
+    "namespaces": {
+      "bt-db.videos": {
+        "targetIndex": "videos",
+        "targetType": "_doc"
+      }
+    },
+    "docManagers": [
+      {
+        "docManager": "elastic2_doc_manager",
+        "targetURL": "elasticsearch:9200",
+        "args": {
+          "clientOptions": {"timeout": 500}
+        }
+      }
+    ]
+  }
+  

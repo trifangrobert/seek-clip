@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import UploadVideoPage from "./pages/UploadVideoPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import OwnerProtectedRoute from "./components/OwnerProtectedRoute";
+import SearchedVideos from "./pages/SearchedVideos";
 
 function App() {
   // if the route is protected, we will use the ProtectedRoute component
@@ -49,6 +50,12 @@ function App() {
       element: <EditVideoPage />,
       isUserProtected: true,
       isVideoOwnerProtected: true,
+    },
+    {
+      path: "/search/:searchTerm",
+      element: <SearchedVideos />,
+      isUserProtected: true,
+      isVideoOwnerProtected: false,
     },
     {
       path: "*",

@@ -1,5 +1,7 @@
 const Video = require("../models/videoModel");
 const User = require("../models/userModel");
+const esClient = require("../config/elasticsearchClient");
+
 import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/authenticate";
 import { getTranscription } from "../utils/transcription";
@@ -69,7 +71,9 @@ const updateVideo = async (req: AuthRequest, res: Response) => {
     }
 
     if (video.authorId.toString() !== req.userId) {
-      return res.status(403).json({ message: "Not authorized to update video" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to update video" });
     }
 
     console.log("Old title: ", video.title);
@@ -80,14 +84,13 @@ const updateVideo = async (req: AuthRequest, res: Response) => {
 
     video.title = title || video.title;
     video.description = description || video.description;
-    console.log("Updated video: ", video)
+    console.log("Updated video: ", video);
 
     await video.save();
     res.status(200).json({ message: "Video updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error updating video" });
   }
-  
 };
 
 // only the creator of the video can delete it
@@ -99,12 +102,14 @@ const deleteVideo = async (req: AuthRequest, res: Response) => {
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
     }
-    
+
     console.log("video.authorId: ", video.authorId.toString());
     console.log("req.userId: ", req.userId);
 
     if (video.authorId.toString() !== req.userId) {
-      return res.status(403).json({ message: "Not authorized to delete video" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete video" });
     }
 
     const videoPath = video.url;
@@ -116,8 +121,7 @@ const deleteVideo = async (req: AuthRequest, res: Response) => {
       await fs.unlink(audioPath);
       await fs.unlink(captionsPath);
       console.log("Files deleted successfully");
-    }
-    catch (error) {
+    } catch (error) {
       console.log("Error deleting files from disk: ", error);
     }
 
@@ -126,7 +130,7 @@ const deleteVideo = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     res.status(500).json({ message: "Error deleting video" });
   }
-}
+};
 
 const getAllVideos = async (req: Request, res: Response) => {
   console.log("getting all videos...");
@@ -315,6 +319,37 @@ const getDislikes = async (req: Request, res: Response) => {
   }
 };
 
+// ENDPOINT: GET /api/video/search
+const searchVideos = async (req: Request, res: Response) => {
+  const { query } = req.query;
+  // console.log("searching videos for: ", query);
+  try {
+    const { body } = await esClient.search({
+      index: "bt-db_videos",
+      body: {
+        min_score: 1.0, // might need to adjust this
+        query: {
+          multi_match: {
+            query: query,
+            fields: ["title", "description", "transcription", "topic"],
+            fuzziness: "AUTO",
+          },
+        },
+      },
+    });
+
+    // add _id to each video
+    const videos = body.hits.hits.map((hit: any) => ({
+      ...hit._source,
+      _id: hit._id,
+    }));
+    res.status(200).json(videos);
+    // res.status(200).json(body.hits.hits);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   uploadVideo,
   updateVideo,
@@ -326,4 +361,5 @@ export {
   dislikeVideo,
   getLikes,
   getDislikes,
+  searchVideos,
 };
