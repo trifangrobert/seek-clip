@@ -1,4 +1,5 @@
 import { RegisterFormValues, RegisterFormErrors, LoginFormErrors, LoginFormValues } from "../models/AuthFormType";
+import { EditUserProfile, EditUserProfileErrors } from "../models/UserType";
 import { EditVideoFormErrors, EditVideoFormValues, VideoFormErrors, VideoFormValues } from "../models/VideoFormType";
 
 export const validateRegisterForm = (values: RegisterFormValues): RegisterFormErrors => {
@@ -8,6 +9,13 @@ export const validateRegisterForm = (values: RegisterFormValues): RegisterFormEr
     errors.email = "Email is required";
   } else if (!/\S+@\S+\.\S+/.test(values.email)) {
     errors.email = "Email address is invalid.";
+  }
+
+  if (!values.username) {
+    errors.username = "Username is required";
+  }
+  else if (values.username.length < 4) {
+    errors.username = "Username must be at least 4 characters long.";
   }
 
   if (!values.password) {
@@ -36,10 +44,10 @@ export const validateRegisterForm = (values: RegisterFormValues): RegisterFormEr
 export const validateLoginForm = (values: LoginFormValues): LoginFormErrors => {
   let errors: LoginFormErrors = {};
 
-  if (!values.email) {
-    errors.email = "Email is required";
-  } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-    errors.email = "Email address is invalid.";
+  if (!values.username) {
+    errors.username = "Username is required";
+  } else if (values.username.length < 4) {
+    errors.username = "Username must be at least 4 characters long.";
   }
 
   if (!values.password) {
@@ -79,6 +87,30 @@ export const validateEditVideoForm = (values: EditVideoFormValues): EditVideoFor
 
   if (!values.description) {
     errors.description = "Description is required";
+  }
+
+  return errors;
+}
+
+export const validateEditProfileForm = (values: EditUserProfile): EditUserProfileErrors => {
+  let errors: EditUserProfileErrors = {};
+
+  if (!values.email) {
+    errors.email = "Email is required";
+  } else if (!/\S+@\S+\.\S+/.test(values.email)) {
+    errors.email = "Email address is invalid.";
+  }
+
+  if (!values.username) {
+    errors.username = "Username is required";
+  }
+
+  if (!values.firstName) {
+    errors.firstName = "First name is required";
+  }
+
+  if (!values.lastName) {
+    errors.lastName = "Last name is required";
   }
 
   return errors;

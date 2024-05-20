@@ -19,7 +19,7 @@ export default function SignInPage() {
   const { loginUser, user } = useAuthContext();
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState<LoginFormValues>({
-    email: "",
+    username: "",
     password: "",
   });
   const [errors, setErrors] = useState<LoginFormErrors>({});
@@ -44,7 +44,7 @@ export default function SignInPage() {
     if (Object.keys(validationErrors).length === 0) {
       // Form is valid, proceed with submission
       console.log("Form submission", formValues);
-      loginUser(formValues.email, formValues.password);
+      loginUser(formValues.username, formValues.password);
     }
   };
   return (
@@ -52,7 +52,7 @@ export default function SignInPage() {
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
-            marginTop: 25,
+            marginTop: 20,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -70,15 +70,15 @@ export default function SignInPage() {
                 <TextField
                   required
                   fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
+                  id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
                   autoFocus
-                  value={formValues.email}
+                  value={formValues.username}
                   onChange={handleChange}
-                  error={!!errors.email}
-                  helperText={errors.email}
+                  error={!!errors.username}
+                  helperText={errors.username}
                 />
               </Grid>
               <Grid item xs={12}>

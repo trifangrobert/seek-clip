@@ -10,11 +10,18 @@ interface IUser extends Document {
   password: string;
   firstName: string;
   lastName: string;
+  profilePicture?: string;
 }
 
 const userSchema = new Schema(
   {
     email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    username: {
       type: String,
       required: true,
       unique: true,
@@ -33,6 +40,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    profilePicture: {
+      type: String,
+      required: true,
+      default: "profile-picture/default-profile-picture.png"
+    },
   },
   { collection: "users", timestamps: true }
 );
@@ -40,11 +52,13 @@ const userSchema = new Schema(
 // check if the email and password are valid
 userSchema.statics.register = async function (
   email: string,
+  username: string,
   password: string,
   firstName: string,
-  lastName: string
+  lastName: string,
+  profilePicture: string = "profile-picture/default-profile-picture.png"
 ) {
-  if (!email || !password || !firstName || !lastName) {
+  if (!email || !username ||  !password || !firstName || !lastName) {
     throw new Error("All fields are required");
   }
 
@@ -60,33 +74,41 @@ userSchema.statics.register = async function (
   //   throw new Error("Password must contain at least one uppercase letter, one lowercase letter, one number and one special character");
   // }
 
-  const existing = await this.findOne({ email });
+  const existingEmail = await this.findOne({ email });
 
-  if (existing) {
-    throw { message: "Email already exists", code: 11000 };
+  if (existingEmail) {
+    throw new Error("Email already exists");
+  }
+
+  const existingUsername = await this.findOne({ username });
+
+  if (existingUsername) {
+    throw new Error("Username already exists");
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const user = await this.create({
     email,
+    username,
     password: hashedPassword,
     firstName,
     lastName,
+    profilePicture,
   });
 
   return user;
 };
 
-userSchema.statics.login = async function (email: string, password: string) {
-  if (!email || !password) {
-    throw new Error("Email and password are required");
+userSchema.statics.login = async function (username: string, password: string) {
+  if (!username || !password) {
+    throw new Error("Username and password are required");
   }
 
-  const user = await this.findOne({ email });
+  const user = await this.findOne({ username });
 
   if (!user) {
-    throw new Error("Invalid email");
+    throw new Error("Invalid username");
   }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);

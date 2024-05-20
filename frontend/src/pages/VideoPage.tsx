@@ -1,9 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Video } from "../models/VideoType";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Button,
   Card,
@@ -25,7 +21,6 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import { topicColorMap } from "../utils/TopicColors";
 import EditIcon from "@mui/icons-material/Edit";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DescriptionAccordion } from "../components/DescriptionAccordion";
 
 const VideoPage: React.FC = () => {

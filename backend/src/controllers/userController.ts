@@ -1,42 +1,87 @@
-import dotenv from "dotenv";
-const User = require("../models/userModel");
-const jwt = require("jsonwebtoken");
+import { profile } from "console";
 
-dotenv.config();
+const User = require("../models/authModel");
+const fs = require("fs");
 
-const createToken = (_id: string) => {
-  return jwt.sign({ _id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-};
 
-const registerUser = async (req: any, res: any) => {
-  const { email, password, firstName, lastName } = req.body;
+const getUserByUsername = async (req: any, res: any) => {
+  console.log("Getting user by username...");
+  const { username } = req.params;
   try {
-    const user = await User.register(email, password, firstName, lastName);
+    const user = await User.findOne({ username: username });
     console.log("this is the user:", user);
-    const token = createToken(user._id);
-    res.status(200).json({email: user["email"], firstName: user["firstName"], lastName: user["lastName"], token, userId: user["_id"]});
-  } catch (error: any) {
-    console.log(error);
-    if (error.code === 11000) {
-      return res.status(409).json({ error: error.message });
-    } else if (error.message === "ValidationError") {
-      return res.status(400).json({ error: error.message });
-    }
-  }
-};
-
-const loginUser = async (req: any, res: any) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.login(email, password);
-    console.log("this is the user:", user);
-    const token = createToken(user._id);
-    res.status(200).json({email: user["email"], firstName: user["firstName"], lastName: user["lastName"], token, userId: user["_id"]});
+    res.status(200).json({
+      email: user["email"],
+      username: user["username"],
+      firstName: user["firstName"],
+      lastName: user["lastName"],
+      userId: user["_id"],
+      profilePicture: user["profilePicture"],
+    });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
 };
 
-module.exports = { registerUser, loginUser };
+interface UpdateUserProfile {
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  profilePicture?: string;
+}
+
+const updateUserProfile = async (req: any, res: any) => {
+  console.log("Updating user profile...");
+  const { email, username, firstName, lastName } = req.body;
+
+  let updateData: UpdateUserProfile = {
+    email: email,
+    username: username,
+    firstName: firstName,
+    lastName: lastName,
+  };
+
+  if (req.file) {
+    updateData.profilePicture = req.file.path;
+
+    try {
+      // if the user already has a profile picture, delete it
+      const user = await User.findOne({ username });
+
+      if (user["profilePicture"] !== "profile-pictures/default-profile-picture.png") {
+        fs.unlinkSync(user["profilePicture"]);
+      }
+    }
+    catch (error: any) {
+      console.log("Error deleting profile picture:", error);
+    }
+  }
+
+  try {
+    const user = await User.findOneAndUpdate(
+        { username },
+        updateData,
+        { new: true }
+    );
+
+    // get the updated user
+    const updatedUser = await User.findOne({ username });
+
+    console.log("this is the udpated user:", updatedUser);
+    res.status(200).json({
+      email: updatedUser["email"],
+      username: updatedUser["username"],
+      firstName: updatedUser["firstName"],
+      lastName: updatedUser["lastName"],
+      profilePicture: updatedUser["profilePicture"],
+      userId: updatedUser["_id"],
+    });
+
+    console.log("User profile updated successfully");
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export { getUserByUsername, updateUserProfile };

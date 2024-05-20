@@ -9,11 +9,11 @@ import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
 import UploadVideoPage from "./pages/UploadVideoPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import OwnerProtectedRoute from "./components/OwnerProtectedRoute";
+import VideoOwnerProtectedRoute from "./components/VideoOwnerProtectedRoute";
 import SearchedVideos from "./pages/SearchedVideos";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
-  // if the route is protected, we will use the ProtectedRoute component
   const routes = [
     {
       path: "/signup",
@@ -25,6 +25,12 @@ function App() {
       path: "/signin",
       element: <SignInPage />,
       isUserProtected: false,
+      isVideoOwnerProtected: false,
+    },
+    {
+      path: "/profile/:username",
+      element: <ProfilePage />,
+      isUserProtected: true,
       isVideoOwnerProtected: false,
     },
     {
@@ -70,7 +76,7 @@ function App() {
       <Routes>
         {routes.map(({ path, element, isUserProtected, isVideoOwnerProtected }) => {
           if (isVideoOwnerProtected) {
-            return <Route key={path} path={path} element={<OwnerProtectedRoute element={element} />} />;
+            return <Route key={path} path={path} element={<VideoOwnerProtectedRoute element={element} />} />;
           }
           
           if (isUserProtected) {

@@ -8,25 +8,37 @@ import {
   TextField,
   Button,
   Link,
+  Badge,
+  IconButton,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import React, { useEffect, useState } from "react";
 import { validateRegisterForm } from "../../utils/Validation";
-import { RegisterFormValues, RegisterFormErrors } from "../../models/AuthFormType";
+import {
+  RegisterFormValues,
+  RegisterFormErrors,
+} from "../../models/AuthFormType";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
+import DefaultProfilePicture from "../../assets/default-profile-picture.png";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
   const { registerUser, user } = useAuthContext();
   const [formValues, setFormValues] = useState<RegisterFormValues>({
     email: "",
+    username: "",
     password: "",
     firstName: "",
     lastName: "",
+    profilePicture: null,
   });
   const [errors, setErrors] = useState<RegisterFormErrors>({});
+  // initialize profilePicPreview statewith default profile picture
+  const [profilePicPreview, setProfilePicPreview] = useState<
+    string | undefined
+  >(DefaultProfilePicture);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -38,8 +50,25 @@ export default function SignUpPage() {
     if (user) {
       navigate("/home", { replace: true });
     }
-  }
-  , [user, navigate]);
+  }, [user, navigate]);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      console.log("Selected file: ", file);
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setProfilePicPreview(reader.result);
+          setFormValues((prev) => ({ ...prev, profilePicture: file }));
+        } else {
+          console.log("Error reading image file");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,7 +78,14 @@ export default function SignUpPage() {
     if (Object.keys(validationErrors).length === 0) {
       // Form is valid, proceed with submission
       console.log("Form submission", formValues);
-      registerUser(formValues.email, formValues.password, formValues.firstName, formValues.lastName);
+      registerUser(
+        formValues.email,
+        formValues.username,
+        formValues.password,
+        formValues.firstName,
+        formValues.lastName,
+        formValues.profilePicture!
+      );
     }
   };
 
@@ -59,22 +95,56 @@ export default function SignUpPage() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 25,
+            marginTop: 10,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <input
+            accept="image/*"
+            style={{ display: "none" }}
+            id="raised-button-file"
+            type="file"
+            onChange={handleImageChange}
+          />
+          <label htmlFor="raised-button-file">
+            <Badge
+              overlap="circular"
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              badgeContent={
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="span"
+                  sx={{
+                    backgroundColor: "white",
+                    "&:hover": { backgroundColor: "#e0e0e0" },
+                    width: 30,
+                    height: 30, 
+                    minHeight: 0, 
+                    minWidth: 0, 
+                  }}
+                >
+                  <AddAPhotoIcon fontSize="small" />
+                </IconButton>
+              }
+            >
+              <Avatar
+                sx={{ m: 1, bgcolor: "primary.main", width: 100, height: 100 }}
+                src={profilePicPreview}
+              >
+                <LockOutlinedIcon />
+              </Avatar>
+            </Badge>
+          </label>
           <Typography component="h1" variant="h4" sx={{ m: 2 }}>
             Register
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <TextField 
+                <TextField
                   required
                   fullWidth
                   id="firstName"
@@ -86,10 +156,10 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   error={!!errors.firstName}
                   helperText={errors.firstName}
-                  />
+                />
               </Grid>
               <Grid item xs={6}>
-                <TextField 
+                <TextField
                   required
                   fullWidth
                   id="lastName"
@@ -100,9 +170,9 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   error={!!errors.lastName}
                   helperText={errors.lastName}
-                  />
+                />
               </Grid>
-                
+
               <Grid item xs={12}>
                 <TextField
                   required
@@ -115,6 +185,20 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   error={!!errors.email}
                   helperText={errors.email}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
+                  value={formValues.username}
+                  onChange={handleChange}
+                  error={!!errors.username}
+                  helperText={errors.username}
                 />
               </Grid>
               <Grid item xs={12}>

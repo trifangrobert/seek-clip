@@ -1,11 +1,11 @@
 import express from "express";
-import upload from "../middleware/multerConfig";
+import { videoUpload } from "../middleware/multerConfig";
 import { getAllVideos, getVideosByUser, uploadVideo, updateVideo, deleteVideo, getVideoById, likeVideo, dislikeVideo, getLikes, getDislikes, searchVideos } from "../controllers/videoController";
 import authenticate from "../middleware/authenticate";
 
 const router = express.Router();
 
-router.post("/upload", authenticate, upload.single("url"), uploadVideo);
+router.post("/upload", authenticate, videoUpload.single("url"), uploadVideo);
 router.get("/search", searchVideos);
 router.put("/update/:videoId", authenticate, updateVideo);
 router.delete("/delete/:videoId", authenticate, deleteVideo);

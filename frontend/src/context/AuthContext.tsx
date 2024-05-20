@@ -5,15 +5,17 @@ import { registerAPI, loginAPI } from "../services/AuthService";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from "react";
+import { updateUserProfile } from "../services/UserService";
 
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
   loading: boolean;
-  registerUser: (email: string, password: string, firstName: string, lastName: string) => void;
-  loginUser: (email: string, password: string) => void;
+  registerUser: (email: string, username: string, password: string, firstName: string, lastName: string, profilePicture: File) => void;
+  loginUser: (username: string, password: string) => void;
   logoutUser: () => void;
   isLoggedIn: () => boolean;
+  updateProfile: (email: string, username: string, firstName: string, lastName: string, profilePicture: File) => void;
 };
 
 type Props = {
@@ -40,18 +42,19 @@ export const AuthProvider = ({ children }: Props) => {
     setLoading(false);
   }, []);
 
-  const registerUser = async (email: string, password: string, firstName: string, lastName: string) => {
-    console.log("Hello from registerUser")
-    await registerAPI(email, password, firstName, lastName)
+  const registerUser = async (email: string, username: string, password: string, firstName: string, lastName: string, profilePicture: File | null) => {
+    await registerAPI(email, username, password, firstName, lastName, profilePicture)
       .then((res) => {
         console.log("Response for registerUser: ", res)
         if (res) {
           localStorage.setItem("token", JSON.stringify(res?.data.token));
           const userObj = {
             email: res.data.email,
+            username: res.data.username,
             firstName: res.data.firstName,
             lastName: res.data.lastName,
-            userId: res.data.userId
+            userId: res.data.userId,
+            profilePicture: res.data.profilePicture
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           setToken(res?.data.token!);
@@ -85,16 +88,18 @@ export const AuthProvider = ({ children }: Props) => {
 
   };
   
-  const loginUser = async (email: string, password: string) => {
-    await loginAPI(email, password)
+  const loginUser = async (username: string, password: string) => {
+    await loginAPI(username, password)
       .then((res) => {
         if (res) {
           localStorage.setItem("token", JSON.stringify(res?.data.token));
           const userObj = {
             email: res.data.email,
+            username: res.data.username,
             firstName: res.data.firstName,
             lastName: res.data.lastName,
-            userId: res.data.userId
+            userId: res.data.userId,
+            profilePicture: res.data.profilePicture
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           console.log("this is the user:", userObj);
@@ -139,8 +144,42 @@ export const AuthProvider = ({ children }: Props) => {
     setToken(null);
   };
 
+  const updateProfile = async (email: string, username: string, firstName: string, lastName: string, profilePicture: File | null) => {
+    try {
+      const response = await updateUserProfile(email, username, firstName, lastName, profilePicture);
+      console.log("this is the user:", response);
+      // update only the modified fields in user state
+      const updatedUser = {
+        email: response.email,
+        username: response.username,
+        firstName: response.firstName,
+        lastName: response.lastName,
+        profilePicture: response.profilePicture,
+        userId: response.userId
+      };
+
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      toast.success('User profile updated successfully!', {
+        position: "bottom-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+        });
+      
+    }
+    catch (error) {
+      console.log("Error updating user profile: ", error);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, registerUser, loginUser, logoutUser, isLoggedIn }}>
+    <AuthContext.Provider value={{ user, token, loading, registerUser, loginUser, logoutUser, isLoggedIn, updateProfile }}>
       {children}  
     </AuthContext.Provider>
   )
