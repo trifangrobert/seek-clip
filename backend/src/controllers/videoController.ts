@@ -1,5 +1,5 @@
 const Video = require("../models/videoModel");
-const User = require("../models/userModel");
+const User = require("../models/authModel");
 const esClient = require("../config/elasticsearchClient");
 
 import { Request, Response } from "express";
@@ -51,6 +51,17 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
       topic,
     });
     await newVideo.save();
+
+    await esClient.index({
+      index: 'videos',
+      id: newVideo._id.toString(),
+      body: {
+        title: newVideo.title,
+        description: newVideo.description,
+        transcription: newVideo.transcription,
+        topic: newVideo.topic,
+      }
+    });
     res.status(201).json({ message: "Video uploaded successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error uploading video" });
@@ -85,8 +96,19 @@ const updateVideo = async (req: AuthRequest, res: Response) => {
     video.title = title || video.title;
     video.description = description || video.description;
     console.log("Updated video: ", video);
-
     await video.save();
+
+    await esClient.update({
+      index: 'videos',
+      id: video._id.toString(),
+      body: {
+        doc: {
+          title: video.title,
+          description: video.description,
+        }
+      }
+    });
+
     res.status(200).json({ message: "Video updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error updating video" });
@@ -126,6 +148,12 @@ const deleteVideo = async (req: AuthRequest, res: Response) => {
     }
 
     await Video.findByIdAndDelete(videoId);
+
+    await esClient.delete({
+      index: 'videos',
+      id: videoId
+    });
+
     res.status(200).json({ message: "Video deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting video" });
@@ -325,7 +353,7 @@ const searchVideos = async (req: Request, res: Response) => {
   // console.log("searching videos for: ", query);
   try {
     const { body } = await esClient.search({
-      index: "bt-db_videos",
+      index: "videos",
       body: {
         min_score: 1.0, // might need to adjust this
         query: {

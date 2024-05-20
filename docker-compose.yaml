@@ -4,7 +4,7 @@ services:
   mongodb:
     image: mongo
     container_name: bt-mongo
-    command: mongod --replSet "rs0"
+    # command: mongod --replSet "rs0"
     volumes:
       - mongodb_data:/data/db
     ports:
@@ -53,6 +53,7 @@ services:
     networks:
       mynet:
         ipv4_address: 172.28.1.7
+
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.2
     container_name: bt-kibana
@@ -64,29 +65,9 @@ services:
       mynet:
         ipv4_address: 172.28.1.8
 
-  mongo-connector:
-    build: 
-      context: ./mongo-connector
-      dockerfile: Dockerfile
-    container_name: bt-mongo-connector
-    links:
-      - mongodb
-      - elasticsearch
-    depends_on:
-      - mongodb
-      - elasticsearch
-    volumes:
-      - mongo_connector_log:/var/log/mongo-connector
-    environment:
-      - PYTHONUNBUFFERED=1
-    networks:
-      mynet:
-        ipv4_address: 172.28.1.9
-
 volumes:
   mongodb_data:
   elasticsearch_data:
-  mongo_connector_log:
 
 
 networks:

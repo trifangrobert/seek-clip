@@ -1,13 +1,22 @@
 import { useAuthContext } from "../context/AuthContext";
-import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, IconButton, Toolbar, Typography, Avatar } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import LoginIcon from "@mui/icons-material/Login";
 import Logo from "../assets/logo_white.png";
+import { useState, useEffect } from "react";
+import DefaultProfilePicture from "../assets/default-profile-picture.png";
 
 const Navbar = () => {
   const { logoutUser, user } = useAuthContext();
   const navigate = useNavigate();
+  const [userProfilePicUrl, setUserProfilePicUrl] = useState<string>(DefaultProfilePicture);
+
+  useEffect(() => {
+    if (user) {
+      setUserProfilePicUrl(process.env.REACT_APP_API_URL + "/" + user.profilePicture);
+    }
+  }, [user]);
 
   const handleLogout = () => {
     logoutUser();
@@ -22,6 +31,11 @@ const Navbar = () => {
     navigate("/home");
   };
 
+  const handleClickUser = () => {
+    const username = user?.username;
+    navigate("/profile/" + username);
+  };
+
   return (
     <AppBar position="sticky" sx={{ bgcolor: "#222831" }}>
       <Toolbar>
@@ -32,13 +46,21 @@ const Navbar = () => {
           alt="Logo"
         />
         <div style={{ flexGrow: 1 }} />{" "}
-        {/* This div pushes everything after it to the right */}
         {user ? (
           <>
+            <Avatar
+              src={userProfilePicUrl}
+              alt={`${user.firstName} ${user.lastName}`}
+              sx={{ width: 30, height: 30, marginRight: 2 }}
+              onClick={handleClickUser}
+              style={{ cursor: "pointer" }}
+            />
             <Typography
               variant="h6"
               component="div"
               style={{ marginRight: "10px" }}
+              onClick={handleClickUser}
+              sx={{ cursor: "pointer" }}
             >
               {user.firstName + " " + user.lastName}
             </Typography>

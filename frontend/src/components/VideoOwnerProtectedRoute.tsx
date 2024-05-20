@@ -4,11 +4,11 @@ import { Navigate, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getVideoById } from "../services/VideoService";
 
-interface OwnerProtectedRouteProps {
+interface VideoOwnerProtectedRouteProps {
     element: React.ReactElement;
 }
 
-const OwnerProtectedRoute: React.FC<OwnerProtectedRouteProps> = ({element}) => {
+const VideoOwnerProtectedRoute: React.FC<VideoOwnerProtectedRouteProps> = ({element}) => {
     const { token, loading, user } = useAuthContext();
     const [onwerLoading, setOwnerLoading] = useState<boolean>(true);
     const [owner, setOwner] = useState<boolean>(false);
@@ -51,4 +51,4 @@ const OwnerProtectedRoute: React.FC<OwnerProtectedRouteProps> = ({element}) => {
     return owner ? element : <Navigate to="/home" replace />;
 }
 
-export default OwnerProtectedRoute;
+export default VideoOwnerProtectedRoute;
