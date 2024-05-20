@@ -14,7 +14,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-// import CoolLogo from "../assets/cool_logo.png";
 import DefaultProfilePicture from "../assets/default-profile-picture.png";
 import { useAuthContext } from "../context/AuthContext";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
@@ -105,6 +104,19 @@ const ProfilePage = () => {
     }
     setEditMode(false);
   };
+
+  const handleCancel = () => {
+    setEditMode(false);
+    if (user) {
+      setFormData({
+        email: user.email,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        profilePicture: null,
+      });
+    }
+  }
 
   if (!user || loading)
     return (
@@ -208,23 +220,34 @@ const ProfilePage = () => {
         helperText={formErrors.lastName}
       />
       {editMode ? (
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={handleSave}
-          sx={{
-            mt: 2,
-            bgcolor: "primary.main",
-            ":hover": { bgcolor: "primary.dark" },
-            px: 3,
-            py: 1,
-            borderRadius: 2,
-            display: "block",
-            margin: "auto",
-          }}
-        >
-          Save Changes
-        </Button>
+        <Box sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 2 }}>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={handleSave}
+            sx={{
+              bgcolor: "primary.main",
+              ":hover": { bgcolor: "primary.dark" },
+              px: 3,
+              py: 1,
+              borderRadius: 2,
+            }}
+          >
+            Save Changes
+          </Button>
+          <Button
+            color="secondary"
+            variant="outlined"
+            onClick={() => handleCancel()}
+            sx={{
+              px: 3,
+              py: 1,
+              borderRadius: 2,
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
       ) : (
         <Button
           color="primary"
