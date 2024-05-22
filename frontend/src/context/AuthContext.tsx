@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: Props) => {
             username: res.data.username,
             firstName: res.data.firstName,
             lastName: res.data.lastName,
-            userId: res.data.userId,
+            _id: res.data._id,
             profilePicture: res.data.profilePicture
           };
           localStorage.setItem("user", JSON.stringify(userObj));
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: Props) => {
             username: res.data.username,
             firstName: res.data.firstName,
             lastName: res.data.lastName,
-            userId: res.data.userId,
+            _id: res.data._id,
             profilePicture: res.data.profilePicture
           };
           localStorage.setItem("user", JSON.stringify(userObj));
@@ -155,7 +155,7 @@ export const AuthProvider = ({ children }: Props) => {
         firstName: response.firstName,
         lastName: response.lastName,
         profilePicture: response.profilePicture,
-        userId: response.userId
+        _id: response._id
       };
 
       setUser(updatedUser);

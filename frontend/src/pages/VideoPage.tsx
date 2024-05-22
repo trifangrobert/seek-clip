@@ -22,6 +22,9 @@ import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import { topicColorMap } from "../utils/TopicColors";
 import EditIcon from "@mui/icons-material/Edit";
 import { DescriptionAccordion } from "../components/DescriptionAccordion";
+import { Comments } from "../components/Comments";
+import { CommentProvider } from "../context/CommentContext";
+import { useAuthContext } from "../context/AuthContext";
 
 const VideoPage: React.FC = () => {
   const navigate = useNavigate();
@@ -33,20 +36,14 @@ const VideoPage: React.FC = () => {
   const [likeCount, setLikeCount] = useState<number>(0);
   const [dislikeCount, setDislikeCount] = useState<number>(0);
   const [showEdit, setShowEdit] = useState<boolean>(false);
+  const { user } = useAuthContext();
 
   // console.log("video from VideoPage: ", video);
 
   useEffect(() => {
     if (video) {
       setSubtitlesURL(process.env.REACT_APP_API_URL + "/" + video.subtitles);
-      const user = localStorage.getItem("user");
-      const userId = user ? JSON.parse(user).userId : null;
-      // console.log("CHECK userId: ", userId);
-      // console.log("CHECK video.authorId: ", video.authorId);
-      // console.log(
-      //   "CHECK userId === video.authorId: ",
-      //   userId === video.authorId
-      // );
+      const userId = user?._id;
       if (userId && video.authorId === userId) setShowEdit(true);
     }
   }, [video]);
@@ -57,36 +54,25 @@ const VideoPage: React.FC = () => {
 
   const checkUserReaction = async () => {
     // console.log("videoId: ", videoId);
-    const likesList = (await getLikes(videoId)).toString();
-    const dislikesList = (await getDislikes(videoId)).toString();
+    const likesList = await getLikes(videoId);
+    const dislikesList = await getDislikes(videoId);
 
-    const user = localStorage.getItem("user");
-    const userId = JSON.parse(user!).userId;
+    const likesListArray = Object.values(likesList);
+    const dislikesListArray = Object.values(dislikesList);
 
+    const userId = user?._id;
     // console.log("userId: ", userId);
 
-    if (likesList.includes(userId.toString())) {
+    if (userId && likesListArray.includes(userId.toString())) {
       setLiked(true);
     }
 
-    if (dislikesList.includes(userId.toString())) {
+    if (userId && dislikesListArray.includes(userId.toString())) {
       setDisliked(true);
     }
 
-    // console.log("likesList: ", likesList);
-    // console.log("dislikesList: ", dislikesList);
-
-    if (likesList === "") {
-      setLikeCount(0);
-    } else {
-      setLikeCount(likesList.split(",").length);
-    }
-
-    if (dislikesList === "") {
-      setDislikeCount(0);
-    } else {
-      setDislikeCount(dislikesList.split(",").length);
-    }
+    setLikeCount(likesListArray.length);
+    setDislikeCount(dislikesListArray.length);
   };
 
   const handleLike = async () => {
@@ -126,98 +112,101 @@ const VideoPage: React.FC = () => {
 
   // console.log("video: ", video);
   return (
-    <Card sx={{ maxWidth: 1200, margin: "auto", mt: 4, overflow: "hidden" }}>
-      <Box sx={{ position: "relative", paddingTop: "56.25%" }}>
-        {subtitlesURL && video && (
-          <ReactPlayer
-            url={video?.url}
-            playing
-            controls
-            width="100%"
-            height="100%"
-            style={{ position: "absolute", top: 0, left: 0 }}
-            config={{
-              file: {
-                attributes: {
-                  crossOrigin: "anonymous",
-                },
-                tracks: [
-                  {
-                    kind: "subtitles",
-                    src: subtitlesURL,
-                    srcLang: "en",
-                    default: true,
-                    label: "English",
+    <CommentProvider videoId={videoId}>
+      <Card sx={{ maxWidth: 1200, margin: "auto", mt: 4, overflow: "hidden" }}>
+        <Box sx={{ position: "relative", paddingTop: "56.25%" }}>
+          {subtitlesURL && video && (
+            <ReactPlayer
+              url={video?.url}
+              playing
+              controls
+              width="100%"
+              height="100%"
+              style={{ position: "absolute", top: 0, left: 0 }}
+              config={{
+                file: {
+                  attributes: {
+                    crossOrigin: "anonymous",
                   },
-                ],
-              },
+                  tracks: [
+                    {
+                      kind: "subtitles",
+                      src: subtitlesURL,
+                      srcLang: "en",
+                      default: true,
+                      label: "English",
+                    },
+                  ],
+                },
+              }}
+            />
+          )}
+          <Chip
+            label={video?.topic || "Unknown Topic"}
+            sx={{
+              position: "absolute",
+              top: 20,
+              left: 20,
+              bgcolor: topicColor,
+              color: "#fff",
+              borderRadius: "8px",
             }}
           />
-        )}
-        <Chip
-          label={video?.topic || "Unknown Topic"}
-          sx={{
-            position: "absolute",
-            top: 20,
-            left: 20,
-            bgcolor: topicColor,
-            color: "#fff",
-            borderRadius: "8px",
-          }}
-        />
-      </Box>
-      <CardContent>
-        <Stack
-          direction="column" // Changed to column to stack vertically
-          spacing={2} // Adds space between items in the stack
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
+        </Box>
+        <CardContent>
+          <Stack
+            direction="column" // Changed to column to stack vertically
+            spacing={2} // Adds space between items in the stack
           >
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="h2"
-              sx={{ flexGrow: 1 }}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
             >
-              {video?.title || "Loading title..."}
-              {showEdit && (
-                <Button
-                  startIcon={<EditIcon />}
-                  onClick={goToEditPage}
-                  size="small"
-                  sx={{ ml: 2, color: "inherit" }} // Ensured color inherits from theme
-                >
-                  Edit
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="h2"
+                sx={{ flexGrow: 1 }}
+              >
+                {video?.title || "Loading title..."}
+                {showEdit && (
+                  <Button
+                    startIcon={<EditIcon />}
+                    onClick={goToEditPage}
+                    size="small"
+                    sx={{ ml: 2, color: "inherit" }} // Ensured color inherits from theme
+                  >
+                    Edit
+                  </Button>
+                )}
+              </Typography>
+              <Box>
+                <Button onClick={handleLike}>
+                  <Typography component="span" sx={{ mr: 1 }}>
+                    {likeCount}
+                  </Typography>
+                  <ThumbUpAltIcon color={liked ? "success" : "action"} />
                 </Button>
-              )}
-            </Typography>
-            <Box>
-              <Button onClick={handleLike}>
-                <Typography component="span" sx={{ mr: 1 }}>
-                  {likeCount}
-                </Typography>
-                <ThumbUpAltIcon color={liked ? "success" : "action"} />
-              </Button>
-              <Button onClick={handleDislike}>
-                <Typography component="span" sx={{ mr: 1 }}>
-                  {dislikeCount}
-                </Typography>
-                <ThumbDownAltIcon color={disliked ? "error" : "action"} />
-              </Button>
+                <Button onClick={handleDislike}>
+                  <Typography component="span" sx={{ mr: 1 }}>
+                    {dislikeCount}
+                  </Typography>
+                  <ThumbDownAltIcon color={disliked ? "error" : "action"} />
+                </Button>
+              </Box>
             </Box>
-          </Box>
-          <Typography variant="subtitle1" color="text.secondary">
-            {video?.author || "Loading author..."}
-          </Typography>
-          <DescriptionAccordion description={video?.description || ""} />
-        </Stack>
-      </CardContent>
-    </Card>
+            <Typography variant="subtitle1" color="text.secondary">
+              {video?.author || "Loading author..."}
+            </Typography>
+            <DescriptionAccordion description={video?.description || ""} />
+            <Comments videoId={videoId} />
+          </Stack>
+        </CardContent>
+      </Card>
+    </CommentProvider>
   );
 };
 

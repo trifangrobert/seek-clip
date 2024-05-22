@@ -1,5 +1,4 @@
-import mongoose, { Schema } from "mongoose";
-import { Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 interface IVideo extends Document {
   url: string;

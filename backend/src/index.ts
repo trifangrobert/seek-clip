@@ -1,11 +1,13 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cors from "cors";
+import setupElasticsearchIndex from "./config/elasticsearchSetup";
+
 import authRoutes from "./routes/authRoutes";
 import videoRoutes from "./routes/videoRoutes";
 import userRoutes from "./routes/userRoutes";
-import cors from "cors";
-import setupElasticsearchIndex from "./config/elasticsearchSetup";
+import commentRoutes from "./routes/commentRoutes";
 
 dotenv.config();
 
@@ -24,6 +26,7 @@ app.use('/profile-pictures', express.static('profile-pictures'));
 app.use("/api/auth", authRoutes);
 app.use("/api/video", videoRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/comment", commentRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI as string)

@@ -14,11 +14,15 @@ const VideoOwnerProtectedRoute: React.FC<VideoOwnerProtectedRouteProps> = ({elem
     const [owner, setOwner] = useState<boolean>(false);
     const { id } = useParams<{ id: string }>(); // Get video ID from URL
     const location = useLocation();
-    const userId = user?.userId;
+    console.log("user data from VideoOwnerProtectedRoute: ", user);
+    const userId = user?._id;
+    // const userId = "123"
+
 
     useEffect(() => {
         const checkOwner = async () => {
             try {
+                console.log(id, userId)
                 if (!id || !userId) {
                     return;
                 }
@@ -39,6 +43,8 @@ const VideoOwnerProtectedRoute: React.FC<VideoOwnerProtectedRouteProps> = ({elem
         }
         checkOwner();
     }, [id, userId]);
+
+    console.log("loading and ownerLoading: ", loading, onwerLoading)
 
     if (loading || onwerLoading) {
         return <Loading />;

@@ -3,7 +3,7 @@ export type UserProfile = {
     username: string,
     firstName: string,
     lastName: string,
-    userId: string,
+    _id: string,
     profilePicture: string
 }
 
@@ -27,7 +27,7 @@ export type UserProfileToken = {
     username: string,
     firstName: string,
     lastName: string,
-    userId: string,
+    _id: string,
     token: string,
     profilePicture: string
 }
