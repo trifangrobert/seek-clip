@@ -10,7 +10,7 @@ export const DescriptionAccordion: React.FC<{ description: string }> = ({ descri
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' , ml: -2, fontSize: 20 }}>
+        <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' , ml: 0, fontSize: 17 }}>
             Description
         </Typography>
       </AccordionSummary>
