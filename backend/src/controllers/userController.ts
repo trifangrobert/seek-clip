@@ -15,7 +15,7 @@ const getUserByUsername = async (req: any, res: any) => {
       username: user["username"],
       firstName: user["firstName"],
       lastName: user["lastName"],
-      userId: user["_id"],
+      _id: user["_id"],
       profilePicture: user["profilePicture"],
     });
   } catch (error: any) {
@@ -75,7 +75,7 @@ const updateUserProfile = async (req: any, res: any) => {
       firstName: updatedUser["firstName"],
       lastName: updatedUser["lastName"],
       profilePicture: updatedUser["profilePicture"],
-      userId: updatedUser["_id"],
+      _id: updatedUser["_id"],
     });
 
     console.log("User profile updated successfully");

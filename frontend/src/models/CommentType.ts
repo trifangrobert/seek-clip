@@ -9,4 +9,5 @@ export interface CommentType {
     createdAt: string;
     updatedAt: string;
     replies: CommentType[];
+    isDeleted: boolean;
 }

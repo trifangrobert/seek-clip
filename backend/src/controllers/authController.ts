@@ -23,7 +23,7 @@ const registerUser = async (req: any, res: any) => {
     const user = await User.register(email, username, password, firstName, lastName, profilePicture);
     console.log("this is the user:", user);
     const token = createToken(user._id);
-    res.status(200).json({email: user["email"], username: user["username"], firstName: user["firstName"], lastName: user["lastName"], token, userId: user["_id"], profilePicture: user["profilePicture"]});
+    res.status(200).json({email: user["email"], username: user["username"], firstName: user["firstName"], lastName: user["lastName"], token, _id: user["_id"], profilePicture: user["profilePicture"]});
   } catch (error: any) {
     console.log(error);
     if (error.code === 11000) {
@@ -40,7 +40,7 @@ const loginUser = async (req: any, res: any) => {
     const user = await User.login(username, password);
     console.log("this is the user:", user);
     const token = createToken(user._id);
-    res.status(200).json({email: user["email"], username: user["username"], firstName: user["firstName"], lastName: user["lastName"], token, userId: user["_id"], profilePicture: user["profilePicture"]});
+    res.status(200).json({email: user["email"], username: user["username"], firstName: user["firstName"], lastName: user["lastName"], token, _id: user["_id"], profilePicture: user["profilePicture"]});
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

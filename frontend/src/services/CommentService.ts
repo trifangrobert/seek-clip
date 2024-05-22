@@ -3,7 +3,7 @@ import { CommentType } from "../models/CommentType";
 
 const commentApi = process.env.REACT_APP_API_URL + "/api/comment";
 
-export const addComment = async (
+export const addCommentAPI = async (
   videoId: string,
   content: string,
   parentId: string | null = null
@@ -25,20 +25,24 @@ export const addComment = async (
   return response.data;
 };
 
-export const deleteComment = async (commentId: string) => {
+export const deleteCommentAPI = async (commentId: string) => {
   const token = localStorage.getItem("token");
   const response = await axios.delete<CommentType>(
-    commentApi + "/delete/" + commentId,
+    commentApi + "/delete",
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      data: {
+        commentId,
+      },
     }
+    
   );
   return response.data;
 };
 
-export const updateComment = async (commentId: string, content: string) => {
+export const updateCommentAPI = async (commentId: string, content: string) => {
   const token = localStorage.getItem("token");
   const response = await axios.put<CommentType>(
     commentApi + "/update",

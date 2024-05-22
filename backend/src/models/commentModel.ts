@@ -5,6 +5,7 @@ interface IComment extends Document {
   userId: Schema.Types.ObjectId;
   content: string;
   parentId?: Schema.Types.ObjectId;
+  isDeleted: boolean;
 }
 
 const commentSchema = new Schema(
@@ -26,6 +27,11 @@ const commentSchema = new Schema(
     parentId: {
       type: Schema.Types.ObjectId,
       ref: "Comment",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      required: true,
     },
   },
   { collection: "comments", timestamps: true }

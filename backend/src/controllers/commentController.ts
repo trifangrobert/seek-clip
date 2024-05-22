@@ -26,11 +26,13 @@ const addComment = async (req: AuthRequest, res: Response) => {
       parentId = req.body.parentId; // reply to a comment
     }
 
+    const isDeleted = false;
     const comment = new Comment({
       videoId,
       userId,
       content,
       parentId,
+      isDeleted,
     });
     await comment.save();
     
@@ -50,6 +52,10 @@ const updateComment = async (req: AuthRequest, res: Response) => {
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.status(404).json({ error: "Comment not found" });
+    }
+
+    if (comment.isDeleted) {
+      return res.status(404).json({ error: "Comment is deleted" });
     }
 
     if (comment.userId.toString() !== userId) {
@@ -82,13 +88,19 @@ const deleteComment = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: "Comment not found" });
     }
 
+    if (comment.isDeleted) {
+      return res.status(404).json({ error: "Comment is deleted" });
+    }
+
     if (comment.userId.toString() !== userId) {
       return res
         .status(403)
         .json({ error: "You are not authorized to delete this comment" });
     }
 
-    await Comment.findByIdAndDelete(commentId);
+    comment.isDeleted = true;
+    comment.content = "[deleted]";
+    await comment.save();
     return res.status(204).json("Comment deleted successfully");
   } catch (error: any) {
     return res.status(500).json({ error: error.message });

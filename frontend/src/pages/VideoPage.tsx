@@ -24,6 +24,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { DescriptionAccordion } from "../components/DescriptionAccordion";
 import { Comments } from "../components/Comments";
 import { CommentProvider } from "../context/CommentContext";
+import { useAuthContext } from "../context/AuthContext";
 
 const VideoPage: React.FC = () => {
   const navigate = useNavigate();
@@ -35,20 +36,14 @@ const VideoPage: React.FC = () => {
   const [likeCount, setLikeCount] = useState<number>(0);
   const [dislikeCount, setDislikeCount] = useState<number>(0);
   const [showEdit, setShowEdit] = useState<boolean>(false);
+  const { user } = useAuthContext();
 
   // console.log("video from VideoPage: ", video);
 
   useEffect(() => {
     if (video) {
       setSubtitlesURL(process.env.REACT_APP_API_URL + "/" + video.subtitles);
-      const user = localStorage.getItem("user");
-      const userId = user ? JSON.parse(user).userId : null;
-      // console.log("CHECK userId: ", userId);
-      // console.log("CHECK video.authorId: ", video.authorId);
-      // console.log(
-      //   "CHECK userId === video.authorId: ",
-      //   userId === video.authorId
-      // );
+      const userId = user?._id;
       if (userId && video.authorId === userId) setShowEdit(true);
     }
   }, [video]);
@@ -65,22 +60,14 @@ const VideoPage: React.FC = () => {
     const likesListArray = Object.values(likesList);
     const dislikesListArray = Object.values(dislikesList);
 
-    // likedList and dislikedList are objects
-    // console.log("likesList: ", likesListArray);
-    // console.log("dislikesList: ", dislikesListArray);
-    // console.log(typeof likesListArray);
-    // console.log(typeof dislikesListArray);
+    const userId = user?._id;
+    // console.log("userId: ", userId);
 
-    const user = localStorage.getItem("user");
-    const userId = JSON.parse(user!).userId;
-
-    console.log("userId: ", userId);
-
-    if (likesListArray.includes(userId.toString())) {
+    if (userId && likesListArray.includes(userId.toString())) {
       setLiked(true);
     }
 
-    if (dislikesListArray.includes(userId.toString())) {
+    if (userId && dislikesListArray.includes(userId.toString())) {
       setDisliked(true);
     }
 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
-import { getCommentsForVideo, addComment } from "../services/CommentService";
+import { getCommentsForVideo, addCommentAPI, updateCommentAPI, deleteCommentAPI } from "../services/CommentService";
 import { CommentType } from "../models/CommentType";
 
 type Action =
@@ -8,7 +8,8 @@ type Action =
       type: "ADD_REPLY";
       payload: { parentId: string; newComment: CommentType };
     }
-  | { type: "ADD_COMMENT"; payload: CommentType };
+  | { type: "ADD_COMMENT"; payload: CommentType }
+  | { type: "UPDATE_COMMENT"; payload: { commentId: string; content: string } }; 
 
 type State = CommentType[];
 
@@ -16,6 +17,8 @@ interface CommentContextType {
   comments: State;
   addReply: (content: string, parentId: string) => Promise<void>;
   addTopComment: (content: string) => Promise<void>;
+  updateComment: (commentId: string, content: string) => Promise<void>;
+  deleteComment: (commentId: string) => Promise<void>;
 }
 
 const CommentContext = createContext<CommentContextType | undefined>(undefined);
@@ -27,6 +30,14 @@ const commentsReducer = (state: State, action: Action): State => {
     case "ADD_COMMENT":
       // add a top level comment
       return [...state, { ...action.payload, replies: [] }];
+    case "UPDATE_COMMENT":
+      // update a comment
+      return state.map((comment) => {
+        if (comment._id === action.payload.commentId) {
+          return { ...comment, content: action.payload.content };
+        }
+        return comment;
+      });
     default:
       return state;
   }
@@ -72,18 +83,30 @@ export const CommentProvider: React.FC<{
   }, [videoId]);
 
   const addReply = async (content: string, parentId: string): Promise<void> => {
-    const newComment = await addComment(videoId, content, parentId);
+    await addCommentAPI(videoId, content, parentId);
     const fetchedComments = await getCommentsForVideo(videoId);
     dispatch({ type: "SET_COMMENTS", payload: fetchedComments });
   };
 
   const addTopComment = async (content: string): Promise<void> => {
-    const newComment = await addComment(videoId, content);
+    const newComment = await addCommentAPI(videoId, content);
     dispatch({ type: "ADD_COMMENT", payload: newComment });
   };
 
+  const updateComment = async (commentId: string, content: string) => {
+    await updateCommentAPI(commentId, content);
+    const fetchedComments = await getCommentsForVideo(videoId);
+    dispatch({ type: "SET_COMMENTS", payload: fetchedComments });
+  }
+    
+  const deleteComment = async (commentId: string) => {
+    await deleteCommentAPI(commentId);
+    const fetchedComments = await getCommentsForVideo(videoId);
+    dispatch({ type: "SET_COMMENTS", payload: fetchedComments });
+  }
+
   return (
-    <CommentContext.Provider value={{ comments, addReply, addTopComment }}>
+    <CommentContext.Provider value={{ comments, addReply, addTopComment, updateComment, deleteComment }}>
       {children}
     </CommentContext.Provider>
   );
