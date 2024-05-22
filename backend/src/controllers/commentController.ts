@@ -33,7 +33,10 @@ const addComment = async (req: AuthRequest, res: Response) => {
       parentId,
     });
     await comment.save();
-    return res.status(201).json(comment);
+    
+    // populate the userId field in the comment object
+    const populatedComment = await Comment.findById(comment._id).populate("userId", "username profilePicture firstName lastName email _id");
+    return res.status(201).json(populatedComment);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
@@ -57,7 +60,13 @@ const updateComment = async (req: AuthRequest, res: Response) => {
 
     comment.content = content;
     await comment.save();
-    return res.status(200).json(comment);
+    
+    // populate the userId field in the comment object
+    const populatedComment = await Comment
+        .findById(comment._id)
+        .populate("userId", "username profilePicture firstName lastName email _id");
+    return res.status(200).json(populatedComment);
+
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
@@ -90,7 +99,7 @@ const getCommentsForVideo = async (req: Request, res: Response) => {
     const { videoId } = req.params;
     
     try {
-        const comments = await Comment.find({ videoId }).populate("userId");
+        const comments = await Comment.find({ videoId }).populate("userId", "username profilePicture firstName lastName email _id");
         return res.status(200).json(comments);
     } catch (error: any) {
         return res.status(500).json({ error: error.message });
