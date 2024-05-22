@@ -6,9 +6,13 @@ import LoginIcon from "@mui/icons-material/Login";
 import Logo from "../assets/logo_white.png";
 import { useState, useEffect } from "react";
 import DefaultProfilePicture from "../assets/default-profile-picture.png";
+import { useTheme } from "../context/ThemeContext";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 const Navbar = () => {
   const { logoutUser, user } = useAuthContext();
+  const { toggleTheme, currentTheme } = useTheme();
   const navigate = useNavigate();
   const [userProfilePicUrl, setUserProfilePicUrl] = useState<string>(DefaultProfilePicture);
 
@@ -37,7 +41,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="sticky" sx={{ bgcolor: "#222831" }}>
+    <AppBar position="sticky">
       <Toolbar>
         <img
           src={Logo}
@@ -46,6 +50,9 @@ const Navbar = () => {
           alt="Logo"
         />
         <div style={{ flexGrow: 1 }} />{" "}
+        <IconButton onClick={toggleTheme} color="inherit" sx={{ marginRight: 1.5 }}>
+          {currentTheme === "light" ? <Brightness4Icon /> : <Brightness7Icon />}
+        </IconButton>
         {user ? (
           <>
             <Avatar
@@ -62,7 +69,8 @@ const Navbar = () => {
               onClick={handleClickUser}
               sx={{ cursor: "pointer" }}
             >
-              {user.firstName + " " + user.lastName}
+              {/* {user.firstName + " " + user.lastName} */}
+              {user.firstName}
             </Typography>
             <IconButton
               size="large"
