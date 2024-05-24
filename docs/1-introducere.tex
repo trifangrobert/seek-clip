@@ -1,0 +1,47 @@
+\chapter{Introducere}
+
+\section{Motivație}
+
+Motivul pentru care am ales această temă îl reprezintă nevoia de subtitrări pentru videoclipuri, în special pentru filme, 
+dar și pentru tutoriale sau alte tipuri de conținut video, a căror înțelegere este îngreunată de calitatea slabă a sunetului 
+sau de faptul că sunt într-o limbă străină. Astfel, în această lucrare, am ales să abordez problema subtitrărilor prin
+intermediul unui model de recunoaștere a vorbirii, care extrage audio dintr-un videoclip și generează textul corespunzător.
+\par
+De asemenea, am ales să abordez și problema căutării videoclipurilor, care constă în căutarea cuvintelor cheie în metadate
+precum titlu, descriere, topicuri sau chiar în conținutul videoclipului, folosind o bază de date special concepută pentru
+acest scop, Elasticsearch. \cite{elasticsearch}
+
+
+\section{Domenii abordate}
+
+Această lucrare abordează 5 domenii principale:
+
+\begin{itemize}
+    \item \textbf{Procesarea semnalelor audio} - pentru extragerea audio din videoclipuri și recunoașterea vorbirii
+    \item \textbf{Procesarea limbajului natural} - pentru clasificarea videoclipurilor în funcție de conținutul lor
+    \item \textbf{Frontend} \textit{(React.js)} pentru interfața cu utilizatorul și pentru a oferi acces la funcționalitățile sistemului
+    \item \textbf{Backend} - pentru gestionarea cererilor prin intermediul unui API, cu ajutorul a 3 servicii principale:
+    \begin{itemize}
+        \item \textbf{Server} \textit{(Node.js, Express.js)} pentru gestionarea cererilor și a răspunsurilor
+        \item \textbf{Recunoașterea vorbirii} \textit{(Flask)} pentru gestionarea cererilor de recunoaștere a vorbirii
+        \item \textbf{Clasificarea videoclipurilor} \textit{(Flask)} pentru clasificarea videoclipurilor în funcție de conținutul lor
+    \end{itemize}
+    \item \textbf{Baze de date} 
+    \begin{itemize}
+        \item \textbf{MongoDB} pentru stocarea metadatelor videoclipurilor
+        \item \textbf{Elasticsearch} pentru căutarea videoclipurilor în funcție de cuvintele cheie
+    \end{itemize}
+\end{itemize}
+
+
+\section{Structura lucrării}
+
+Voi împărți această lucrare în 2 capitole principale, fiecare cu subcapitolele sale.
+
+\begin{itemize}
+    \item \textbf{Inteligență artificială} - în care voi aborda \textit{recunoașterea vorbirii} și 
+    \textit{clasificarea videoclipurilor} și voi prezenta setul de date folosit, arhitectura modelului,
+    antrenarea și evaluarea acestuia, precum și procesările ulterioare
+    \item \textbf{Inginerie software} - în care voi aborda partea de frontend, backend și baze de date,
+    precum și detaliile tehnice ale implementării
+\end{itemize}

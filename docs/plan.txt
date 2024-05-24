@@ -1,0 +1,62 @@
+Sofware Engineering:
+
+- frameworks used:
+    - frontend: React with typescript
+    - backend server: Node.js with typescript (Express server)
+        - model
+        - routing
+        - controllers
+        - middleware
+        - multer for data
+    - backend speech-to-text: Flask  (maybe mention packages used)
+        - huggingface API
+    - backend topic classification: Flask (maybe mention packages used)
+        - huggingface API
+    - mongo database container
+    - elastic search container
+        - maybe explain the syncing with mongo-connector approach that did not work
+        - search after title, description, topic, transcription (fuziness: auto)
+    - (optional) kibana for elastic search visualization
+    - docker
+        - docker-compose
+- authentication with JSON Web Token
+    - 7 days token (customizable)
+    - user context
+    - firstName, lastName, username, email, password, profile picture
+- protected routing for Video Edit and Logged user
+- video CRUD
+    - upload video with metadata
+    - extract audio
+    - use speech-to-text to extract text
+    - algorithm for processing model output chunks of 30 seconds to subtitles
+    - classify each video into topics like: business, tech, politics, sport
+    - likes/dislikes
+- comment CRUD
+    - optimistic updates for top-level comments
+    - replies
+    - cron for clean up comment tree (explain how this works and why I am using it)
+    - replies + comments CRUD
+- profile CRUD
+    - first name, last name, email, profile picture
+
+Machine Learning
+
+- speech-to-text:
+    - model used: facebook/wav2vec2-base-960h
+    - datasets used for fine tuning: common-voice, minilibrispeech
+    - preprocessing for datasets (ex: convert to 16kHz)
+    - hyper parameters used
+    - boost with language model
+        - kenlm
+        - transformers and n-gram trade-off
+        - dataset for n-gram (something official, find it on my huggingface profile)
+    - spell checker
+    - (future work) noise suppression
+    - explain (and understand :)) )subtitles generator algorithm (processing chunks of 30 seconds)
+    - deploy to huggingface
+- topic classification
+    - model used: bert-base-uncased (I guess?)
+    - dataset finetuned: (kaggle dataset for news: business, tech, sport, politics)
+    - hyperparameters
+    - deploy to huggingface
+- (future work) recommendation system
