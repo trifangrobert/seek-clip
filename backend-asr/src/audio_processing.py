@@ -120,7 +120,7 @@ def process_audio(audio_file):
     audio_filename = audio_file.filename
     
     if len(audio.shape) > 1:
-        audio = audio[:, 0] + audio[:, 1] # audio is stereo
+        audio = (audio[:, 0] + audio[:, 1]) / 2 # audio is stereo
         
     if sample_rate != 16000:
         audio = resampy.resample(audio, sample_rate, 16000)
