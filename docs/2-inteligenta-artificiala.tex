@@ -145,7 +145,7 @@ Hiperparametrii folosiți pentru fine-tuning-ul modelului sunt:
 
 \begin{table}[h]
     \centering
-    \label{tab:hyperparameters}
+    \label{tab:wav2vec2-hyperparameters}
     \begin{tabular}{ll}
     \hline
     \textbf{Hiperparametru} & \textbf{Valoare} \\ \hline
@@ -319,19 +319,199 @@ pentru a prezice caracterul următor. În schimb, cu ajutorul n-gram language mo
 probabilități sunt alterate pentru a se apropia de limbajul natural. 
 
 \section{Clasificarea videoclipurilor}
-% TODO
+Videoclip-urile încărcate pe platform vin însoțite de metadate precum: titlu, descriere și, folosind
+modelul prezentat anterior, subtitrări. Pentru o experiță mai personalizată, am ales să clasific
+videoclipurile în funcție de subiectul abordat în topicuri precum: politics, sport, entertainment
+tehnologie și afaceri. Am folosit un modelul de clasificare \textit{BERT}, Bidirectional Encoder Representations
+from \textit{Transformers}, dezvoltat de \textit{Google} \cite{devlin2019bert} pe care l-am antrenat pe setul de date
+\textit{BBC News} \cite{greene06icml}.
 
 \subsection{Arhitectura modelului}
-% TODO
+Modelul \textit{BERT} este un model de învățare profundă care are la bază partea de encoder a unui \textit{Transformer} \cite{vaswani2023attention},
+scopul lui fiind de a înțelege contextul cuvintelor într-o propoziție. Modelul \textit{BERT} vine în două
+variante: \textit{BERT-base} și \textit{BERT-large}, cele două diferă prin numărul de blocuri de encoder (12 și 24),
+numărul de neuroni din stratul fully-connected (768 și 1024) și numărul de attention heads (12 și 16), dar 
+conceptual sunt la fel. 
+
+\par
+Spre deosebire de arhitectura standard a unui \textit{Transformer}, \textit{BERT} adaugă un token
+special la începutul fiecărei propoziții, \textit{[CLS]}, folosit pentru clasificare. Intuitiv,
+acest token va reține informații despre întreaga propoziție și va putea fi folosit pentru rețeaua
+de clasificare care va determina topicul propoziției. \ref{fig:bert-architecture}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{bert-architecture.png}
+    \caption{Arhitectura modelului \textit{BERT} \protect\footnotemark[2]}
+    \label{fig:bert-architecture}
+\end{figure}
+\vspace{1em}
+
+\par
+Ieșirile modelului \textit{BERT} au dimensiunea 768, iar pentru partea de clasificare sunt trecute
+prin un strat fully-connected cu 5 neuroni, câte unul pentru fiecare clasă. Cu ajutorul funcției
+\textit{softmax}, se obține o distribuție de probabilitate peste cele 5 clase, iar clasa cu cea mai
+mare probabilitate este cea aleasă.
+
+\footnotetext[2]{Imaginea a fost preluată de pe site-ul lui Jay Alammar, ``The Illustrated BERT, ELMo, and co. (How NLP Cracked Transfer Learning)'', disponibil la: \url{https://jalammar.github.io/illustrated-bert/}.}
+
+\vspace{1em}
 
 \subsection{Setul de date}
-% TODO
+\vspace{1em}
+Pentru antrenarea modelului am folosit setul de date \textit{BBC News} care conține 2225 de articole 
+între anii 2004-2005. Setul de date este împărțit în 5 clase: politics, sport, entertainment, technology
+și business. Mai jos am prezentat distribuția datelor din setul de date din punct de vedere al exemplelor
+pe clasă și al lungimii medii a articolelor. \ref{fig:bbc-stats}
+
+\vspace{1em}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{bbc_stats.png}
+    \caption{Distribuția claselor din setul de date \textit{BBC News}}
+    \label{fig:bbc-stats}
+\end{figure}
+
 
 \subsection{Antrenarea modelului}
-% TODO
+\vspace{1em}
+Antrenarea modelului a fost făcută folosind limbajul de programare Python, biblioteca PyTorch. \cite{paszke2019pytorch}
+și plecând de la modelul preantrenat \textit{bert-base-uncased} pus la dispoziție de Hugging Face.
+Codul a fost structurat în: 
+\vspace{1em}
 
-\subsection{Postprocesare}
-% TODO
+\begin{itemize}
+    \item \textbf{dataset.py} - creează un Dataset specific PyTorch pentru setul de date \textit{BBC News},
+    implementând metodele \textit{\_\_len\_\_} și \textit{\_\_getitem\_\_}; metoda \textit{\_\_getitem\_\_}
+    aplică tokenizer-ul pe text cu lungimea maximă de 512 token-uri și returnează un tuplu de input\_ids,
+    attention\_mask și label
+    \item \textbf{model.py} - definește arhitectura modelului \textit{BERT} și a rețelei de clasificare:
+    inițializează modelul preantrenat \textit{bert-base-uncased}, extrage token-ul special \textit{[CLS]}
+    și adaugă un strat liniar cu 5 neuroni pentru clasificare
+    \item \textbf{trainer.py} - antrenează modelul pe setul de date \textit{BBC News} folosind hiperparametrii
+    din primiți ca parametru în linia de comandă și salvează modelul de fiecare dată când obține o
+    acuratețe mai bună pe setul de validare
+\end{itemize}
 
-\section{Concluzii}
-% TODO
+\vspace{1em}
+
+\par
+În figurile de mai jos \ref{fig:loss_graphs} sunt ilustrate pierderile de antrenare și de evaluare pentru modelul \textit{BERT}
+folosind ca rată de învățare $1 \times 10^{-4}$ și $1 \times 10^{-5}$. Se observă fenomenul de \textit{overfitting}
+pentru rata de învățare $1 \times 10^{-4}$, motiv pentru care am ales să experimentez cu valori mai mici.
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{train_loss_1.png}
+        \caption{Training Loss}
+        \label{fig:train_loss}
+    \end{subfigure}
+    \hfill % Asigură spațierea dintre subfiguri
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{eval_loss_1.png}
+        \caption{Evaluation Loss}
+        \label{fig:eval_loss}
+    \end{subfigure}
+    \caption{Training and Evaluation Loss Graphs}
+    \label{fig:loss_graphs}
+\end{figure}
+\vspace{1em}
+
+\par
+Am încercat mai multe experimente plecând de la aceeași hiperparametri, cu rata de învățare $1 \times 10^{-5}$,
+pentru a vedea cum se comportă modelul la diferite inițializări ale ponderilor. În figura \ref{fig:eval_acc}
+sunt ilustrate valorile obținute pentru acuratețea modelului pe setul de validare.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{eval_acc.png}
+    \caption{Evaluation Accuracy Graph}
+    \label{fig:eval_acc}
+\end{figure}
+
+\subsubsection{Hiperparametrii}
+Pentru modelul final pe care l-am folosit pentru clasificarea videoclipurilor am ales următorii hiperparametrii:
+
+% \begin{table}[h]
+%     \centering
+%     \label{tab:wav2vec2-hyperparameters}
+%     \begin{tabular}{ll}
+%     \hline
+%     \textbf{Hiperparametru} & \textbf{Valoare} \\ \hline
+%     Rata de învățare (\textit{learning rate}) & $1 \times 10^{-4}$ \\
+%     Descreșterea greutății (\textit{weight decay}) & 0.005 \\
+%     Pași de încălzire (\textit{warmup steps}) & 1000 \\
+%     Dimensiunea lotului (\textit{batch size}) & 4 \\ \hline
+%     \end{tabular}
+%     \caption{Hiperparametrii folosiți pentru fine-tuning-ul modelului \textit{wav2vec2}}
+% \end{table}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{@{}ll@{}}
+        \toprule
+        \textbf{Hiperparametru}   & \textbf{Valoare}         \\
+        \midrule
+        Rata de învățare \textit{(learning rate)}             & 0.00001                  \\
+        Dimensiunea lotului \textit{(batch size)}             & 8                        \\
+        Optimizator \textit{(optimizer)}                      & Adam                     \\
+        Funcția de pierdere \textit{(loss function)}          & CrossEntropyLoss         \\
+        \bottomrule
+    \end{tabular}
+    \caption{Hiperparametrii modelului \textit{BERT}}
+    \label{tab:bert-hyperparameters}
+\end{table}
+
+
+\section{Concluzie}
+Cele două modele prezentate anterior, \textit{wav2vec 2.0} și \textit{BERT}, au fost încărcate
+pe platforma Huggingface și sunt disponibile în pachetul \textit{transformers}.
+
+\subsubsection{wav2vec 2.0}
+Utilizarea modelului de recunoaștere a vorbirii necesită folosirea modulului \textit{Wav2Vec2ForCTC}
+și a modulului \textit{Wav2Vec2Processor} sau \textit{Wav2Vec2ProcessorWithLM} pentru a folosi varianta
+îmbunătățită cu n-grame. Codul de mai jos ilustrează cum se pot folosi modelele prezentate anterior.
+
+\begin{lstlisting}[language=Python]
+    from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor, Wav2Vec2ProcessorWithLM
+    
+    asr_repos = {
+        "minilibrispeech": "3funnn/wav2vec2-base-minilibrispeech",
+        "common-voice": "3funnn/wav2vec2-base-common-voice",
+    }
+    lm_boosted_repos = {
+        "minilibrispeech": "3funnn/wav2vec2-base-minilibrispeech-lm",
+        "common-voice": "3funnn/wav2vec2-base-common-voice-lm",
+    }
+    
+    repo_name = "minilibrispeech"
+    boost_lm = True
+    model = Wav2Vec2ForCTC.from_pretrained(asr_repos[repo_name])
+    
+    if boost_lm:
+        processor = Wav2Vec2ProcessorWithLM.from_pretrained(lm_boosted_repos[repo_name])
+    else:
+        processor = Wav2Vec2Processor.from_pretrained(asr_repos[repo_name])
+    \end{lstlisting}
+
+
+\subsubsection{BERT}
+Modelul de clasificare a videoclipurilor este disponibil în pachetul \textit{transformers} sub numele
+\textit{3funnn/bert-topic-classification}. Modelul primește ca intrare un text care poate fi o 
+concatenare a titlului și descrierii videoclipului și returnează o distribuție de probabilitate
+pentru fiecare din cele 5 clase. Huggingface pune la dispoziție funcția \textit{pipeline} care
+permite folosirea modelului într-un mod simplu. Codul de mai jos ilustreaza acest lucru.
+
+\begin{lstlisting}[language=Python]
+    from transformers import pipeline
+    
+    classifier = pipeline("text-classification", model="3funnn/bert-topic-classification")
+    
+    text = "This is a video about the latest technology in AI."
+    result = classifier(text)
+    print(result)
+    # Output: {'label': 'tech', 'score': 0.897}
+\end{lstlisting}

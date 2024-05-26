@@ -81,6 +81,38 @@
 % Listări de cod
 \usepackage{listings}
 
+% Setări pentru listările de cod
+\usepackage{color}
+
+% Definirea culorilor pentru listările de cod
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+
+
 % Linkuri interactive în PDF
 \usepackage[
     colorlinks,
@@ -118,6 +150,8 @@
 \usepackage{fancyhdr}
 
 \usepackage{caption} % Add the caption package
+
+\usepackage{subcaption} % Add the subcaption package
 
 % Metadate
 \title{Aplicație web pentru videoclip-uri cu funcții de înțelegerea vorbirii și regăsire pe bază de text}
