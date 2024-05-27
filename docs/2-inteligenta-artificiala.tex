@@ -115,16 +115,15 @@ audio având o durată de 10.47 secunde.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{length_distribution.png}
-    \caption{Distribuția duratelor audio-urilor din seturile de date \textit{Mini LibriSpeech} și \textit{Common Voice Delta Segment 16.1}}
+    \caption{Distribuția duratelor secvențelor audio din seturile de date \textit{Mini LibriSpeech} și \textit{Common Voice Delta Segment 16.1}}
     \label{fig:length-distribution}
 \end{figure}
 
 \subsubsection{Concluzie}
 Menționez aceste detalii deoarece pentru generarea subtitrărilor vom avea nevoie de audio-uri
 mult mai lungi decât cele folosite pentru antrenare care nu ar încăpea în memorie. Astfel, va trebui
-să folosim o tehnică de segmentare a audio-urilor în bucăți mai mici pentru a putea procesa
-audio-urile mai lungi. Mai multe detalii despre această tehnică vor fi prezentate în secțiunea
-\textit{Subtitrări}.
+să folosim o tehnică de segmentare a secvențelor audio în bucăți mai mici pentru a putea fi procesate.
+Mai multe detalii despre această tehnică vor fi prezentate în secțiunea \textit{Subtitrări}.
 
 \subsection{Antrenarea modelului}
 Pentru antrenarea modelului am folosit limbajul de programare Python și biblioteca Hugging Face
