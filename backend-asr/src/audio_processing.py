@@ -15,12 +15,14 @@ def make_subtitles(transcription, predicted_ids, input_values, offset=0.0):
     processor = app.processor
     
     words = [w for w in transcription.split(" ") if len(w) > 0]
+    
+    # print("Making subtitles...")
+    # print(f"len(predicted_ids): {len(predicted_ids)}")
+    # print(f"predicted_ids: {predicted_ids}")
+    
     predicted_ids = predicted_ids[0].tolist()
     duration_sec = input_values.shape[1] / SAMPLE_RATE
     
-    # print(words)
-    # print(predicted_ids)
-    # print(duration_sec)
     ids_w_time = [(i / len(predicted_ids) * duration_sec, _id) for i, _id in enumerate(predicted_ids)]
     
     ids_w_time = [i for i in ids_w_time if i[1] != processor.tokenizer.pad_token_id]
@@ -29,13 +31,19 @@ def make_subtitles(transcription, predicted_ids, input_values, offset=0.0):
                 in groupby(ids_w_time, lambda x: x[1] == processor.tokenizer.word_delimiter_token_id)
                 if not k]
     
-    # print(ids_w_time)
-    # print(split_ids_w_time)
+    # print(f"duration_sec: {duration_sec}")
     
-    print(f"split_ids_w_time: {len(split_ids_w_time)}")
-    print(f"words: {len(words)}")
-    # print(split_ids_w_time)
-    # print(words)
+    # print(f"len(predicted_ids): {len(predicted_ids)}")
+    # print(f"predicted_ids: {predicted_ids}")
+    
+    # print(f"len(ids_w_time): {len(ids_w_time)}")
+    # print(f"ids_w_time: {ids_w_time}")
+    
+    # print(f"len(split_ids_w_time): {len(split_ids_w_time)}")
+    # print(f"split_ids_w_time: {split_ids_w_time}")
+    
+    # print(f"len(words): {len(words)}")
+    # print(f"words: {words}")
     
     # remove last elements from split_ids_w_time until lengths match
     while len(split_ids_w_time) > len(words):

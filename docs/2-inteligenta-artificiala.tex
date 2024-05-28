@@ -304,6 +304,7 @@ folosind doar ultimele n caractere. Formula de mai jos ilustreaza această idee.
 \begin{equation}
     P(w_1, w_2, \ldots, w_n) = \prod_{i=1}^{m} P(w_i | w_{1}, w_{2}, \ldots, w_{i-1}) \approx \prod_{i=1}^{m} P(w_i | w_{i-(n-1)}, \ldots, w_{i-1})
 \end{equation}
+\vspace{1em}
 
 \par
 Am folosit un context de 5 caractere și am antrenat modelul pe
@@ -316,6 +317,24 @@ de n-grame și apoi am creat un procesor specific Hugging Face pentru modelele \
 În mod normal, modelul \textit{wav2vec 2.0} ia argumentul maxim din distribuția de probabilitate
 pentru a prezice caracterul următor. În schimb, cu ajutorul n-gram language model, aceste
 probabilități sunt alterate pentru a se apropia de limbajul natural. 
+
+\subsubsection{Îmbunătățire cu Transformer Language Model}
+\vspace{1em}
+Având în vedere performanța arhitecturii Transformer în învățarea secvențelor, o altă abordare
+ar fi utilizarea unui model de limbaj bazat pe Transformer. Paper-ul original \cite{wav2vec2}
+menționează în Appendix-ul C că un model de limbaj bazat pe Transformer este într-adevăr mai
+bun decât un model de limbaj bazat pe n-grame, dar durata antrenării și a inferenței este
+mult mai mare. 
+\par 
+Tabelul de mai jos a fost extras din paper-ul original și prezintă rezultatele obținute. \ref{fig:boost-results}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{boost-results.png}
+    \caption{Rezultatele obținute cu un model simplu, un model de limbaj bazat pe n-grame și un model de limbaj bazat pe Transformer}
+    \label{fig:boost-results}
+\end{figure}
+
 
 \section{Clasificarea videoclipurilor}
 Videoclip-urile încărcate pe platform vin însoțite de metadate precum: titlu, descriere și, folosind

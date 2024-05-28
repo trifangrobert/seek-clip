@@ -65,6 +65,11 @@ const buildCommentTree = (comments: CommentType[]) => {
     });
   });
 
+  // sort top level comments by date
+  return commentTree.sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
   return commentTree;
 };
 

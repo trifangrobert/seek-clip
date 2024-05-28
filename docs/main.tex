@@ -84,6 +84,10 @@
 % Setări pentru listările de cod
 \usepackage{color}
 
+\usepackage{tcolorbox}
+
+\tcbuselibrary{listings, skins}
+
 % Definirea culorilor pentru listările de cod
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -111,6 +115,13 @@
 
 \lstset{style=mystyle}
 
+\usepackage{xcolor}
+
+\definecolor{background}{RGB}{245, 245, 245}
+
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta} % Numbers
+\colorlet{punct}{red} % Punctuation
 
 
 % Linkuri interactive în PDF
@@ -195,6 +206,7 @@
 \include{1-introducere}
 \include{2-inteligenta-artificiala}
 \include{3-inginerie-software}
+\include{4-concluzie}
 
 \printbibliography[heading=bibintoc]
 
