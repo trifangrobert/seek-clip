@@ -29,7 +29,7 @@ codul aplicației web. Dintre acestea, cele mai importante sunt:
 
 \begin{itemize}
     \item \textbf{Components}: Ideea de bază librăriei React o reprezintă componentele, elemente
-    reutilizabile care încapsulează și izolează logica codului,
+    reutilizabile care încapsulează și izolează logica codului.
     \item \textbf{Props}: Proprietățile sunt parametrii transmiși de la componenta părinte
     la componenta copil, fiind folosite pentru customizarea comportamentului componentelor.
     \item \textbf{State}: Starea reprezintă datele interne ale componentelor, fiind folosite pentru
@@ -37,7 +37,7 @@ codul aplicației web. Dintre acestea, cele mai importante sunt:
     \item \textbf{Hooks}: Hooks sunt funcții speciale care permit interacțiunea cu starea și ciclul
     de viață al componentelor, fiind succesorul claselor din versiunile mai vechi ale librăriei.
     \item \textbf{Contexts}: Contextele sunt o modalitate de a controla transmiterea datelor între
-    componente fără a folosi proprietăți, intuitiv, creând un fel de scop pentru componentele din
+    componente fără a folosi proprietăți, intuitiv, creând un fel de scope pentru componentele din
     interiorul contextului.
     \item \textbf{Models}: Deoarece folosim TypeScript, avem nevoie de modele pentru a defini tipurile
     de date folosite în aplicație.
@@ -192,7 +192,7 @@ o ierarhie de comentarii și pot edita sau șterge comentariile proprii.
 \par
 Dacă un comentariu are răspunsuri, atunci textul devine [deleted] fiind un \textit{soft-delete}.
 Altfel, dacă un comentariu nu are răspunsuri, atunci acesta este șters complet din baza de date
-fiind considera un \textit{hard-delete}. Comentariile sunt sortate după data adăugării, cele mai
+fiind considerat un \textit{hard-delete}. Comentariile sunt sortate după data adăugării, cele mai
 recente fiind afișate mai sus. 
 
 \begin{figure}[h]
@@ -209,7 +209,7 @@ Trebuie să menționez un detaliu important legat de ierarhia comentariilor. Ar 
 din punct de vedere al performanței, ca de fiecare dată când se șterge un comentariu să se reconstruiască
 arborele de comentarii. De aceea, am creat un serviciu care rulează o dată pe zi, construieste ierarhia
 comentariilor și șterge acele drumuri în arbore care nu mai sunt folosite. Mai multe detalii despre
-acest serviciu se găsesc în secțiunea \ref{sec:comment-cron}.
+acest serviciu se găsesc în secțiunea \ref{sec:cron-jobs}.
 
 \subsection{Căutare}
 \subsubsection{Bara de căutare}
@@ -269,7 +269,7 @@ de rute protejate:
 Am creat un server Node.js folosind Express.js în limbajul de programare TypeScript care
 gestionează cererile primite de la client și le rutează către serviciile corespunzătoare.
 \par
-Astfel, codul este structurat 
+Astfel, codul este structurat: 
 
 \begin{itemize}
     \item \textbf{Routes}: definesc rutele serverului și asociază cererile primite cu funcțiile
@@ -300,7 +300,7 @@ Conceptul de REST API are la bază 6 principii:
     în acest fel, cele două entități pot evolua independent.
     \item \textbf{Uniform Interface}: având în vedere diversitatea limbajelor de programare folosite
     atât pentru client cât și pentru server, este necesară o interfață comună, independentă de limbaj
-    care să faciliteze comunicarea între cele două entități; astfel REST API este contruit peste 
+    care să faciliteze comunicarea între cele două entități; astfel REST API este construit peste 
     protocolul HTTP și folosește metodele standardizate GET, POST, PUT, DELETE.
     \item \textbf{Stateless}: fiecare cerere primite de la client conține toate informațiile necesare
     pentru a fi procesată cu succes, serverul nefiind nevoit să păstreze informații despre cererile
@@ -309,13 +309,13 @@ Conceptul de REST API are la bază 6 principii:
     intermediare folosite pentru a îmbunătăți performanța, securitatea sau scalabilitatea aplicației.
     \item \textbf{Cacheable}: cererile anterioare pot fi stocate în cache pentru a fi refolosite
     la cereri ulterioare, reducând astfel timpul de răspuns și traficul de date între client și server.
-    \item \textbf{Code on Demand(Optional)}: serverul poate trimite cod executabil către client pentru
+    \item \textbf{Code on Demand (Optional)}: serverul poate trimite cod executabil către client pentru
     a fi rulat în browser, însă această funcționalitate este opțională
 \end{itemize}
 
 \subsubsection{Codurile de stare HTTP}
-Pentru a comunica rezultatul unei cereri, există un standard de coduri de stare HTTP împărțit în
-5 categorii:
+Pentru a comunica rezultatul unei cereri, există un standard de coduri HTTP împărțit în
+următoarele 5 categorii:
 \begin{itemize}
     \item \textbf{1xx}: informații, cererea a fost primită, se continuă procesarea.
     \item \textbf{2xx}: succes, cererea a fost primită, procesată și răspunsul a fost generat cu succes.
@@ -323,9 +323,6 @@ Pentru a comunica rezultatul unei cereri, există un standard de coduri de stare
     \item \textbf{4xx}: erori de la client, cererea a fost greșită sau nu poate fi procesată.
     \item \textbf{5xx}: erori de la server, serverul a întâmpinat o problemă în procesarea cererii.
 \end{itemize}
-
-\subsubsection{Cererile HTTP}
-Cum functioneaza cererile HTTP?
 
 \subsubsection{Routes}
 Rutele sunt construite recursiv, plecând de la rădăcină și adăugând pentru fiecare API 
@@ -358,8 +355,8 @@ aplicației noastre, am folosit două middleware-uri:
     fișiere de tip imagine sau videoclip; middleware-ul se asigură că fișierul are formatul corect
     (de exemplu, imaginea este de tip .jpg/.png/.jpeg și videoclip-ul este de tip .mp4/.mov/.avi).
     Acesta creează un director în interiorul căruia se salvează fișierul încărcat și adaugă
-    calea către fișier în baza de date. Serverul expune apoi url-ul către id-ul fișierul încărcat
-    pentru a putea fi accesat de client.
+    calea către fișier în baza de date. Serverul expune apoi url-ul către id-ul fișierului
+    încărcat pentru a putea fi accesat de client.
     
 \end{itemize}
 
@@ -439,9 +436,9 @@ cererilor. În cadrul aplicației noastre, am definit următoarele funcții util
 \begin{itemize}
     \item \textbf{getTranscription}: înainte de a trimite cererea către serverul de Flask pentru 
     recunoașterea vorbirii, e nevoie să extragem întâi secvența audio din videoclip deoarece 
-    modelul lucrează cu fișiere audio. Folosesc pentru asta librăria \textit{ffmpeg-extract-audio}
+    modelul lucrează cu fișiere audio. Folosesc pentru acest lucru librăria \textit{ffmpeg-extract-audio}
     care permite procesarea fișierelor video și extragerea secvenței audio. De asemenea, secvența
-    audio fiind destul de mare, creeaz un flux de date folosind \textit{fs.createReadStream} și 
+    audio fiind destul de mare, creez un flux de date folosind \textit{fs.createReadStream} și 
     atașez acest flux la cererea către serverul de Flask.
     \item \textbf{getTopic}: după ce am obținut subtitrările videoclip-ului, folosesc un serviciu
     extern pentru a clasifica fiecare videoclip în funcție de metadatele sale și a subtitrărilor.
@@ -484,6 +481,8 @@ Serverul folosește algoritmul de criptare \textit{bcrypt} pentru a stoca parole
     viteza de criptare, făcând astfel atacurile cu forță brută ineficiente, în special pentru
     atacurile la scară largă.
 \end{itemize}
+
+\subsubsection{Algoritm de criptare bcrypt}
 
 \par
 Utilizarea algoritmului de criptare \textit{bcrypt}:
@@ -568,7 +567,7 @@ cum este reprezentat și cum este procesat.
 
 \par
 Definim un convertor analog-digital ca fiind un dispozitiv care transformă semnalul recepționat 
-de la microfon (variații în presiunea aerului/unde sonore)într-un semnal digital.
+de la microfon (variații în presiunea aerului/unde sonore) într-un semnal digital.
 Practic, convertește semnalul analogic continuu într-un
 semnal digital discret care poate fi stocat și procesat de un calculator. Acest proces implică
 conceptul de cuantizare și introduce o eroare de cuantizare care depinde de rezoluția convertorului.
@@ -644,20 +643,21 @@ De asemenea, modelul a fost antrenat pe fișiere audio cu o frecvență de eșan
 la 16kHz. Acest lucru se face folosind funcția \textit{resample} din librăria \textit{resampy}.
 
 \par
-Un alt aspect important, după cum am menționat și la seturile de date folosite, este că modelul a fost
+Un aspect important, după cum am menționat și la seturile de date folosite, este că modelul a fost
 antrenat pe fișiere audio cu o durată de aproximativ 10 secunde. O secvență audio prea mare oricum
 nu ar încăpea în memoria serverului, așa că am ales să sparg secvența audio în segmente de câte 30 de
 secunde folosind funcția \textit{stream} din librăria \textit{librosa}.
 
 \par
-Un aspect de luat în calcul aici, chiar dacă modelul ar putea procesa secvențe mai lungi, mai
-intervine și timeout-ul socket-ului care ar putea expira în cazul unor secvențe prea lungi. Deși în
+Un alt aspect de luat în calcul aici, chiar dacă modelul ar putea procesa secvențe mai lungi, mai
+intervine și timeout-ul socket-ului care ar putea expira în cazul unor secvențe prea mari. Deși în
 cazul spargerii secvenței audio în segmente de câte 30 de secunde, se pot pierde informații de 
 la începutul și finalul fiecărei bucăți, am ales să sacrific aceste informații pentru a asigura
 procesarea cu succes a secvențelor audio. Exceptând aceste cazuri, bucățile pot fi tratate independent
 și deci procesate în paralel, îmbunătățind semnificativ timpul de răspuns.
 
 \subsubsection{Subtitrări}
+\label{subsec:subtitles}
 \par
 Funcția \textbf{make\_subtitles} primește ca parametru textul transcris din fiecare block de 30 de secunde
 și creează subtitrările în formatul .vtt. În cadrul unui bloc, modelul de recunoaștere a vorbirii 
@@ -685,7 +685,7 @@ Pentru a crea subtitrările, folosim următoarele etape:
     grup de token-uri între fiecare delimitator. Practic, obținem cuvintele propriu-zise, dar acum știm și
     momentul de timp.
     \item \textbf{word\_timestamps}: pentru fiecare cuvânt, calculăm momentul de timp de început și de sfârșit
-    ca fiind minimum, respectiv maximul dintre toate momentele de timp ale token-urilor din acel cuvânt.
+    ca fiind minimul, respectiv maximul dintre toate momentele de timp ale token-urilor din acel cuvânt.
     \item \textbf{group\_timestamps}: putem grupa acum cuvintele în blocuri de 7 cuvinte, pentru a contura
     subtitrările. Începutul și sfârșitul fiecărui bloc de cuvinte este dat de momentul de timp al primului
     și ultimului cuvânt din bloc.
@@ -785,18 +785,302 @@ Configurările sunt folosite pentru a specifica serverului cum să proceseze cer
 \end{itemize}
 
 \subsection{Flask Server - Clasificarea videoclip-urilor}
-
-
-\subsection{Docker}
-%TODO
+Serverul de Flask pentru clasificarea videoclip-urilor este similar cu cel pentru recunoașterea vorbirii,
+dar are o structură mai simplă, nefiind necesare mai multe etape de procesare.
+\subsubsection{Routes}
+\par
+Astfel, serverul definește o singură rută \textit{/topic} care primește cereri de tipul \textit{POST}
+și returnează topicul textului primit. Deoarece secvența de intrare a modelului \textit{BERT} este 
+limitată la 512 token-uri, am ales să împart textul în blocuri de câte 512 token-uri și fiecare bloc
+este trimis la model pentru a obține topicul. Pentru a obține topicul final, se contorizează frecvența
+apariției fiecărui topic și se returnează cel majoritar.
+\subsubsection{Configurări}
+\par
+Serverul creează un \textit{pipeline} specific Huggingface înaite de a primi cereri, pentru a reduce
+timpul de răspuns. Acest \textit{pipeline} conține modelul preantrenat și fine-tunat pe setul de date
+\textit{BBC News}. Mai multe detalii se regăsesc în secțiunea \ref{sec:clasificare-videoclipuri}.
 
 \section{Baze de date}
-
+Pentru stocarea datelor, am ales să folosesc două baze de date: MongoDB, datorită structurii sale
+flexibile care permite dezvoltarea rapidă a aplicațiilor și Elasticsearch, pentru căutarea eficientă
+în metadatele videoclip-urilor.
 \subsection{MongoDB}
-% TODO
-\subsection{Elasticsearch}
-% TODO
-\section{Monitorizare}
+\subsubsection{Arhitectura bazei de date}
+MongoDB este o bază de date de tip \textbf{NoSQL} care stochează datele sub forma de documente în 
+formatul \textit{JSON}. Documentele sunt grupate în colecții, iar colecțiile sunt apoi grupate în
+baze de date. 
+\par
+Intuitiv, un document este echivalentul unui rând dintr-o bază de date relațională, dar cu o structură
+similară unui obiect JSON. Acesta permite stocarea datelor fără a respecta un model de date fix, adică
+pot fi adăugate câmpuri noi, chiar și alte documente, diferite de celelalte documente din aceeași colecție.
 
-\subsection{Kibana}
-% TODO
+\subsubsection{Structura datelor}
+
+\par
+Fiecare document conține, pe lângă datele propriu-zise, câmpuri speciale precum:
+\begin{itemize}
+    \item \textbf{\_id}: un \textit{ObjectId} adăugat automat de MongoDB pentru a identifica unic documentul.
+    \item \textbf{\_v}: un câmp special care indică versiunea documentului în cazul actualizării. Acest
+    câmp a fost conceput pentru a preveni conflictele de actualizare în cazul cererilor concurente.
+    \item \textbf{createdAt} și \textbf{updatedAt}: câmpuri speciale de tipul \textit{ISODate} care
+    indică momentul de creare și actualizare pentru fiecare document.
+\end{itemize}
+
+\subsubsection{Colecții}
+
+\par
+În cadrul aplicației noastre, am definit 3 colecții:
+\begin{itemize}
+    \item \textbf{users}: conține informații despre utilizatori precum: numele și prenumele, adresa de
+    email, numele de utilizator, parola criptată și url-ul către poza de profil.
+    \item \textbf{videos}: conține informații despre videoclipuri precum: titlul, descrierea, topicul,
+    id-ul autorului (referință către colecția \textit{users}), url-ul către videoclip, url-ul către
+    subtitrări și două liste separate pentru id-urile utilizatorilor care au dat like și dislike.
+    \item \textbf{comments}: conține informații despre comentarii precum: textul comentariului, 
+    id-ul autorului (referință către colecția \textit{users}), id-ul videoclipului (referință către
+    colecția \textit{videos}), isDeleted folosit la \textit{soft-delete} și \textit{hard-delete}, 
+    parentId în cazul în care comentariul este un răspuns la alt comentariu.
+\end{itemize}
+
+\subsubsection{Interacțiunea cu baza de date}
+
+\par
+Interacțiunea cu baza de date are loc cu ajutorul librăriei \textit{mongoose} care definește modelele
+în serverul Express și execută operații de tip CRUD (Create, Read, Update, Delete) în baza de date.
+\textit{mongoose} este un ODM (Object Data Modeling) care oferă un nivel de abstractizare peste MongoDB
+și permite definirea de scheme pentru documente, validarea datelor și crearea de relații între colecții.
+
+\par
+Un alt aspect important pus la dispoziție de \textbf{MongoDB} îl reprezintă capacitatea de a crea replici
+la nivel de colecție, numite \textit{indexes}. Deși aplicația noastră este un prototip, nu are nevoie 
+de scalările orizontale, dar în cazul unui volum mare de date, replicile facilitează operațiile de
+citire și scriere, îmbunătățind timpul de răspuns.
+
+\subsection{Cron Jobs}
+\label{sec:cron-jobs}
+\subsubsection{Definiție și utilitate}
+Un \textbf{cron job} este un proces care rulează automat la un momente de tip prestabilite. În cadrul proiectului,
+un \textit{cron job} își găsește utilitatea în procesul de curățare al arborelui de comentarii pentru fiecare 
+videoclip. Problema constă în găsirea unei soluții eficiente care șterge comentariile marcate drept \textit{soft-delete}
+cu subarborele de răspunsuri gol.
+\par
+Figura de mai jos ilustrează acest concept:
+\begin{verbatim}
+    Cool video!
+    |__ Indeed it is!
+    |__ |__ [deleted] (1)
+    |__ [deleted] (2)
+    |__ |__ Waiting for the next one!
+    [deleted] (3)
+    Awesome!
+    |__ [deleted] (4)
+    |__ |__ Yeah, I agree!
+    |__ [deleted] (5)
+    |__ |__ [deleted] (6)
+\end{verbatim}
+
+\par
+În exemplul de mai sus, comentariile cu textul [deleted] sunt marcate drept \textit{soft-delete}, semnificând că
+deși au fost șterse de utilizator, ele încă există în baza de date. 
+\par
+Problema apare atunci când un comentariu este marcat drept \textit{soft-delete}, dar nu știm, fără o parcurege în 
+prealabil, dacă poate fi șters sau nu.
+
+
+\par
+O primă idee ar fi ca de fiecare dată când un comentariu este șters, să facem o cerere pentru întreg arborele
+de comentarii și să verificăm dacă fiecare nod are copii care pot fi la rândul lor șterși. Această metodă
+este ineficientă, deoarece necesită o cantitate mare de resurse pentru a parcurge întreg arborele de comentarii
+la fiecare actualizare.
+
+\par
+O altă soluție ar fi să păstrăm comentariile în starea \textit{soft-delete} și să rulăm un \textit{cron job}
+la intervale regulate de timp care să curețe arborele de comentarii. 
+
+\subsubsection{Algoritm}
+\par
+Algoritmul de curățare a arborelui de comentarii este următorul:
+
+\begin{itemize}
+    \item \textbf{Inițializare}: creează conexiunea cu baza de date, obține toate comentariile și creează
+    structura arborescentă menționată anterior.
+    \item \textbf{Parcurgere}: parcurge arborele în adâncime folosind algoritmul DFS (Depth First Search) și
+    verifică recursiv folosind conceptul de programare dinamică, dacă un nod poate fi șters sau nu. La fiecare
+    pas din recursie se verifică dacă nodul curent este marcat drept \textit{soft-delete} și dacă toți
+    subarborii copiilor săi sunt de asemenea marcați drept \textit{soft-delete}. În caz afirmativ, nodul
+    curent poate fi șters și este adăugat într-o listă de noduri \textit{deletable}. Altfel, nodul nu poate
+    fi șters și implicit toate nodurile de pe drumul până la rădăcină nu pot fi șterse.
+    \item \textbf{Ștergere}: după ce arborele a fost parcurs și a fost creată lista \textit{deletable}, se
+    apelează iar clientul MongoDB pentru a șterge toate nodurile din listă.
+\end{itemize}
+
+\par
+Exemplul de mai jos ilustrează algoritmul de curățare a arborelui de comentarii:
+
+\vspace{2em}
+
+\begin{tikzpicture}[sibling distance=10em, every
+    node/.style = {shape=circle, draw, align=center},
+    highlightSoftDelete/.style = {fill=red!20, draw=red, thick, font=\sffamily\bfseries},
+    ]
+    \node {root}
+      child { node {a}
+        child { node {b} 
+          child { node [highlightSoftDelete] {c} } }
+        child { node [highlightSoftDelete] {d}
+          child { node {e} } } }
+      child { node [highlightSoftDelete] {f} }
+      child { node {g}
+        child { node [highlightSoftDelete] {h}
+          child { node {i} } }
+        child { node [highlightSoftDelete] {j}
+          child { node [highlightSoftDelete] {k} } 
+          child { node [highlightSoftDelete] {l} } 
+          } };
+\end{tikzpicture}
+
+\vspace{2em}
+
+\par
+În arborele prezentat, nodurile colorate cu roșu reprezintă comentariile \textit{soft-delete}. Algoritmul
+va adăuga nodurile \textit{c}, \textit{f}, \textit{j}, \textit{k} și \textit{l} în lista \textit{deletable}.
+\par
+Chiar dacă nodurile \textit{d} și \textit{h} sunt marcate drept \textit{soft-delete}, ele nu pot fi șterse
+permanent (\textit{hard-delete}) din cauza subarborilor încă activi.
+
+\subsection{Elasticsearch}
+\subsubsection{Concept}
+Elasticsearch este un motor de căutare ce organizează datele în documente în formatul \textit{JSON} care
+sunt apoi grupate în indici. Indicii sunt echivalentul bazelor de date din MongoDB, iar documentele sunt
+echivalentul rândurilor din tabelele relaționale.
+
+\par
+Concepte cheie în Elasticsearch:
+\begin{itemize}
+    \item \textbf{Document}: unitatea de bază folosită de Elasticsearch în formatul \textit{JSON}
+    (considerat formatul standard pentru transferul de date)
+    \item \textbf{Indices}: o colecție de documente cu trăsături similare formează un indice și reprezintă
+    cel mai înalt nivel de organizare a datelor.
+    \item \textbf{Inverted Index}: reprezintă mecanismul care stă la baza motoarelor de căutare și constă
+    într-o structură de date (similară cu un hashmap) care mapează cuvintele (sau mai bine zis, termenii)
+    la locațiile unde apar în documente. Astfel, fiecare document este împărțit în termeni individuali 
+    care sunt folosiți la căutare.
+\end{itemize}
+
+\par
+Figura \ref{fig:elasticsearch} ilustrează conceptul \textit{Inverted Index}. \cite{elasticsearchexplained}
+
+\subsubsection{Inserare}
+\par
+În cazul aplicației noastre, am definit un singur indice \textit{videos} care conține metadatele
+videoclip-urilor: titlul, descrierea, topicul și subtitrările. De fiecare dată când un videoclip
+este încărcat în aplicație, inserarea se face atât în baza de date MongoDB, cât și în Elasticsearch.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{elasticsearch.png}
+    \caption{Inverted Index\protect\footnotemark[3]}
+    \label{fig:elasticsearch}
+\end{figure}
+
+\footnotetext[3]{Imagine preluată de pe site-ul knowi.io la adresa: \url{https://www.knowi.com/blog/what-is-elastic-search/}}
+
+\subsubsection{Căutare}
+Interogarea în Elasticsearch permite specificarea criteriului de căutare precum: full-text, fuzzy, prefix,
+expresii regulate etc. În cazul aplicației noastre, am ales să folosesc \textit{fuzziness AUTO} pentru a 
+permite căutarea cuvintelor similare cu cele din cerere.
+
+\section{Deployment}
+\subsection{Docker}
+
+\subsubsection{Concept}
+Docker este o platformă care permite dezvoltatorilor să izoleze logica, dependințele și mediul de lucru
+în containere. Spre deosebire de mașinile virtuale, Docker nu virtualizează întregul sistem de operare,
+ci combină aplicația și dependințele sale cu librăriile oferite de sistemul de operare.
+\par
+În contextul mașinilor virtuale (VM), alocarea de resurse este dirijată de un \textit{hypervisor} care
+gestionează resursele fizice ale sistemului. În mod asemănător, Docker folosește un sistem de gestiune
+al resurselor mult mai eficient din punct de vedere al memoriei și timpului de rulare. 
+\par
+Avantajele folosirii containerelor Docker sunt:
+\begin{itemize}
+    \item \textbf{memorie mică}: un container Docker nu conține întregul sistem de operare, ci doar
+    procesele și dependințele necesare pentru aplicație, dimensiunea acestuia fiind de ordinul MB.
+    \item \textbf{portabilitate}: rezolvă problema \textit{it works on my machine} datorită
+    izolării mediului de lucru cu ajutorul imaginilor și containerelor.
+    \item \textbf{utilizare eficientă a resurselor}: permite gestionarea eficientă a resurselor sistemului.
+\end{itemize}
+
+\subsubsection{Dockerfile și Docker image}
+\par
+Imaginile Docker reprezintă unitatea de bază a containerelor și conțin tot ce este necesar (codul sursă,
+dependințele, tool-urile, librăriile, variabile de mediu etc.) pentru a rula o aplicație. Imaginile
+sunt structurate în nivele de abstractizare construite pe baza unui fișier numit \textit{Dockerfile}.
+\par
+Un \textit{Dockerfile} enumeră instrucțiunile necesare pentru construirea imaginii. De obicei, se pleacă
+de la o imagine de bază (de exemplu, \textit{python:3.8-slim}), după care se instalează dependințele
+necesare și se copiază codul sursă în container. În ultima parte a fișierului, se specifică comanda
+care pornește aplicația.
+\par
+Odată ce \textit{Dockerfile}-ul este definit, se pot construi imagini Docker folosind comanda \textit{docker build},
+eventual cu argumente suplimentare în linia de comandă. (de exemplu, menționarea portului pe care rulează aplicația, 
+versiunea imaginii etc.)
+
+\subsubsection{Docker container}
+\par
+Un container de Docker folosește imaginea construită anterior și creează instanțe ale acesteia. În timp ce
+o imagine permite doar citirea, un container permite dezvoltatorului interacțiunea cu acesta, fie pentru
+a rula comenzi, fie pentru a monitoriza starea aplicației.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{docker.JPG}
+    \caption{Docker\protect\footnotemark[4]}
+    \label{fig:docker}
+\end{figure}
+\footnotetext[4]{Imagine preluată de pe site-ul suresoft la adresa: \url{https://suresoft.gitlab-pages.rz.tu-bs.de/workshop-website/continuous-integration/containers.html}}
+
+\subsubsection{Docker Compose}
+\par
+Pe parcursul dezvoltării aplicației, apar din ce în ce mai multe servicii care trebuie gestionate separat
+și care depind unele de altele. Docker Compose este un tool care înglobează toate comenzile necesare
+pentru pornirea și oprirea serviciilor, precum și pentru construirea imaginilor și a containerelor.
+\par
+Docker Compose folosește un fișier numit \textit{docker-compose.yml} care conține toate detaliile necesare
+pentru fiecare serviciu, dintre care amintim: imaginea folosită, numele containerului, porturile expuse,
+variabilele de mediu, volumele, dependințele între alte servicii, rețelele folosite etc.
+
+\subsubsection{Volume și rețele}
+\par
+În cazul în care aplicația are nevoie de o stocare persistentă, de pildă pentru bazele de date, se pot
+folosi volume Docker. Un volum Docker este, de fapt, un director din sistemul gazdă care este montat în
+container al cărui conținut este persistent chiar și după oprirea containerului.
+
+\par
+De asemenea, Docker oferă și posibilitatea de a crea rețele virtuale prin intermediul cărora serviciile
+pot comunica între ele. Implicit, Docker oricum atribuia fiecărui container o adresă IP, dar în cazul
+pornirilor succesive ale aceluiași container, adresa IP se schimbă și nu mai poate fi accesată. Folosirea
+rețelelor Docker permite atribuirea manuală a IP-urilor.
+
+\subsection{Dockerizarea aplicației}
+\par
+Aplicația beneficiază de avantajele oferite de Docker și Docker Compose pentru a simplifica procesul
+de dezvoltare și de deployment. În cadrul proiectului, am definit următoarele servicii:
+
+\begin{itemize}
+    \item \textbf{MongoDB Container}: rulează o instanță de MongoDB pentru stocarea datelor, folosind
+    un volum Docker pentru a asigura persistența datelor și făcând o corespondență între portul gazdă
+    și portul containerului.
+    \item \textbf{Elasticsearch Container}: rulează o instanță de Elasticsearch pentru căutarea eficientă
+    în metadatele videoclip-urilor, folosind de asemenea un volum Docker.
+    \item \textbf{Flask Server - Recunoașterea Vorbirii}: rulează serverul Flask pentru recunoașterea
+    vorbirii, folosind portul 5001. Deoarece serverul comunică cu MongoDB și Elasticsearch, cele două
+    servicii sunt specificate ca dependințe.
+    \item \textbf{Flask Server - Clasificarea Videoclipurilor}: rulează serverul Flask pentru clasificarea
+    videoclipurilor, folosind portul 5003. Nu are dependințe.
+\end{itemize}
+
+\par
+Pentru serverele de React si Node.js am ales să nu folosesc containere Docker astfel încât să pot
+beneficia de o dezvoltarea rapidă și de actualizare în timp real a codului sursă.
+

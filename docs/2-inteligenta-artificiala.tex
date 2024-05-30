@@ -24,7 +24,7 @@ Contrastive Loss. \ref{fig:wav2vec2-architecture}
 \end{figure}
 
 \subsubsection{Latent Feature Encoder}
-\vspace{3em}
+\vspace{2em}
 Componenta Latent Feature Encoder este o rețea convoluțională care primește ca 
 intrare un semnal audio și aplică o serie de operații de convoluție, normalizare
 și activări GELU pentru a extrage caracteristici latente din semnalul audio.
@@ -123,7 +123,7 @@ audio având o durată de 10.47 secunde.
 Menționez aceste detalii deoarece pentru generarea subtitrărilor vom avea nevoie de audio-uri
 mult mai lungi decât cele folosite pentru antrenare care nu ar încăpea în memorie. Astfel, va trebui
 să folosim o tehnică de segmentare a secvențelor audio în bucăți mai mici pentru a putea fi procesate.
-Mai multe detalii despre această tehnică vor fi prezentate în secțiunea \textit{Subtitrări}.
+Mai multe detalii despre această tehnică vor fi prezentate în secțiunea \textit{Subtitrări}. \ref{subsec:subtitles}
 
 \subsection{Antrenarea modelului}
 Pentru antrenarea modelului am folosit limbajul de programare Python și biblioteca Hugging Face
@@ -337,6 +337,7 @@ Tabelul de mai jos a fost extras din paper-ul original și prezintă rezultatele
 
 
 \section{Clasificarea videoclipurilor}
+\label{sec:clasificare-videoclipuri}
 Videoclip-urile încărcate pe platform vin însoțite de metadate precum: titlu, descriere și, folosind
 modelul prezentat anterior, subtitrări. Pentru o experiță mai personalizată, am ales să clasific
 videoclipurile în funcție de subiectul abordat în topicuri precum: politics, sport, entertainment
