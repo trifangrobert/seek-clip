@@ -1,11 +1,11 @@
 \chapter{Inginerie software}
 
 \section{Arhitectura aplicației}
-Am ales să folosesc arhitectura MERN (MongoDB, Express.js, React, Node.js) la care am mai adăugat
+Am ales să folosesc arhitectura MERN (MongoDB, Express.js, React, Node.js), la care am mai adăugat
 două servere de Flask pentru recunoașterea vorbirii și clasificarea videoclip-urilor, o bază de
 date Elasticsearch pentru căutare și Kibana pentru vizualizarea datelor din Elasticsearch.
 \par
-În figura de mai jos \ref{fig:project-architecture} este prezentată arhitectura aplicației.
+În figura de mai jos \ref{fig:project-architecture} este prezentată arhitectura aplicației:
 
 \begin{figure}[h]
     \centering
@@ -84,7 +84,7 @@ două componente la care se mai adaugă un secret.
 \subsubsection{Înregistrare și logare}
 Atât înregistrarea \ref{fig:register} cât și logarea \ref{fig:login} sunt realizate prin
 intermediul unor formulare care cer informații precum numele, prenumele, adresa de email,
-un nume de utilizator, o parolă și poză de profil. Pentru aceste formulare au fost folosite
+numele de utilizator, parola și poza de profil. Pentru aceste formulare au fost folosite
 validatoare care verifică dacă datele introduse sunt corecte.
 \par
 Odată ce datele sunt introduse, sunt validate încă o dată la nivel de server pentru a evita 
@@ -111,8 +111,8 @@ Pentru deconectare, token-ul este șters din memoria locală și contextul utili
 \end{figure}
 
 \subsubsection{Profil}
-Pagina de profil prezină informați despre utilizator precum numele, prenumele, numele de utilizator,
-adresa de email și poză de profil și îi permite acestuia să le actualizeze cu ajutorul unui formular.
+Pagina de profil prezintă informați despre utilizator precum numele, prenumele, numele de utilizator,
+adresa de email și poza de profil și îi permite acestuia să le actualizeze cu ajutorul unui formular.
 
 \begin{figure}[h!]
     \centering
@@ -152,7 +152,7 @@ prelucrat (stocarea în baza de date, extragerea subtitrărilor, clasificarea vi
 Videoclip-urile încărcate sunt afișate pe pagina principală a aplicației web sub forma unui
 grid, fiecare videoclip având un thumbnail, un titlu și numele autorului. Atunci când este 
 accesat un videoclip, utilizatorul este redirecționat către o pagină dedicată unde poate
-vizualiza videoclip-ul și interacționa cu acesta prin intermediul apreriilor și comentariilor.
+vizualiza videoclip-ul și interacționa cu acesta prin intermediul aprecierilor și comentariilor.
 
 \begin{figure}[h] 
     \centering
@@ -183,15 +183,15 @@ autentificat și să fie autorul videoclip-ului pentru a putea schimba metadatel
 \end{figure}
 
 \subsubsection{Aprecieri \& Comentarii}
-Pagina de vizualizare a videoclip-ului permite utilizatorului să dea like, dislike videoclip-ului
+Pagina de vizualizare a videoclip-ului permite utilizatorului să dea like/dislike videoclip-ului
 sau să își retragă aprecierea și să adauge comentarii. 
 \par
 Fiecare videoclip reține o listă cu id-urile utilizatorilor care au dat like sau dislike și o
 listă cu comentariile adăugate. De asemenea, utilizatorii pot răspunde la comentarii, creând astfel
 o ierarhie de comentarii și pot edita sau șterge comentariile proprii.
 \par
-Dacă un comentariu are răspunsuri, atunci textul devine [deleted] fiind un \textit{soft-delete}.
-Altfel, dacă un comentariu nu are răspunsuri, atunci acesta este șters complet din baza de date
+Dacă un comentariu are răspunsuri, atunci textul devine [deleted], fiind un \textit{soft-delete}.
+Altfel, dacă un comentariu nu are răspunsuri, atunci acesta este șters complet din baza de date,
 fiind considerat un \textit{hard-delete}. Comentariile sunt sortate după data adăugării, cele mai
 recente fiind afișate mai sus. 
 
@@ -207,7 +207,7 @@ recente fiind afișate mai sus.
 
 Trebuie să menționez un detaliu important legat de ierarhia comentariilor. Ar fi foarte costisitor,
 din punct de vedere al performanței, ca de fiecare dată când se șterge un comentariu să se reconstruiască
-arborele de comentarii. De aceea, am creat un serviciu care rulează o dată pe zi, construieste ierarhia
+arborele de comentarii. De aceea, am creat un serviciu care rulează o dată pe zi, construiește ierarhia
 comentariilor și șterge acele drumuri în arbore care nu mai sunt folosite. Mai multe detalii despre
 acest serviciu se găsesc în secțiunea \ref{sec:cron-jobs}.
 
@@ -232,8 +232,9 @@ sunt afișate pe aceeași pagină, sub forma unui grid asemănător cu cel de pe
 
 \subsection{Temă}
 Întreaga aplicație web poate fi personalizată prin intermediul a două teme: light și dark.
-Utilizatorul poate schimba tema din navbar cu ajutorul unui buton care schimbă valoarea
-unei variabile din contextul temei și propagă această schimbare în întreaga aplicație web.
+Utilizatorul poate schimba tema din bara de navigare cu ajutorul unui buton care schimbă
+valoarea unei variabile din contextul temei și propagă această schimbare în întreaga
+aplicație web.
 
 \begin{figure}[h]
     \centering
@@ -269,7 +270,7 @@ de rute protejate:
 Am creat un server Node.js folosind Express.js în limbajul de programare TypeScript care
 gestionează cererile primite de la client și le rutează către serviciile corespunzătoare.
 \par
-Astfel, codul este structurat: 
+Astfel, codul este structurat în:
 
 \begin{itemize}
     \item \textbf{Routes}: definesc rutele serverului și asociază cererile primite cu funcțiile
@@ -436,7 +437,7 @@ cererilor. În cadrul aplicației noastre, am definit următoarele funcții util
 \begin{itemize}
     \item \textbf{getTranscription}: înainte de a trimite cererea către serverul de Flask pentru 
     recunoașterea vorbirii, e nevoie să extragem întâi secvența audio din videoclip deoarece 
-    modelul lucrează cu fișiere audio. Folosesc pentru acest lucru librăria \textit{ffmpeg-extract-audio}
+    modelul lucrează cu fișiere audio. Folosesc, pentru acest lucru, librăria \textit{ffmpeg-extract-audio}
     care permite procesarea fișierelor video și extragerea secvenței audio. De asemenea, secvența
     audio fiind destul de mare, creez un flux de date folosind \textit{fs.createReadStream} și 
     atașez acest flux la cererea către serverul de Flask.
@@ -509,12 +510,12 @@ Exemplu de criptare a parolei "abc123xyz"\footnotemark[1]:
     \__/\/ \____________________/\_____________________________/
     Alg Cost      Salt                        Hash
 \end{verbatim}
-\footnotetext[1]{Exemplul este preluat de pe Wikipedia la adresa: \url{https://en.wikipedia.org/wiki/Bcrypt}}
+\footnotetext[1]{Exemplul este preluat de pe Wikipedia de la adresa: \url{https://en.wikipedia.org/wiki/Bcrypt}}
 
 
 \subsubsection{Variabile de mediu}
 Serverul folosește variabile de mediu stocate în fișierul \textit{.env} pentru a putea lăsa
-la îndemâna utilizatorului anumite configurații precum portul pe care rulează serverul, secretul
+la îndemâna utilizatorului anumite configurații precum: portul pe care rulează serverul, secretul
 folosit pentru generarea token-ului JWT și link-urile către serverele de Flask. Variabilele de mediu
 sunt citite folosind librăria \textit{dotenv} și sunt accesate în cod folosind \textit{process.env}.
 \par
@@ -524,7 +525,7 @@ sunt citite folosind librăria \textit{dotenv} și sunt accesate în cod folosin
     \item \textbf{JWT\_SECRET}: secretul folosit pentru generarea token-ului JWT.
     \item \textbf{BACKEND\_ASR\_URL}: link-ul către serverul de Flask pentru recunoașterea vorbirii.
     \item \textbf{BACKEND\_TOPIC\_URL}: link-ul către serverul de Flask pentru clasificarea videoclip-urilor.
-    \item \textbf{BASE\_URL}: link-ul către serverul Express, folosit pentru a construi link-urile
+    \item \textbf{BASE\_URL}: link-ul către serverul Express, folosit pentru a construi link-urile.
     \item \textbf{MONGO\_URI}: link-ul către baza de date MongoDB, conține și credențialele de acces.
 \end{itemize}
 
@@ -536,7 +537,7 @@ comenzile de pornire a serverului. Astfel, pentru modul de dezvoltare, am defini
 automat la modificarea fișierelor. Pentru modul de producție, am definit comanda \textit{start}
 care pornește serverul folosind \textit{node dist/server.js}.
 \par
-Există două directoare \textit{/src} și \textit{/dist} pentru a separa codul sursă de codul compilat.
+Codul este structurat în două directoare \textit{/src} și \textit{/dist}, care codul sursă de codul compilat.
 Astfel, pentru eficientizarea codului în producție, codul este compilat o singură dată și rulat
 folosind fișierul \textit{dist/server.js}. Pentru a face acest lucru, am folosit librăria \textit{tsc}
 care dă \textit{build} și rulează comanda \textit{npx tsc}.
@@ -571,7 +572,7 @@ de la microfon (variații în presiunea aerului/unde sonore) într-un semnal dig
 Practic, convertește semnalul analogic continuu într-un
 semnal digital discret care poate fi stocat și procesat de un calculator. Acest proces implică
 conceptul de cuantizare și introduce o eroare de cuantizare care depinde de rezoluția convertorului.
-În acest sens, convertorul analog-digital converteste periodic semnalul analogic, eșantionând semnalul
+În acest sens, convertorul analog-digital convertește periodic semnalul analogic, eșantionând semnalul
 la intervale de timp egale.
 \par
 Perioada de timp dintre două eșantioane consecutive este cunoscută sub numele de \textbf{frecvență de eșantionare}
@@ -649,7 +650,7 @@ nu ar încăpea în memoria serverului, așa că am ales să sparg secvența aud
 secunde folosind funcția \textit{stream} din librăria \textit{librosa}.
 
 \par
-Un alt aspect de luat în calcul aici, chiar dacă modelul ar putea procesa secvențe mai lungi, mai
+Un alt aspect de luat în calcul este că, chiar dacă modelul ar putea procesa secvențe mai lungi, mai
 intervine și timeout-ul socket-ului care ar putea expira în cazul unor secvențe prea mari. Deși în
 cazul spargerii secvenței audio în segmente de câte 30 de secunde, se pot pierde informații de 
 la începutul și finalul fiecărei bucăți, am ales să sacrific aceste informații pentru a asigura
@@ -659,17 +660,17 @@ procesarea cu succes a secvențelor audio. Exceptând aceste cazuri, bucățile 
 \subsubsection{Subtitrări}
 \label{subsec:subtitles}
 \par
-Funcția \textbf{make\_subtitles} primește ca parametru textul transcris din fiecare block de 30 de secunde
+Funcția \textbf{make\_subtitles} primește ca parametru textul transcris din fiecare bloc de 30 de secunde
 și creează subtitrările în formatul .vtt. În cadrul unui bloc, modelul de recunoaștere a vorbirii 
 folosește următoarele etape:
 \begin{itemize}
-    \item \textbf{Processing}: modelul primește secvența audio, și folosește procesorul specific de pe
+    \item \textbf{Processing}: modelul primește secvența audio și folosește procesorul specific de pe
     Hugging Face pentru a converti secvența audio în tensori. Vom numi acești tensori \textit{input\_values}.
     \item \textbf{Prediction}: modelul primește \textit{input\_values} și returnează \textit{logits}, tot
     sub forma de tensori reprezentând probabilitățile pentru fiecare literă din vocabular. Sunt calculate
-    apoi \textit{predicted\_ids} fiind literele cu cele mai mari probabilități.
+    apoi \textit{predicted\_ids}, fiind literele cu cele mai mari probabilități.
     \item \textbf{Decoding}: folosind \textit{logits}, modelul folosește algoritmul de decodare pentru a
-    converti tensorii în text și obtinem \text{transcription}.
+    converti tensorii în text și obtinem \textit{transcription}.
 \end{itemize}
 
 Astfel, obținem pentru fiecare bloc \textit{transcription}, \textit{input\_values} și \textit{predicted\_ids}.
@@ -780,8 +781,6 @@ Configurările sunt folosite pentru a specifica serverului cum să proceseze cer
     \item \textbf{SAMPLE\_RATE}: frecvența de eșantionare a fișierelor audio, setată pe 16kHz pentru
     a respecta cerințele modelului.
     \item \textbf{BLOCK\_SIZE}: lungimea blocurilor folosite în fluxul de date, setată pe 30 de secunde.
-    \item \textbf{SPELL\_CHECK}: dacă este setat pe \textit{true}, folosește un model de corectare a
-    cuvintelor pentru a îmbunătăți rezultatele.
 \end{itemize}
 
 \subsection{Flask Server - Clasificarea videoclip-urilor}
@@ -791,8 +790,8 @@ dar are o structură mai simplă, nefiind necesare mai multe etape de procesare.
 \par
 Astfel, serverul definește o singură rută \textit{/topic} care primește cereri de tipul \textit{POST}
 și returnează topicul textului primit. Deoarece secvența de intrare a modelului \textit{BERT} este 
-limitată la 512 token-uri, am ales să împart textul în blocuri de câte 512 token-uri și fiecare bloc
-este trimis la model pentru a obține topicul. Pentru a obține topicul final, se contorizează frecvența
+limitată la 512 token-uri, am ales să împart textul în blocuri de câte 512 token-uri și să le trimit
+succesiv la model pentru a obține topicul. Pentru a obține topicul final, se contorizează frecvența
 apariției fiecărui topic și se returnează cel majoritar.
 \subsubsection{Configurări}
 \par
@@ -802,11 +801,11 @@ timpul de răspuns. Acest \textit{pipeline} conține modelul preantrenat și fin
 
 \section{Baze de date}
 Pentru stocarea datelor, am ales să folosesc două baze de date: MongoDB, datorită structurii sale
-flexibile care permite dezvoltarea rapidă a aplicațiilor și Elasticsearch, pentru căutarea eficientă
-în metadatele videoclip-urilor.
+flexibile care permite dezvoltarea rapidă a aplicațiilor și Elasticsearch, pentru sistemul de căutare
+rapid în metadatele videoclip-urilor.
 \subsection{MongoDB}
 \subsubsection{Arhitectura bazei de date}
-MongoDB este o bază de date de tip \textbf{NoSQL} care stochează datele sub forma de documente în 
+MongoDB este o bază de date de tip \textbf{NoSQL} care stochează datele sub formă de documente în 
 formatul \textit{JSON}. Documentele sunt grupate în colecții, iar colecțiile sunt apoi grupate în
 baze de date. 
 \par
@@ -946,7 +945,7 @@ Exemplul de mai jos ilustrează algoritmul de curățare a arborelui de comentar
 va adăuga nodurile \textit{c}, \textit{f}, \textit{j}, \textit{k} și \textit{l} în lista \textit{deletable}.
 \par
 Chiar dacă nodurile \textit{d} și \textit{h} sunt marcate drept \textit{soft-delete}, ele nu pot fi șterse
-permanent (\textit{hard-delete}) din cauza subarborilor încă activi.
+permanent (\textit{hard-delete}) din cauza subarborilor activi.
 
 \subsection{Elasticsearch}
 \subsubsection{Concept}
@@ -1082,5 +1081,5 @@ de dezvoltare și de deployment. În cadrul proiectului, am definit următoarele
 
 \par
 Pentru serverele de React si Node.js am ales să nu folosesc containere Docker astfel încât să pot
-beneficia de o dezvoltarea rapidă și de actualizare în timp real a codului sursă.
+beneficia de o dezvoltare rapidă și de actualizare în timp real a codului sursă.
 

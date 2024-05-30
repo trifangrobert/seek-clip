@@ -5,7 +5,7 @@ Pentru a putea recunoaște vorbirea dintr-un videoclip, am ales să folosesc arh
 \textit{wav2vec 2.0} \cite{wav2vec2} dezvoltată de Facebook AI Research. Am folosit 
 atât modelul \textit{facebook/wav2vec2-base-960h} antrenat pe setul de date 
 \textit{LibriSpeech} \cite{librispeech}, cât și modelul preantrenat
-\textit{facebook/wav2vec2-base} pe care am continuat să-l antrenez pe seturile
+\textit{facebook/wav2vec2-base} pe care le-am fine-tunat pe seturile
 de date \textit{Mini LibriSpeech} (subset din LibriSpeech) și
 \textit{Common Voice Delta Segment 16.1} (subset din Common Voice) \cite{commonvoice}.
 \par
@@ -120,8 +120,8 @@ audio având o durată de 10.47 secunde.
 \end{figure}
 
 \subsubsection{Concluzie}
-Menționez aceste detalii deoarece pentru generarea subtitrărilor vom avea nevoie de audio-uri
-mult mai lungi decât cele folosite pentru antrenare care nu ar încăpea în memorie. Astfel, va trebui
+Menționez aceste detalii deoarece pentru generarea subtitrărilor vom avea nevoie de secvențe audio
+mult mai lungi decât cele folosite pentru antrenare, care nu ar încăpea în memorie. Astfel, va trebui
 să folosim o tehnică de segmentare a secvențelor audio în bucăți mai mici pentru a putea fi procesate.
 Mai multe detalii despre această tehnică vor fi prezentate în secțiunea \textit{Subtitrări}. \ref{subsec:subtitles}
 
@@ -157,7 +157,7 @@ Hiperparametrii folosiți pentru fine-tuning-ul modelului sunt:
 \end{table}
 
 \par
-Am antrenat modelul pe seturile de date \textit{Mini LibriSpeech} și \textit{Common Voice Delta Segment 16.1}
+Am fine-tunat modelul pe seturile de date \textit{Mini LibriSpeech} și \textit{Common Voice Delta Segment 16.1}
 pe o placă grafică NVIDIA Tesla V100 pusă la dispoziție de Google Colab. Am făcut un checkpoint la fiecare
 500 de pași pentru a putea monitoriza evoluția modelului. Rezultatele checkpoint-urilor pentru modelul
 \textit{facebook/wav2vec2-base} sunt prezentate în cele două tabele de mai jos.
@@ -299,7 +299,7 @@ o îmbunătățire de \textbf{1.3\%}.
 Un n-gram language model este un model statistic care estimează, în cazul nostru, probabilitatea
 apariției unui caracter având în vedere cele n-1 caractere anterioare. Modelul se bazează pe
 ipoteza Markov de ordinul n, conform căreia putem aproxima probabilitatea apariției unui caracter
-folosind doar ultimele n caractere. Formula de mai jos ilustreaza această idee.
+folosind doar ultimele n caractere. Formula de mai jos ilustrează această idee:
 
 \begin{equation}
     P(w_1, w_2, \ldots, w_n) = \prod_{i=1}^{m} P(w_i | w_{1}, w_{2}, \ldots, w_{i-1}) \approx \prod_{i=1}^{m} P(w_i | w_{i-(n-1)}, \ldots, w_{i-1})
@@ -339,7 +339,7 @@ Tabelul de mai jos a fost extras din paper-ul original și prezintă rezultatele
 \section{Clasificarea videoclipurilor}
 \label{sec:clasificare-videoclipuri}
 Videoclip-urile încărcate pe platform vin însoțite de metadate precum: titlu, descriere și, folosind
-modelul prezentat anterior, subtitrări. Pentru o experiță mai personalizată, am ales să clasific
+modelul prezentat anterior, subtitrări. Pentru o experiență mai personalizată, am ales să clasific
 videoclipurile în funcție de subiectul abordat în topicuri precum: politică, sport, divertisment,
 tehnologie și afaceri. Am folosit un modelul de clasificare \textbf{BERT} (Bidirectional Encoder Representations
 from Transformers) dezvoltat de \textit{Google} \cite{devlin2019bert} pe care l-am antrenat pe setul de date
@@ -349,8 +349,7 @@ from Transformers) dezvoltat de \textit{Google} \cite{devlin2019bert} pe care l-
 Modelul \textit{BERT} este un model de învățare profundă care are la bază partea de encoder a unui \textit{Transformer} \cite{vaswani2023attention},
 scopul lui fiind de a înțelege contextul cuvintelor într-o propoziție. Modelul \textit{BERT} vine în două
 variante: \textit{BERT-base} și \textit{BERT-large}, cele două diferă prin numărul de blocuri de encoder (12 și 24),
-numărul de neuroni din stratul fully-connected (768 și 1024) și numărul de attention heads (12 și 16), dar 
-conceptual sunt la fel. 
+numărul de neuroni din stratul fully-connected (768 și 1024) și numărul de attention heads (12 și 16).
 
 \par
 Spre deosebire de arhitectura standard a unui \textit{Transformer}, \textit{BERT} adaugă un token
@@ -395,7 +394,7 @@ pe clasă și al lungimii medii a articolelor. \ref{fig:bbc-stats}
 
 \subsection{Antrenarea modelului}
 \vspace{1em}
-Antrenarea modelului a fost făcută folosind limbajul de programare Python, biblioteca PyTorch. \cite{paszke2019pytorch}
+Antrenarea modelului a fost făcută folosind limbajul de programare Python, biblioteca PyTorch \cite{paszke2019pytorch}
 și plecând de la modelul preantrenat \textit{bert-base-uncased} pus la dispoziție de Hugging Face.
 Codul a fost structurat în: 
 \vspace{1em}
@@ -404,13 +403,13 @@ Codul a fost structurat în:
     \item \textbf{dataset.py} - creează un Dataset specific PyTorch pentru setul de date \textit{BBC News},
     implementând metodele \textit{\_\_len\_\_} și \textit{\_\_getitem\_\_}; metoda \textit{\_\_getitem\_\_}
     aplică tokenizer-ul pe text cu lungimea maximă de 512 token-uri și returnează un tuplu de input\_ids,
-    attention\_mask și label
+    attention\_mask și label.
     \item \textbf{model.py} - definește arhitectura modelului \textit{BERT} și a rețelei de clasificare:
     inițializează modelul preantrenat \textit{bert-base-uncased}, extrage token-ul special \textit{[CLS]}
-    și adaugă un strat liniar cu 5 neuroni pentru clasificare
-    \item \textbf{trainer.py} - antrenează modelul pe setul de date \textit{BBC News} folosind hiperparametrii
-    din primiți ca parametru în linia de comandă și salvează modelul de fiecare dată când obține o
-    acuratețe mai bună pe setul de validare
+    și adaugă un strat liniar cu 5 neuroni pentru clasificare.
+    \item \textbf{trainer.py} - antrenează modelul pe setul de date \textit{BBC News} folosind
+    hiperparametrii primiți din linia de comandă și salvează modelul de fiecare dată când obține o
+    acuratețe mai bună pe setul de validare.
 \end{itemize}
 
 \vspace{1em}
@@ -519,10 +518,10 @@ Utilizarea modelului de recunoaștere a vorbirii necesită folosirea modulului \
 
 \subsubsection{BERT}
 Modelul de clasificare a videoclipurilor este disponibil în pachetul \textit{transformers} sub numele
-\textit{3funnn/bert-topic-classification}. Modelul primește ca intrare un text care poate fi o 
-concatenare a titlului și descrierii videoclipului și returnează o distribuție de probabilitate
+\textit{3funnn/bert-topic-classification}. Modelul primește ca intrare un text (care poate fi o 
+concatenare a titlului și a descrierii videoclipului) și returnează o distribuție de probabilitate
 pentru fiecare din cele 5 clase. Hugging Face pune la dispoziție funcția \textit{pipeline} care
-permite folosirea modelului într-un mod simplu. Codul de mai jos ilustreaza acest lucru.
+permite folosirea modelului într-un mod simplu. Codul de mai jos ilustrează acest lucru.
 
 \begin{lstlisting}[language=Python]
     from transformers import pipeline
