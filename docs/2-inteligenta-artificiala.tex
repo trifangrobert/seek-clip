@@ -148,10 +148,10 @@ Hiperparametrii folosiți pentru fine-tuning-ul modelului sunt:
     \begin{tabular}{ll}
     \hline
     \textbf{Hiperparametru} & \textbf{Valoare} \\ \hline
-    Rata de învățare (\textit{learning rate}) & $1 \times 10^{-4}$ \\
-    Descreșterea greutății (\textit{weight decay}) & 0.005 \\
-    Pași de încălzire (\textit{warmup steps}) & 1000 \\
-    Dimensiunea lotului (\textit{batch size}) & 4 \\ \hline
+    Learning rate & $1 \times 10^{-4}$ \\
+    Weight decay & 0.005 \\
+    Warmup steps & 1000 \\
+    Batch size & 4 \\ \hline
     \end{tabular}
     \caption{Hiperparametrii folosiți pentru fine-tuning-ul modelului \textit{wav2vec2}}
 \end{table}
@@ -340,9 +340,9 @@ Tabelul de mai jos a fost extras din paper-ul original și prezintă rezultatele
 \label{sec:clasificare-videoclipuri}
 Videoclip-urile încărcate pe platform vin însoțite de metadate precum: titlu, descriere și, folosind
 modelul prezentat anterior, subtitrări. Pentru o experiță mai personalizată, am ales să clasific
-videoclipurile în funcție de subiectul abordat în topicuri precum: politics, sport, entertainment
-tehnologie și afaceri. Am folosit un modelul de clasificare \textit{BERT}, Bidirectional Encoder Representations
-from \textit{Transformers}, dezvoltat de \textit{Google} \cite{devlin2019bert} pe care l-am antrenat pe setul de date
+videoclipurile în funcție de subiectul abordat în topicuri precum: politică, sport, divertisment,
+tehnologie și afaceri. Am folosit un modelul de clasificare \textbf{BERT} (Bidirectional Encoder Representations
+from Transformers) dezvoltat de \textit{Google} \cite{devlin2019bert} pe care l-am antrenat pe setul de date
 \textit{BBC News} \cite{greene06icml}.
 
 \subsection{Arhitectura modelului}
@@ -379,8 +379,8 @@ mare probabilitate este cea aleasă.
 \subsection{Setul de date}
 \vspace{1em}
 Pentru antrenarea modelului am folosit setul de date \textit{BBC News} care conține 2225 de articole 
-între anii 2004-2005. Setul de date este împărțit în 5 clase: politics, sport, entertainment, technology
-și business. Mai jos am prezentat distribuția datelor din setul de date din punct de vedere al exemplelor
+între anii 2004-2005. Setul de date este împărțit în 5 clase: politică, sport, divertisment, tehnologie
+și afaceri. Mai jos am prezentat distribuția datelor din setul de date din punct de vedere al exemplelor
 pe clasă și al lungimii medii a articolelor. \ref{fig:bbc-stats}
 
 \vspace{1em}
@@ -474,10 +474,10 @@ Pentru modelul final pe care l-am folosit pentru clasificarea videoclipurilor am
         \toprule
         \textbf{Hiperparametru}   & \textbf{Valoare}         \\
         \midrule
-        Rata de învățare \textit{(learning rate)}             & 0.00001                  \\
-        Dimensiunea lotului \textit{(batch size)}             & 8                        \\
-        Optimizator \textit{(optimizer)}                      & Adam                     \\
-        Funcția de pierdere \textit{(loss function)}          & CrossEntropyLoss         \\
+        Learning rate             & 0.00001                  \\
+        Batch size             & 8                        \\
+        Optimizer                      & Adam                     \\
+        Loss function          & CrossEntropyLoss         \\
         \bottomrule
     \end{tabular}
     \caption{Hiperparametrii modelului \textit{BERT}}
@@ -487,7 +487,7 @@ Pentru modelul final pe care l-am folosit pentru clasificarea videoclipurilor am
 
 \section{Concluzie}
 Cele două modele prezentate anterior, \textit{wav2vec 2.0} și \textit{BERT}, au fost încărcate
-pe platforma Huggingface și sunt disponibile în pachetul \textit{transformers}.
+pe platforma Hugging Face și sunt disponibile în pachetul \textit{transformers}.
 
 \subsubsection{wav2vec 2.0}
 Utilizarea modelului de recunoaștere a vorbirii necesită folosirea modulului \textit{Wav2Vec2ForCTC}
@@ -521,7 +521,7 @@ Utilizarea modelului de recunoaștere a vorbirii necesită folosirea modulului \
 Modelul de clasificare a videoclipurilor este disponibil în pachetul \textit{transformers} sub numele
 \textit{3funnn/bert-topic-classification}. Modelul primește ca intrare un text care poate fi o 
 concatenare a titlului și descrierii videoclipului și returnează o distribuție de probabilitate
-pentru fiecare din cele 5 clase. Huggingface pune la dispoziție funcția \textit{pipeline} care
+pentru fiecare din cele 5 clase. Hugging Face pune la dispoziție funcția \textit{pipeline} care
 permite folosirea modelului într-un mod simplu. Codul de mai jos ilustreaza acest lucru.
 
 \begin{lstlisting}[language=Python]

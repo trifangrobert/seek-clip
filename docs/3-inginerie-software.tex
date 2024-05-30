@@ -43,8 +43,8 @@ codul aplicației web. Dintre acestea, cele mai importante sunt:
     de date folosite în aplicație.
     \item \textbf{Views/Pages}: Pot fi considerate componente principale, fiind rutele aplicației web.
     \item \textbf{Services}: Serviciile sunt funcții asincrone care primesc date din frontend,
-    creează cereri HTTP către server (folosind Axios sau Fetch) și returnează răspunsurile
-    primite de la server.
+    creează cereri HTTP către server (folosind \textit{Axios} sau \textit{Fetch}) și returnează
+    răspunsurile primite de la server.
     \item \textbf{Utils}: Funcții utilitare care nu sunt legate de o componentă anume.
 \end{itemize}
 
@@ -664,7 +664,7 @@ Funcția \textbf{make\_subtitles} primește ca parametru textul transcris din fi
 folosește următoarele etape:
 \begin{itemize}
     \item \textbf{Processing}: modelul primește secvența audio, și folosește procesorul specific de pe
-    Huggingface pentru a converti secvența audio în tensori. Vom numi acești tensori \textit{input\_values}.
+    Hugging Face pentru a converti secvența audio în tensori. Vom numi acești tensori \textit{input\_values}.
     \item \textbf{Prediction}: modelul primește \textit{input\_values} și returnează \textit{logits}, tot
     sub forma de tensori reprezentând probabilitățile pentru fiecare literă din vocabular. Sunt calculate
     apoi \textit{predicted\_ids} fiind literele cu cele mai mari probabilități.
@@ -796,7 +796,7 @@ este trimis la model pentru a obține topicul. Pentru a obține topicul final, s
 apariției fiecărui topic și se returnează cel majoritar.
 \subsubsection{Configurări}
 \par
-Serverul creează un \textit{pipeline} specific Huggingface înaite de a primi cereri, pentru a reduce
+Serverul creează un \textit{pipeline} specific Hugging Face înaite de a primi cereri, pentru a reduce
 timpul de răspuns. Acest \textit{pipeline} conține modelul preantrenat și fine-tunat pe setul de date
 \textit{BBC News}. Mai multe detalii se regăsesc în secțiunea \ref{sec:clasificare-videoclipuri}.
 
