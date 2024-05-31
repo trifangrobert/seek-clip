@@ -12,6 +12,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import VideoOwnerProtectedRoute from "./components/VideoOwnerProtectedRoute";
 import SearchedVideos from "./pages/SearchedVideos";
 import ProfilePage from "./pages/ProfilePage";
+import NotFoundPage from "./pages/NotFoundPage";
+import path from "path";
 
 function App() {
   const routes = [
@@ -30,6 +32,12 @@ function App() {
     {
       path: "/profile/:username",
       element: <ProfilePage />,
+      isUserProtected: true,
+      isVideoOwnerProtected: false,
+    },
+    {
+      path: "/",
+      element: <HomePage />,
       isUserProtected: true,
       isVideoOwnerProtected: false,
     },
@@ -65,8 +73,8 @@ function App() {
     },
     {
       path: "*",
-      element: <HomePage />,
-      isUserProtected: true,
+      element: <NotFoundPage />,
+      isUserProtected: false,
       isVideoOwnerProtected: false,
     },
   ];

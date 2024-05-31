@@ -8,16 +8,12 @@ export type UserProfile = {
 }
 
 export type EditUserProfile = {
-    email: string,
-    username: string,
     firstName: string,
     lastName: string,
     profilePicture: File | null;
 }
 
 export type EditUserProfileErrors = {
-    email? : string,
-    username? : string,
     firstName? : string,
     lastName? : string
 }
