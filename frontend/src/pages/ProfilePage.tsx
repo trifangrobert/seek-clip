@@ -387,7 +387,7 @@ const ProfilePage = () => {
             }}
           >
             <Grid item xs={4}>
-              <Typography>10 posts</Typography>
+              <Typography>{userVideos.length} posts</Typography>
             </Grid>
             <Grid item xs={4}>
               <Typography>{stringNumFollowers} followers</Typography>
