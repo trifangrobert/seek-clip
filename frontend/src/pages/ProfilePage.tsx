@@ -46,7 +46,9 @@ const ProfilePage = () => {
   });
   const [formErrors, setFormErrors] = useState<EditUserProfileErrors>({});
 
-  const {videos: userVideos, loading: videosLoading} = useVideosByUser(userProfileInfo?._id!);
+  const { videos: userVideos, loading: videosLoading } = useVideosByUser(
+    userProfileInfo?._id!
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -225,17 +227,17 @@ const ProfilePage = () => {
                   />
                 </>
               ) : (
-                <>
+                <Box sx={{ ml: 2 }}>
                   <Typography variant="h5" component="h1">
                     {userProfileInfo.username}
                   </Typography>
                   <Typography variant="body1" sx={{ color: "text.secondary" }}>
                     {userProfileInfo.firstName} {userProfileInfo.lastName}
                   </Typography>
-                </>
+                </Box>
               )}
             </Grid>
-            <Grid item>
+            <Grid item sx={{ pr: 5 }}>
               {isOwner &&
                 (editMode ? (
                   <Box>
@@ -276,7 +278,7 @@ const ProfilePage = () => {
               )}
             </Grid>
           </Grid>
-          <Grid container spacing={2} sx={{ marginTop: 1 }}>
+          <Grid container spacing={1} sx={{ ml: -3, marginTop: 1, textAlign: 'center', justifyContent: 'space-between'}}>
             <Grid item xs={4}>
               <Typography>10 posts</Typography>
             </Grid>
