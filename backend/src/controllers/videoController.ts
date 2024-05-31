@@ -189,6 +189,8 @@ const getAllVideos = async (req: Request, res: Response) => {
           authorMap[video.authorId].firstName +
           " " +
           authorMap[video.authorId].lastName,
+        authorId: authorMap[video.authorId]._id,
+        authorUsername: authorMap[video.authorId].username,
       };
     });
     // simulate slow network
@@ -196,6 +198,29 @@ const getAllVideos = async (req: Request, res: Response) => {
     //   res.status(200).json(videoUrls);
     // }, 1000);
     res.status(200).json(videoUrls);
+  } catch (error) {
+    res.status(500).json({ message: "Error getting videos" });
+  }
+};
+
+const getVideosByUser = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  console.log(`getting videos by user ${userId}`);
+  try {
+    const videos = await Video.find({ authorId: userId });
+    const populatedVideos = await Promise.all(
+      videos.map(async (video: any) => {
+        const author = await User.findById(video.authorId);
+        return {
+          ...video._doc,
+          url: process.env.BASE_URL + video.url,
+          author: author.firstName + " " + author.lastName,
+          authorId: author._id,
+          authorUsername: author.username,
+        };
+      }
+    ));
+    res.status(200).json(populatedVideos);
   } catch (error) {
     res.status(500).json({ message: "Error getting videos" });
   }
@@ -216,22 +241,14 @@ const getVideoById = async (req: Request, res: Response) => {
     res.status(200).json({
       ...video._doc,
       author: author.firstName + " " + author.lastName,
+      authorId: author._id,
+      authorUsername: author.username,
     });
   } catch (error) {
     res.status(500).json({ message: "Error getting video" });
   }
 };
 
-const getVideosByUser = async (req: Request, res: Response) => {
-  console.log("getting videos by user...");
-  const { userId } = req.params;
-  try {
-    const videos = await Video.find({ author: userId });
-    res.status(200).json(videos);
-  } catch (error) {
-    res.status(500).json({ message: "Error getting videos" });
-  }
-};
 
 // access endpoint: POST /api/video/:id/like
 const likeVideo = async (req: AuthRequest, res: Response) => {

@@ -9,4 +9,5 @@ export interface Video {
   subtitles?: string;
   topic: string;
   createdAt: string;
+  authorUsername: string;
 }

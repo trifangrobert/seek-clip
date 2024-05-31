@@ -23,9 +23,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import VideoGrid from "../components/VideoGrid";
 import { validateEditProfileForm } from "../utils/Validation";
+import { useVideosByUser } from "../hooks/useVideosByUser";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+
   const { username: urlUsername } = useParams<{ username: string }>();
   const { user, token, updateProfile } = useAuthContext();
   const [userProfileInfo, setUserProfileInfo] = useState<UserProfile | null>(
@@ -44,6 +46,7 @@ const ProfilePage = () => {
   });
   const [formErrors, setFormErrors] = useState<EditUserProfileErrors>({});
 
+  const {videos: userVideos, loading: videosLoading} = useVideosByUser(userProfileInfo?._id!);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -156,7 +159,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <Box sx={{ maxWidth: 900, mx: "auto", my: 4, mt: 10 }}>
+    <Box sx={{ maxWidth: 1200, mx: "auto", my: 4, mt: 10 }}>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={3}>
           <Badge
@@ -232,7 +235,7 @@ const ProfilePage = () => {
                 </>
               )}
             </Grid>
-            <Grid item sx={{ pr: 10 }}>
+            <Grid item>
               {isOwner &&
                 (editMode ? (
                   <Box>
@@ -290,7 +293,7 @@ const ProfilePage = () => {
         Videos by {userProfileInfo.username}
       </Typography>
       <Grid container spacing={2}>
-        <VideoGrid videos={[]} />
+        <VideoGrid videos={userVideos} loading={videosLoading} />
       </Grid>
     </Box>
   );

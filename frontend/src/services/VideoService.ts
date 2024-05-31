@@ -30,6 +30,20 @@ export const getVideoById = async (id: string): Promise<Video> => {
   }
 };
 
+export const getVideoByUserId = async (id: string): Promise<Video[]> => {
+  try {
+    const response = await fetch(videoAPI + `/user/${id}`);
+    if (!response.ok) {
+      throw new Error(`Error fetching video ${id}`);
+    }
+    const videos: Video[] = await response.json();
+    return videos;
+  } catch (error) {
+    console.log(`Error fetching video ${id}`, error);
+    throw error;
+  }
+};
+
 export const uploadVideo = async (
   title: string,
   description: string,

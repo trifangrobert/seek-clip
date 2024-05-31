@@ -198,7 +198,20 @@ const VideoPage: React.FC = () => {
                 </Button>
               </Box>
             </Box>
-            <Typography variant="subtitle1" color="text.secondary">
+            <Typography
+              variant="subtitle1"
+              color="text.secondary"
+              onClick={() => navigate(`/profile/${video?.authorUsername}`)}
+              sx={{
+                cursor: "pointer",
+                maxWidth: "fit-content",
+                fontWeight: "bold",
+                transition: "color 0.3s ease",
+                "&:hover": {
+                  color: "#3f51b5",
+                },
+              }}
+            >
               {video?.author || "Loading author..."}
             </Typography>
             <DescriptionAccordion description={video?.description || ""} />

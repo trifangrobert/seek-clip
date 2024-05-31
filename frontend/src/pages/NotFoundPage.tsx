@@ -9,11 +9,8 @@ const NotFoundPage = () => (
       <Typography variant="h4" component="h1" gutterBottom>
         Page Not Found
       </Typography>
-      <Typography variant="subtitle1" sx={{ mb: 2 }}>
+      <Typography variant="subtitle1" sx={{ mb: 2, mt: 2 }}>
         We can't find the page you're looking for.
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 3 }}>
-        You might have the wrong address, or the page may have moved.
       </Typography>
       <Button
         variant="contained"
