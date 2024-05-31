@@ -24,7 +24,6 @@ const getUserByUsername = async (req: any, res: any) => {
 };
 
 interface UpdateUserProfile {
-  email: string;
   username: string;
   firstName: string;
   lastName: string;
@@ -33,10 +32,9 @@ interface UpdateUserProfile {
 
 const updateUserProfile = async (req: any, res: any) => {
   console.log("Updating user profile...");
-  const { email, username, firstName, lastName } = req.body;
+  const { username, firstName, lastName } = req.body;
 
   let updateData: UpdateUserProfile = {
-    email: email,
     username: username,
     firstName: firstName,
     lastName: lastName,

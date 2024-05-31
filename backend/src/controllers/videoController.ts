@@ -164,38 +164,50 @@ const getAllVideos = async (req: Request, res: Response) => {
   console.log("getting all videos...");
   try {
     const videos = await Video.find();
-    const authorIds = videos.map((video: any) => video.authorId.toString());
-    // console.log("authorIds: ", authorIds);
-    // get unique author ids
-    const uniqueAuthorIds = [...new Set(authorIds)];
-    // console.log("uniqueAuthorIds: ", uniqueAuthorIds);
+    const populatedVideos = await Promise.all(
+      videos.map(async (video: any) => {
+        const user = await User.findById(video.authorId);
+        return {
+          ...video._doc,
+          url: process.env.BASE_URL + video.url,
+          user: {
+            username: user.username,
+            profilePicture: user.profilePicture,
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          }
+        }
+      }
+    ));
+    res.status(200).json(populatedVideos);
+  } catch (error) {
+    res.status(500).json({ message: "Error getting videos" });
+  }
+};
 
-    // get authors
-    const authors = await User.find({ _id: { $in: uniqueAuthorIds } });
-
-    // create author map
-    const authorMap = authors.reduce((acc: any, author: any) => {
-      acc[author._id] = author;
-      return acc;
-    }, {});
-    const videoUrls = videos.map((video: any) => {
-      // console.log(process.env.BASE_URL);
-      // console.log(video.url);
-      // console.log(video);
-      return {
-        ...video._doc,
-        url: process.env.BASE_URL + video.url,
-        author:
-          authorMap[video.authorId].firstName +
-          " " +
-          authorMap[video.authorId].lastName,
-      };
-    });
-    // simulate slow network
-    // setTimeout(() => {
-    //   res.status(200).json(videoUrls);
-    // }, 1000);
-    res.status(200).json(videoUrls);
+const getVideosByUser = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  console.log(`getting videos by user ${userId}`);
+  try {
+    const videos = await Video.find({ authorId: userId });
+    const populatedVideos = await Promise.all(
+      videos.map(async (video: any) => {
+        const user = await User.findById(video.authorId);
+        return {
+          ...video._doc,
+          url: process.env.BASE_URL + video.url,
+          user: {
+            username: user.username,
+            profilePicture: user.profilePicture,
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          }
+        };
+      }
+    ));
+    res.status(200).json(populatedVideos);
   } catch (error) {
     res.status(500).json({ message: "Error getting videos" });
   }
@@ -211,27 +223,23 @@ const getVideoById = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Video not found" });
     }
 
-    const videoUrl = process.env.BASE_URL + video.url;
-    video.url = videoUrl;
     res.status(200).json({
       ...video._doc,
-      author: author.firstName + " " + author.lastName,
+      url: process.env.BASE_URL + video.url,
+      user: {
+        username: author.username,
+        profilePicture: author.profilePicture,
+        _id: author._id,
+        firstName: author.firstName,
+        lastName: author.lastName,
+      }
+      
     });
   } catch (error) {
     res.status(500).json({ message: "Error getting video" });
   }
 };
 
-const getVideosByUser = async (req: Request, res: Response) => {
-  console.log("getting videos by user...");
-  const { userId } = req.params;
-  try {
-    const videos = await Video.find({ author: userId });
-    res.status(200).json(videos);
-  } catch (error) {
-    res.status(500).json({ message: "Error getting videos" });
-  }
-};
 
 // access endpoint: POST /api/video/:id/like
 const likeVideo = async (req: AuthRequest, res: Response) => {

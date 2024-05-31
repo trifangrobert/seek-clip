@@ -10,6 +10,7 @@ import {
   Badge,
   Box,
   Button,
+  Grid,
   IconButton,
   TextField,
   Typography,
@@ -17,44 +18,74 @@ import {
 import DefaultProfilePicture from "../assets/default-profile-picture.png";
 import { useAuthContext } from "../context/AuthContext";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import { useTheme } from "../context/ThemeContext";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import VideoGrid from "../components/VideoGrid";
+import { validateEditProfileForm } from "../utils/Validation";
+import { useVideosByUser } from "../hooks/useVideosByUser";
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
+
+  const { username: urlUsername } = useParams<{ username: string }>();
   const { user, token, updateProfile } = useAuthContext();
+  const [userProfileInfo, setUserProfileInfo] = useState<UserProfile | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [profilePicture, setProfilePicture] = useState<string | undefined>(
+    DefaultProfilePicture
+  );
   const [formData, setFormData] = useState<EditUserProfile>({
-    email: "",
-    username: "",
     firstName: "",
     lastName: "",
     profilePicture: null,
   });
   const [formErrors, setFormErrors] = useState<EditUserProfileErrors>({});
 
-  const [profilePicture, setProfilePicture] = useState<string | undefined>(
-    DefaultProfilePicture
+  const { videos: userVideos, loading: videosLoading } = useVideosByUser(
+    userProfileInfo?._id!
   );
+
   useEffect(() => {
-    console.log("user: ", user);
-    if (user) {
-      console.log("user: ", user.profilePicture);
-      setProfilePicture(
-        process.env.REACT_APP_API_URL + "/" + user.profilePicture
-      );
+    const fetchUserData = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        if (!urlUsername) {
+          throw new Error("Username not specified in the URL");
+        }
+        const user = await getUserByUsername(urlUsername);
+        if (user) {
+          setProfilePicture(
+            user.profilePicture
+              ? `${process.env.REACT_APP_API_URL}/${user.profilePicture}`
+              : DefaultProfilePicture
+          );
+          setUserProfileInfo(user);
+          setFormData({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            profilePicture: null,
+          });
+        } else {
+          throw new Error("User not found");
+        }
+      } catch (error: any) {
+        console.error("Error fetching user data: ", error);
+        setError(error.message || "Failed to fetch user data");
+        toast.error("User not found");
+        navigate(`/profile/${user?.username}`, { replace: true });
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setFormData({
-        email: user.email,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        profilePicture: null,
-      });
-
-      setLoading(false);
-    }
-  }, [user]);
-
-  // console.log(profilePicture);
+    fetchUserData();
+  }, [urlUsername, navigate, user]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -78,197 +109,194 @@ const ProfilePage = () => {
   };
 
   const handleSave = async () => {
-    // Call API to update user profile: updateUserProfile
+    const validationErrors = validateEditProfileForm(formData);
+    setFormErrors(validationErrors);
+    console.log(validationErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
     try {
-      // Update user profile using updateUserProfile from useAuthContext
-      updateProfile(
-        formData.email,
-        formData.username,
+      await updateProfile(
+        user!.username,
         formData.firstName,
         formData.lastName,
         formData.profilePicture!
       );
-
-      // update only the modified fields in local storage
-      // const user = localStorage.getItem("user");
-      // const userObj = user ? JSON.parse(user) : null;
-      // if (userObj) {
-      //   userObj.email = email;
-      //   userObj.username = username;
-      //   userObj.firstName = firstName;
-      //   userObj.lastName = lastName;
-      //   localStorage.setItem("user", JSON.stringify(userObj));
-      // }
+      setEditMode(false);
+      // toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating user profile: ", error);
+      toast.error("Failed to update profile");
     }
-    setEditMode(false);
   };
 
   const handleCancel = () => {
     setEditMode(false);
-    if (user) {
+    if (userProfileInfo) {
       setFormData({
-        email: user.email,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: userProfileInfo.firstName,
+        lastName: userProfileInfo.lastName,
         profilePicture: null,
       });
+      setProfilePicture(
+        userProfileInfo.profilePicture
+          ? `${process.env.REACT_APP_API_URL}/${userProfileInfo.profilePicture}`
+          : DefaultProfilePicture
+      );
     }
+  };
+
+  const isOwner = user?.username === urlUsername;
+
+  if (loading) {
+    return <Typography>Loading user data...</Typography>;
   }
 
-  if (!user || loading)
-    return (
-      <Typography variant="h6" sx={{ p: 2 }}>
-        Loading user data...
-      </Typography>
-    );
+  if (error) {
+    return <Typography>{error}</Typography>;
+  }
+
+  if (!userProfileInfo) {
+    return <Typography>User not found</Typography>;
+  }
 
   return (
-    <Box sx={{ maxWidth: 500, mx: "auto", my: 4, marginTop: 10 }}>
-      <Box sx={{ mx: "auto", display: "flex", justifyContent: "center" }}>
-        {editMode ? (
-          <>
-            <input
-              accept="image/*"
-              style={{ display: "none" }}
-              id="raised-button-file"
-              type="file"
-              onChange={handleImageChange}
+    <Box sx={{ maxWidth: 1200, mx: "auto", my: 4, mt: 10 }}>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} sm={3}>
+          <Badge
+            overlap="circular"
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            badgeContent={
+              isOwner &&
+              editMode && (
+                <>
+                  <input
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    id="icon-button-file"
+                    type="file"
+                    onChange={handleImageChange}
+                  />
+                  <label htmlFor="icon-button-file">
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
+                    >
+                      <AddAPhotoIcon />
+                    </IconButton>
+                  </label>
+                </>
+              )
+            }
+          >
+            <Avatar
+              sx={{ width: 150, height: 150 }}
+              src={profilePicture}
+              alt={userProfileInfo.username}
             />
-            <label htmlFor="raised-button-file">
-              <Badge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                badgeContent={
-                  <IconButton
+          </Badge>
+        </Grid>
+        <Grid item xs={12} sm={9}>
+          <Grid container justifyContent="space-between" alignItems="center">
+            <Grid item>
+              {editMode ? (
+                <>
+                  <TextField
+                    label="First Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    name="firstName"
+                    value={formData.firstName}
+                    error={!!formErrors.firstName}
+                    helperText={formErrors.firstName}
+                    onChange={handleChange}
+                  />
+                  <TextField
+                    label="Last Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    error={!!formErrors.lastName}
+                    helperText={formErrors.lastName}
+                  />
+                </>
+              ) : (
+                <Box sx={{ ml: 2 }}>
+                  <Typography variant="h5" component="h1">
+                    {userProfileInfo.username}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: "text.secondary" }}>
+                    {userProfileInfo.firstName} {userProfileInfo.lastName}
+                  </Typography>
+                </Box>
+              )}
+            </Grid>
+            <Grid item sx={{ pr: 5 }}>
+              {isOwner &&
+                (editMode ? (
+                  <Box>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ marginRight: 1 }}
+                      onClick={handleSave}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </Button>
+                  </Box>
+                ) : (
+                  <Button
+                    variant="outlined"
                     color="primary"
-                    aria-label="upload picture"
-                    component="span"
-                    sx={{
-                      backgroundColor: "white",
-                      "&:hover": { backgroundColor: "#e0e0e0" },
-                    }}
+                    onClick={() => setEditMode(true)}
                   >
-                    <AddAPhotoIcon />
-                  </IconButton>
-                }
-              >
-                <Avatar
-                  sx={{ width: 100, height: 100 }}
-                  src={profilePicture}
-                  alt={formData.username}
-                />
-              </Badge>
-            </label>
-          </>
-        ) : (
-          <Avatar
-            sx={{ width: 100, height: 100 }}
-            src={profilePicture}
-            alt={formData.username}
-          />
-        )}
-      </Box>
-      <TextField
-        label="Username"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        name="username"
-        value={formData.username}
-        onChange={handleChange}
-        error={!!formErrors.username}
-        helperText={formErrors.username}
-        disabled={true}
-      />
-      <TextField
-        label="Email"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        disabled={!editMode}
-        error={!!formErrors.email}
-        helperText={formErrors.email}
-      />
-      <TextField
-        label="First Name"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        name="firstName"
-        value={formData.firstName}
-        onChange={handleChange}
-        disabled={!editMode}
-        error={!!formErrors.firstName}
-        helperText={formErrors.firstName}
-      />
-      <TextField
-        label="Last Name"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        name="lastName"
-        value={formData.lastName}
-        onChange={handleChange}
-        disabled={!editMode}
-        error={!!formErrors.lastName}
-        helperText={formErrors.lastName}
-      />
-      {editMode ? (
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 2 }}>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={handleSave}
-            sx={{
-              bgcolor: "primary.main",
-              ":hover": { bgcolor: "primary.dark" },
-              px: 3,
-              py: 1,
-              borderRadius: 2,
-            }}
-          >
-            Save Changes
-          </Button>
-          <Button
-            color="secondary"
-            variant="outlined"
-            onClick={() => handleCancel()}
-            sx={{
-              px: 3,
-              py: 1,
-              borderRadius: 2,
-            }}
-          >
-            Cancel
-          </Button>
-        </Box>
-      ) : (
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => setEditMode(true)}
-          sx={{
-            mt: 2,
-            bgcolor: "primary.main",
-            ":hover": {
-              bgcolor: "primary.dark",
-            },
-            px: 3,
-            py: 1,
-            borderRadius: 2,
-            display: "block",
-            margin: "auto",
-          }}
-        >
-          Edit Profile
-        </Button>
-      )}
+                    Edit
+                  </Button>
+                ))}
+              {!isOwner && (
+                <>
+                  <Button variant="contained" color="primary" sx={{ mr: 1 }}>
+                    Follow
+                  </Button>
+                  <Button variant="outlined" color="primary">
+                    Chat
+                  </Button>
+                </>
+              )}
+            </Grid>
+          </Grid>
+          <Grid container spacing={1} sx={{ ml: -3, marginTop: 1, textAlign: 'center', justifyContent: 'space-between'}}>
+            <Grid item xs={4}>
+              <Typography>10 posts</Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography>1000 followers</Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography>1000 following</Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
+        Videos by {userProfileInfo.username}
+      </Typography>
+      <Grid container spacing={2}>
+        <VideoGrid videos={userVideos} loading={videosLoading} />
+      </Grid>
     </Box>
   );
 };

@@ -5,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { CommentType } from "../models/CommentType";
 import { useComments } from "../context/CommentContext";
 import { useAuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 
 interface CommentProps {
@@ -13,6 +14,7 @@ interface CommentProps {
 }
 
 const Comment: React.FC<CommentProps> = ({ comment, depth = 0 }) => {
+  const navigate = useNavigate();
   const { addReply, updateComment, deleteComment } = useComments();
   const { user } = useAuthContext();
   const [replying, setReplying] = useState<boolean>(false);
@@ -45,11 +47,11 @@ const Comment: React.FC<CommentProps> = ({ comment, depth = 0 }) => {
   };
 
   const isOwner = user?._id === comment.userId._id;
-  console.log("comment: ", comment);
-  console.log("user: ", user);
-  console.log("comment.userId._id: ", comment.userId._id)
-  console.log("user.userId: ", user?._id)
-  console.log("isOwner: ", isOwner);
+  // console.log("comment: ", comment);
+  // console.log("user: ", user);
+  // console.log("comment.userId._id: ", comment.userId._id)
+  // console.log("user.userId: ", user?._id)
+  // console.log("isOwner: ", isOwner);
 
   return (
     <Box sx={{ marginLeft: `${depth * 20}px`, marginTop: "10px", paddingLeft: "10px", borderLeft: depth > 0 ? "2px solid #ccc" : "none" }}>
@@ -59,7 +61,7 @@ const Comment: React.FC<CommentProps> = ({ comment, depth = 0 }) => {
           src={process.env.REACT_APP_API_URL + "/" + comment.userId.profilePicture}
           sx={{ width: 30, height: 30 }}
         />
-        <Typography variant="subtitle2" sx={{ flexGrow: 1, fontWeight: "bold" }}>
+        <Typography variant="subtitle2" sx={{ maxWidth: "fit-content", flexGrow: 1, fontWeight: "bold", cursor: "pointer" }} onClick={() => navigate(`/profile/${comment.userId.username}`)}>
           {comment.userId.firstName} {comment.userId.lastName}
         </Typography>
         {!comment.isDeleted && isOwner && !editing && (
@@ -83,7 +85,7 @@ const Comment: React.FC<CommentProps> = ({ comment, depth = 0 }) => {
           <Button size="small" onClick={cancelEdit}>Cancel</Button>
         </Box>
       ) : (
-        <Typography variant="body2" sx={{ ml: 4 }}>{comment.content}</Typography>
+        <Typography variant="body2" sx={{ ml: 6 }}>{comment.content}</Typography>
       )}
       <Button size="small" onClick={() => setReplying(!replying)}>Reply</Button>
       {replying && (

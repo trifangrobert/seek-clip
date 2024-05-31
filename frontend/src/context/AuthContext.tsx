@@ -15,7 +15,7 @@ type UserContextType = {
   loginUser: (username: string, password: string) => void;
   logoutUser: () => void;
   isLoggedIn: () => boolean;
-  updateProfile: (email: string, username: string, firstName: string, lastName: string, profilePicture: File) => void;
+  updateProfile: (username: string, firstName: string, lastName: string, profilePicture: File) => void;
 };
 
 type Props = {
@@ -144,9 +144,9 @@ export const AuthProvider = ({ children }: Props) => {
     setToken(null);
   };
 
-  const updateProfile = async (email: string, username: string, firstName: string, lastName: string, profilePicture: File | null) => {
+  const updateProfile = async (username: string, firstName: string, lastName: string, profilePicture: File | null) => {
     try {
-      const response = await updateUserProfile(email, username, firstName, lastName, profilePicture);
+      const response = await updateUserProfile(username, firstName, lastName, profilePicture);
       console.log("this is the user:", response);
       // update only the modified fields in user state
       const updatedUser = {

@@ -95,16 +95,6 @@ export const validateEditVideoForm = (values: EditVideoFormValues): EditVideoFor
 export const validateEditProfileForm = (values: EditUserProfile): EditUserProfileErrors => {
   let errors: EditUserProfileErrors = {};
 
-  if (!values.email) {
-    errors.email = "Email is required";
-  } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-    errors.email = "Email address is invalid.";
-  }
-
-  if (!values.username) {
-    errors.username = "Username is required";
-  }
-
   if (!values.firstName) {
     errors.firstName = "First name is required";
   }

@@ -5,9 +5,13 @@ import { Video } from "../models/VideoType";
 
 interface VideoGridProps {
   videos: Video[];
+  loading?: boolean;
 }
 
-const VideoGrid: React.FC<VideoGridProps> = ({ videos }) => {
+const VideoGrid: React.FC<VideoGridProps> = ({ videos, loading }) => {
+    if (loading) {
+        return <p>Loading...</p>;
+    }
     const sortedVideos = videos.sort((a, b) => { return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime() });
 
     return (

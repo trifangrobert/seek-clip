@@ -8,7 +8,7 @@ interface VideoItemProps {
 }
 
 const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
-  // console.log("video from VideoItem: ", video);
+  console.log("video from VideoItem: ", video);
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/video/${video._id}`);
@@ -17,7 +17,18 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
   const topicColor = topicColorMap[video.topic.toLowerCase()] || "#222831";
 
   return (
-    <Card sx={{ maxWidth: 450, borderLeft: `6px solid ${topicColor}` }} onClick={handleClick}>
+    <Card
+      onClick={handleClick}
+      sx={{
+        maxWidth: 450,
+        borderLeft: `6px solid ${topicColor}`,
+        cursor: "pointer",
+        transition: "background-color 0.3s ease", // Smooth transition for background change
+        "&:hover": {
+          backgroundColor: "rgba(255, 255, 255, 0.8)", // Slightly transparent on hover
+        },
+      }}
+    >
       <Box
         sx={{
           width: "100%",
@@ -43,15 +54,20 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
         </video>
       </Box>
       <CardContent>
-        <Typography gutterBottom variant="h6" component="div" sx={{
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-        }}>
+        <Typography
+          gutterBottom
+          variant="h6"
+          component="div"
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
           {video.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {video.author}
+          {video.user.firstName + " " + video.user.lastName}
         </Typography>
       </CardContent>
     </Card>
