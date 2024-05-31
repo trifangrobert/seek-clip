@@ -8,7 +8,7 @@ interface VideoItemProps {
 }
 
 const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
-  console.log("video from VideoItem: ", video);
+  // console.log("video from VideoItem: ", video);
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/video/${video._id}`);

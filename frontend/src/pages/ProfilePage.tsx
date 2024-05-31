@@ -4,7 +4,7 @@ import {
   EditUserProfileErrors,
   UserProfile,
 } from "../models/UserType";
-import { getUserByUsername } from "../services/UserService";
+import { checkFollowing, getUserByUsername } from "../services/UserService";
 import {
   Avatar,
   Badge,
@@ -18,7 +18,6 @@ import {
 import DefaultProfilePicture from "../assets/default-profile-picture.png";
 import { useAuthContext } from "../context/AuthContext";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { useTheme } from "../context/ThemeContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import VideoGrid from "../components/VideoGrid";
@@ -46,9 +45,28 @@ const ProfilePage = () => {
   });
   const [formErrors, setFormErrors] = useState<EditUserProfileErrors>({});
 
+  const [following, setFollowing] = useState<boolean>(false);
+
   const { videos: userVideos, loading: videosLoading } = useVideosByUser(
     userProfileInfo?._id!
   );
+
+  useEffect(() => {
+    if (!userProfileInfo) {
+      return;
+    }
+    const fetchFollowing = async () => {
+      try {
+        const response = await checkFollowing(userProfileInfo._id);
+        setFollowing(response);
+        console.log("Following: ", response);
+      } catch (error) {
+        console.error("Error checking if user is following: ", error);
+      }
+    };
+
+    fetchFollowing();
+  }, [userProfileInfo]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -268,9 +286,15 @@ const ProfilePage = () => {
                 ))}
               {!isOwner && (
                 <>
-                  <Button variant="contained" color="primary" sx={{ mr: 1 }}>
-                    Follow
-                  </Button>
+                  {following ? (
+                    <Button variant="contained" color="primary" sx={{ mr: 1 }}>
+                      Unfollow
+                    </Button>
+                  ) : (
+                    <Button variant="contained" color="primary" sx={{ mr: 1 }}>
+                      Follow
+                    </Button>
+                  )}
                   <Button variant="outlined" color="primary">
                     Chat
                   </Button>
@@ -278,7 +302,16 @@ const ProfilePage = () => {
               )}
             </Grid>
           </Grid>
-          <Grid container spacing={1} sx={{ ml: -3, marginTop: 1, textAlign: 'center', justifyContent: 'space-between'}}>
+          <Grid
+            container
+            spacing={1}
+            sx={{
+              ml: -3,
+              marginTop: 1,
+              textAlign: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <Grid item xs={4}>
               <Typography>10 posts</Typography>
             </Grid>
