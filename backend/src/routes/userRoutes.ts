@@ -10,8 +10,8 @@ router.post("/isFollowing", authenticate, isFollowing);
 router.put("/update/:username", authenticate, imageUpload.single("profilePicture"), updateUserProfile);
 router.put("/follow", authenticate, followUser);
 router.put("/unfollow", authenticate, unfollowUser);
-router.get("/followers/:username", authenticate, getFollowers);
-router.get("/following/:username", authenticate, getFollowing);
+router.get("/followers/:username", getFollowers);
+router.get("/following/:username", getFollowing);
 router.post("/:username", getUserByUsername);
 
 export default router;

@@ -13,7 +13,6 @@ import VideoOwnerProtectedRoute from "./components/VideoOwnerProtectedRoute";
 import SearchedVideos from "./pages/SearchedVideos";
 import ProfilePage from "./pages/ProfilePage";
 import NotFoundPage from "./pages/NotFoundPage";
-import path from "path";
 
 function App() {
   const routes = [

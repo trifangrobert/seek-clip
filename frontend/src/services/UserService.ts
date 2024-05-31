@@ -62,14 +62,12 @@ export const checkFollowing = async (userId: string): Promise<boolean> => {
   try {
     // use fetch
     const token = localStorage.getItem("token");
-    
-    console.log("Checking following status for user: ", userId);
     const response = await fetch(userApi + "/isFollowing", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-      }, 
+      },
       body: JSON.stringify({ followId: userId }),
     });
     if (!response) {
@@ -79,59 +77,104 @@ export const checkFollowing = async (userId: string): Promise<boolean> => {
       throw new Error("Error checking following status");
     }
     const data = await response.json();
-    console.log("Data: ", data.following)
+    console.log("Data: ", data.following);
     return data.following;
   } catch (error) {
     console.log("Error checking following status: ", error);
     throw error;
   }
-}
+};
 
-export const getFollowers = async (username: string): Promise<UserProfile[]> => {
+export const getFollowers = async (
+  username: string
+): Promise<UserProfile[]> => {
+  // console.log("Getting followers for: ", username);
   try {
-    const token = localStorage.getItem("token");
-    const response = await fetch(userApi + `/followers/${username}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get(userApi + `/followers/${username}`);
     if (!response) {
       throw new Error("No response from server");
     }
     if (response.status !== 200) {
       throw new Error("Error fetching followers");
     }
-    const data = await response.json();
-    return data.followers;
+    const followers: UserProfile[] = response.data;
+    return followers;
   } catch (error) {
     console.log("Error fetching followers: ", error);
     throw error;
   }
-}
+};
 
-
-export const getFollowing = async (username: string): Promise<UserProfile[]> => {
+export const getFollowing = async (
+  username: string
+): Promise<UserProfile[]> => {
+  // console.log("Getting following for: ", username);
   try {
-    const token = localStorage.getItem("token");
-    const response = await fetch(userApi + `/following/${username}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get<UserProfile[]>(
+      userApi + `/following/${username}`
+    );
     if (!response) {
       throw new Error("No response from server");
     }
     if (response.status !== 200) {
       throw new Error("Error fetching following");
     }
-    const data = await response.json();
-    return data.following;
+    const following: UserProfile[] = response.data;
+    return following;
   } catch (error) {
     console.log("Error fetching following: ", error);
     throw error;
   }
-}
+};
+
+export const followUser = async (followId: string): Promise<boolean> => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.put(
+      userApi + "/follow",
+      { followId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response) {
+      throw new Error("No response from server");
+    }
+    if (response.status !== 200) {
+      throw new Error("Error following user");
+    }
+
+    return true;
+  } catch (error) {
+    console.log("Error following user: ", error);
+    throw error;
+  }
+};
+
+export const unfollowUser = async (unfollowId: string): Promise<boolean> => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.put(
+      userApi + "/unfollow",
+      { unfollowId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response) {
+      throw new Error("No response from server");
+    }
+    if (response.status !== 200) {
+      throw new Error("Error unfollowing user");
+    }
+
+    return true;
+  } catch (error) {
+    console.log("Error unfollowing user: ", error);
+    throw error;
+  }
+};

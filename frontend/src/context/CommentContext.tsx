@@ -69,8 +69,6 @@ const buildCommentTree = (comments: CommentType[]) => {
   return commentTree.sort((a, b) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
-
-  return commentTree;
 };
 
 export const CommentProvider: React.FC<{

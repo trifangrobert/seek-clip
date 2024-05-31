@@ -108,8 +108,8 @@ const followUser = async (req: any, res: any) => {
     }
 
     // follow the user
-    followedUser.followers.push(userId);
-    user.following.push(followId);
+    followedUser.followers.push(userId.toString());
+    user.following.push(followId.toString());
 
     // save the changes
     await followedUser.save();
@@ -125,6 +125,9 @@ const unfollowUser = async (req: any, res: any) => {
   console.log("Unfollowing user...");
   const { unfollowId } = req.body;
   const userId = req.userId;
+  
+  console.log("unfollowId: ", unfollowId);
+  console.log("userId: ", userId);
   try {
     const unfollowedUser = await User.findById(unfollowId);
     if (!unfollowedUser) {
@@ -136,14 +139,15 @@ const unfollowUser = async (req: any, res: any) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    console.log("all good so far");
     // check if the user is not following the user
     if (!user.following.includes(unfollowId)) {
       return res.status(400).json({ error: "User is not being followed" });
     }
 
     // unfollow the user
-    unfollowedUser.followers.pull(userId);
-    user.following.pull(unfollowId);
+    unfollowedUser.followers.pull(userId.toString());
+    user.following.pull(unfollowId.toString());
 
     // save the changes
     await unfollowedUser.save();
@@ -182,14 +186,38 @@ const isFollowing = async (req: any, res: any) => {
 const getFollowers = async (req: any, res: any) => {
   console.log("Getting user followers...");
   const { username } = req.params;
+  console.log("username: ", username);
   try {
     const user = await User.findOne({ username: username });
+    // console.log("searching followers for: ", user)
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
+    // console.log("user found: ", user)
     const followers = user.followers;
-    res.status(200).json({ followers });
+    console.log(`${username} is followed by: ${followers}`)
+
+    const followersProfile = await Promise.all(
+      followers.map((followerId: any) =>
+        User.findById(followerId)
+          .then((follower: any) => {
+            return {
+              email: follower.email,
+              username: follower.username,
+              firstName: follower.firstName,
+              lastName: follower.lastName,
+              _id: follower._id,
+              profilePicture: follower.profilePicture,
+            };
+          })
+          .catch((error: any) => {
+            console.log("Error fetching follower: ", error);
+            throw error;
+          })
+      )
+    );
+      
+    res.status(200).json(followersProfile);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
@@ -198,6 +226,7 @@ const getFollowers = async (req: any, res: any) => {
 const getFollowing = async (req: any, res: any) => {
   console.log("Getting user following...");
   const { username } = req.params;
+  console.log("username: ", username);
   try {
     const user = await User.findOne({ username: username });
     if (!user) {
@@ -205,7 +234,28 @@ const getFollowing = async (req: any, res: any) => {
     }
 
     const following = user.following;
-    res.status(200).json({ following });
+    console.log(`${username} is following: ${following}`)
+
+    const followingProfile = await Promise.all(
+      following.map((followingId: any) =>
+        User.findById(followingId)
+          .then((following: any) => {
+            return {
+              email: following.email,
+              username: following.username,
+              firstName: following.firstName,
+              lastName: following.lastName,
+              _id: following._id,
+              profilePicture: following.profilePicture,
+            };
+          })
+          .catch((error: any) => {
+            console.log("Error fetching following: ", error);
+            throw error;
+          })
+      )
+    );
+    res.status(200).json(followingProfile);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

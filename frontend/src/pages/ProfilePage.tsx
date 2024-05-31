@@ -4,7 +4,14 @@ import {
   EditUserProfileErrors,
   UserProfile,
 } from "../models/UserType";
-import { checkFollowing, getUserByUsername } from "../services/UserService";
+import {
+  checkFollowing,
+  getUserByUsername,
+  getFollowers,
+  getFollowing,
+  followUser,
+  unfollowUser,
+} from "../services/UserService";
 import {
   Avatar,
   Badge,
@@ -23,6 +30,7 @@ import { toast } from "react-toastify";
 import VideoGrid from "../components/VideoGrid";
 import { validateEditProfileForm } from "../utils/Validation";
 import { useVideosByUser } from "../hooks/useVideosByUser";
+import { formatNumber } from "../utils/FormatNumbers";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -46,6 +54,10 @@ const ProfilePage = () => {
   const [formErrors, setFormErrors] = useState<EditUserProfileErrors>({});
 
   const [following, setFollowing] = useState<boolean>(false);
+  const [numFollowers, setNumFollowers] = useState<number>(0);
+  const [stringNumFollowers, setStringNumFollowers] = useState<string>("");
+  const [numFollowing, setNumFollowing] = useState<number>(0);
+  const [stringNumFollowing, setStringNumFollowing] = useState<string>("");
 
   const { videos: userVideos, loading: videosLoading } = useVideosByUser(
     userProfileInfo?._id!
@@ -55,16 +67,40 @@ const ProfilePage = () => {
     if (!userProfileInfo) {
       return;
     }
-    const fetchFollowing = async () => {
+    const fetchIsFollowing = async () => {
       try {
         const response = await checkFollowing(userProfileInfo._id);
         setFollowing(response);
-        console.log("Following: ", response);
+        // console.log("Following: ", response);
       } catch (error) {
         console.error("Error checking if user is following: ", error);
       }
     };
 
+    const fetchFollowers = async () => {
+      try {
+        const followers = await getFollowers(userProfileInfo.username);
+        let value = formatNumber(followers.length);
+        setNumFollowers(followers.length);
+        setStringNumFollowers(value);
+      } catch (error) {
+        console.error("Error fetching followers: ", error);
+      }
+    };
+
+    const fetchFollowing = async () => {
+      try {
+        const following = await getFollowing(userProfileInfo.username);
+        let value = formatNumber(following.length);
+        setNumFollowing(following.length);
+        setStringNumFollowing(value);
+      } catch (error) {
+        console.error("Error fetching following: ", error);
+      }
+    };
+
+    fetchIsFollowing();
+    fetchFollowers();
     fetchFollowing();
   }, [userProfileInfo]);
 
@@ -161,6 +197,34 @@ const ProfilePage = () => {
           ? `${process.env.REACT_APP_API_URL}/${userProfileInfo.profilePicture}`
           : DefaultProfilePicture
       );
+    }
+  };
+
+  const handleFollow = async () => {
+    try {
+      const response = await followUser(userProfileInfo?._id!);
+      if (response) {
+        setFollowing(true);
+        setNumFollowers(numFollowers + 1);
+        let value = formatNumber(numFollowers + 1);
+        setStringNumFollowers(value);
+      }
+    } catch (error) {
+      console.error("Error following user: ", error);
+    }
+  };
+
+  const handleUnfollow = async () => {
+    try {
+      const response = await unfollowUser(userProfileInfo?._id!);
+      if (response) {
+        setFollowing(false);
+        setNumFollowers(numFollowers - 1);
+        let value = formatNumber(numFollowers - 1);
+        setStringNumFollowers(value);
+      }
+    } catch (error) {
+      console.error("Error unfollowing user: ", error);
     }
   };
 
@@ -287,11 +351,21 @@ const ProfilePage = () => {
               {!isOwner && (
                 <>
                   {following ? (
-                    <Button variant="contained" color="primary" sx={{ mr: 1 }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ mr: 1 }}
+                      onClick={() => handleUnfollow()}
+                    >
                       Unfollow
                     </Button>
                   ) : (
-                    <Button variant="contained" color="primary" sx={{ mr: 1 }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ mr: 1 }}
+                      onClick={() => handleFollow()}
+                    >
                       Follow
                     </Button>
                   )}
@@ -316,10 +390,10 @@ const ProfilePage = () => {
               <Typography>10 posts</Typography>
             </Grid>
             <Grid item xs={4}>
-              <Typography>1000 followers</Typography>
+              <Typography>{stringNumFollowers} followers</Typography>
             </Grid>
             <Grid item xs={4}>
-              <Typography>1000 following</Typography>
+              <Typography>{stringNumFollowing} following</Typography>
             </Grid>
           </Grid>
         </Grid>
