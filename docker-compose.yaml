@@ -20,6 +20,7 @@ services:
       - "5001:5001"
     depends_on:
       - mongodb
+      - elasticsearch
     working_dir: /app/src
     command: [ "python", "app.py" ]
     networks:
@@ -33,6 +34,7 @@ services:
       - "5003:5003"
     depends_on:
       - mongodb
+      - elasticsearch
     working_dir: /app/src
     command: [ "python", "app.py" ]
     networks:

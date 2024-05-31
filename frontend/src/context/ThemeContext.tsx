@@ -13,7 +13,12 @@ interface Props {
 }
 
 export const ThemeProvider: React.FC<Props> = ({ children }) => {
-    const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light');
+    const getInitialTheme = () => {
+        const savedTheme = localStorage.getItem('theme');
+        return savedTheme ? (savedTheme as 'light' | 'dark') : 'light';
+    }
+
+    const [themeMode, setThemeMode] = useState<'light' | 'dark'>(getInitialTheme);
 
     const theme: Theme = useMemo(() => {
         return createTheme({
@@ -25,6 +30,8 @@ export const ThemeProvider: React.FC<Props> = ({ children }) => {
 
     const toggleTheme = () => {
         setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+        const newTheme = themeMode === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
     }
 
     return (
