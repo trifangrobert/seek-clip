@@ -67,7 +67,7 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
           {video.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {video.author}
+          {video.user.firstName + " " + video.user.lastName}
         </Typography>
       </CardContent>
     </Card>

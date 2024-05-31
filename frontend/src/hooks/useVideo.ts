@@ -8,7 +8,11 @@ export const useVideo = (videoId: string) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!videoId) {
+      return;
+    }
     const fetchVideo = async (videoId: string) => {
+      setLoading(true);
       try {
         const fetchedVideo = await getVideoById(videoId);
         setVideo(fetchedVideo);
@@ -20,7 +24,7 @@ export const useVideo = (videoId: string) => {
       }
     };
     fetchVideo(videoId);
-  }, []);
+  }, [videoId]);
 
   return { video, loading, error };
 };

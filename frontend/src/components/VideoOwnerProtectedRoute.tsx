@@ -32,7 +32,7 @@ const VideoOwnerProtectedRoute: React.FC<VideoOwnerProtectedRouteProps> = ({elem
                 // const user = localStorage.getItem("user");
                 // const userId = user ? JSON.parse(user).userId : null;
 
-                if (video.authorId === userId) {
+                if (video.user._id === userId) {
                     setOwner(true);
                 }
             }

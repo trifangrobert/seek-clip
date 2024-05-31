@@ -25,6 +25,7 @@ import { DescriptionAccordion } from "../components/DescriptionAccordion";
 import { Comments } from "../components/Comments";
 import { CommentProvider } from "../context/CommentContext";
 import { useAuthContext } from "../context/AuthContext";
+import { Loading } from "../components/Loading";
 
 const VideoPage: React.FC = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const VideoPage: React.FC = () => {
     if (video) {
       setSubtitlesURL(process.env.REACT_APP_API_URL + "/" + video.subtitles);
       const userId = user?._id;
-      if (userId && video.authorId === userId) setShowEdit(true);
+      if (userId && video.user._id === userId) setShowEdit(true);
     }
   }, [video]);
 
@@ -110,6 +111,9 @@ const VideoPage: React.FC = () => {
   const topicColor =
     (video && topicColorMap[video.topic.toLowerCase()]) || "#757575";
 
+  if (loading || !video) {
+    return <Loading />;
+  }
   // console.log("video: ", video);
   return (
     <CommentProvider videoId={videoId}>
@@ -154,10 +158,7 @@ const VideoPage: React.FC = () => {
           />
         </Box>
         <CardContent>
-          <Stack
-            direction="column" // Changed to column to stack vertically
-            spacing={2} // Adds space between items in the stack
-          >
+          <Stack direction="column" spacing={2}>
             <Box
               sx={{
                 display: "flex",
@@ -177,7 +178,7 @@ const VideoPage: React.FC = () => {
                     startIcon={<EditIcon />}
                     onClick={goToEditPage}
                     size="small"
-                    sx={{ ml: 2, color: "inherit" }} // Ensured color inherits from theme
+                    sx={{ ml: 2, color: "inherit" }}
                   >
                     Edit
                   </Button>
@@ -201,7 +202,7 @@ const VideoPage: React.FC = () => {
             <Typography
               variant="subtitle1"
               color="text.secondary"
-              onClick={() => navigate(`/profile/${video?.authorUsername}`)}
+              onClick={() => navigate(`/profile/${video?.user.username}`)}
               sx={{
                 cursor: "pointer",
                 maxWidth: "fit-content",
@@ -212,7 +213,7 @@ const VideoPage: React.FC = () => {
                 },
               }}
             >
-              {video?.author || "Loading author..."}
+              {video.user.firstName + " " + video.user.lastName}
             </Typography>
             <DescriptionAccordion description={video?.description || ""} />
             <Comments videoId={videoId} />
