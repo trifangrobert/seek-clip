@@ -23,9 +23,9 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
         maxWidth: 450,
         borderLeft: `6px solid ${topicColor}`,
         cursor: "pointer",
-        transition: "background-color 0.3s ease", // Smooth transition for background change
+        transition: "background-color 0.3s ease",
         "&:hover": {
-          backgroundColor: "rgba(255, 255, 255, 0.8)", // Slightly transparent on hover
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
         },
       }}
     >
@@ -38,6 +38,8 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
         }}
       >
         <video
+          // src={`${video.url}#t=0.001`}
+          preload="metadata"
           width="100%"
           style={{
             position: "absolute",
@@ -49,7 +51,7 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
           }}
           // poster={video.thumbnail}
         >
-          <source src={video.url} type="video/mp4" />
+          <source src={`${video.url}#t=0.001`} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </Box>
