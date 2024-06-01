@@ -109,6 +109,7 @@ const VideoUploadForm = () => {
             helperText={formErrors.description}
           />
           <TextField
+            required
             fullWidth
             margin="normal"
             id="video"

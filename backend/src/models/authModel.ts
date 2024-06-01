@@ -45,6 +45,18 @@ const userSchema = new Schema(
       required: true,
       default: "profile-picture/default-profile-picture.png"
     },
+    followers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    following: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { collection: "users", timestamps: true }
 );

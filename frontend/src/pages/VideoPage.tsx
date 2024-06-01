@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -199,22 +200,30 @@ const VideoPage: React.FC = () => {
                 </Button>
               </Box>
             </Box>
-            <Typography
-              variant="subtitle1"
-              color="text.secondary"
-              onClick={() => navigate(`/profile/${video?.user.username}`)}
-              sx={{
-                cursor: "pointer",
-                maxWidth: "fit-content",
-                fontWeight: "bold",
-                transition: "color 0.3s ease",
-                "&:hover": {
-                  color: "#3f51b5",
-                },
-              }}
-            >
-              {video.user.firstName + " " + video.user.lastName}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Avatar
+                src={process.env.REACT_APP_API_URL + "/" + video.user.profilePicture}
+                alt={`${video.user.firstName} ${video.user.lastName}`}
+                sx={{ width: 35, height: 35 }} 
+              />
+              <Typography
+                variant="subtitle1"
+                color="text.secondary"
+                onClick={() => navigate(`/profile/${video.user.username}`)}
+                sx={{
+                  cursor: "pointer",
+                  maxWidth: "fit-content",
+                  fontWeight: "bold",
+                  ml: 1,
+                  transition: "color 0.3s ease",
+                  "&:hover": {
+                    color: "#3f51b5",
+                  },
+                }}
+              >
+                {video.user.firstName + " " + video.user.lastName}
+              </Typography>
+            </Box>
             <DescriptionAccordion description={video?.description || ""} />
             <Comments videoId={videoId} />
           </Stack>

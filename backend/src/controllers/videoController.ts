@@ -7,6 +7,7 @@ import { AuthRequest } from "../middleware/authenticate";
 import { getTranscription } from "../utils/transcription";
 import { getTopic } from "../utils/topic";
 import { promises as fs } from "fs";
+import path from "path";
 
 const uploadVideo = async (req: AuthRequest, res: Response) => {
   console.log("uploading video...");
@@ -22,7 +23,9 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   const title = req.body.title;
   const description = req.body.description;
   const authorId = req.userId;
-  const subtitles = "captions/" + url.split("/")[1].replace(".mp4", ".vtt");
+  const subtitlesDir = "captions/";
+  const subtitlesFilename = path.basename(url, path.extname(url)) + ".vtt";
+  const subtitles = path.join(subtitlesDir, subtitlesFilename);
 
   console.log("url: ", url);
   console.log("title: ", title);
@@ -135,7 +138,7 @@ const deleteVideo = async (req: AuthRequest, res: Response) => {
     }
 
     const videoPath = video.url;
-    const audioPath = videoPath.replace(".mp4", ".mp3");
+    const audioPath = path.basename(videoPath, path.extname(videoPath)) + ".mp3";
     const captionsPath = video.subtitles;
 
     try {

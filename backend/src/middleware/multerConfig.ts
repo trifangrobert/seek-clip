@@ -17,7 +17,8 @@ function storageConfig(folder: string) {
 const videoUpload = multer({
     storage: storageConfig("uploads/"),
     fileFilter: function(req, file, cb) {
-        checkFileType(file, cb, /mp4|avi|mov|mkv/);
+        // checkFileType(file, cb, /mp4|avi|mov|mkv/);
+        checkFileType(file, cb, /mp4|avi|mov|mkv|video\/mp4|video\/x-msvideo|video\/quicktime|video\/x-matroska/);
     }
 });
 
@@ -35,10 +36,14 @@ function checkFileType(file: Express.Multer.File, cb: multer.FileFilterCallback,
     const mimetype = filetypes.test(file.mimetype);
 
     console.log("From multerConfig.ts: ", file);
+    console.log("extname: ", extname);
+    console.log("mimetype: ", mimetype);
     if (extname && mimetype) {
         return cb(null, true);
-    } else {
-        cb(new Error(`Error: Only ${filetypes.toString()} files are allowed!`));
+    } else if (!extname) {
+        cb(new Error(`Error extname: Only ${filetypes.toString()} files are allowed! Found: ${path.extname(file.originalname).toLowerCase()}`));
+    } else if (!mimetype) {
+        cb(new Error(`Error mimetype: Only ${filetypes.toString()} files are allowed! Found: ${file.mimetype}`));
     }
 }
 

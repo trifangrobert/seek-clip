@@ -60,3 +60,10 @@ Machine Learning
     - hyperparameters
     - deploy to huggingface
 - (future work) recommendation system
+
+
+Updates:
+
+- added following system
+- the profile page is nicer, adjust the photos in docs
+- it now works for iphone

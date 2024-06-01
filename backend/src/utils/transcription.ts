@@ -21,7 +21,13 @@ export const getTranscription = async (video: any): Promise<string> => {
     // console.log("backend_asr_url: ", backend_asr_url);
     const formData = new FormData();
 
-    const audioPath = video.path.replace(".mp4", ".mp3");
+    const videoPath = video.path;
+    const audioExtension = ".mp3"; 
+    const audioPath = path.format({
+        dir: path.dirname(videoPath),
+        name: path.basename(videoPath, path.extname(videoPath)),
+        ext: audioExtension
+    });
 
     const audio = await extractAudio({
         input: video.path,
@@ -43,7 +49,7 @@ export const getTranscription = async (video: any): Promise<string> => {
     console.log("Response.data: ", response.data)
     const transcription = response.data.transcription;
     
-    const captionsFilename = audioPath.split("/")[1].replace(".mp3", ".vtt");
+    const captionsFilename = path.basename(audioPath, path.extname(audioPath)) + ".vtt";
     const captionsDir = path.join(__dirname, "../..", "captions");
 
     // console.log("captionsFilename: ", captionsFilename);
