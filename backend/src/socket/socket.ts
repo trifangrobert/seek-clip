@@ -22,6 +22,16 @@ export const setupSocket = (server: http.Server) => {
         userIdToSocketIdMap[userId] = socket.id;
         console.log(`User with ID ${userId} connected with socket ID ${socket.id}`);
 
+        console.log(`Checking for received messages while user was offline`);
+        Message.find({ receiverId: userId, delivered: false }).then((messages: any) => {
+            messages.forEach((message: any) => {
+                console.log(`Sending message to user with socket ID ${socket.id}`);
+                socket.emit("new-message", message);
+                message.delivered = true;
+                message.save();
+            });
+        });
+
         io.emit("onlineUsers", Object.keys(userIdToSocketIdMap));
 
         socket.on("send-message", async ({receiverId, message}) => {
@@ -46,24 +56,27 @@ export const setupSocket = (server: http.Server) => {
                     });
                 }
 
-                const newMessage = new Message({
+                let newMessage = new Message({
                     senderId: senderId,
                     receiverId: receiverId,
                     content: message,
+                    delivered: false,
                 });
 
-                conversation.messages.push(newMessage);
-
-                await Promise.all([newMessage.save(), conversation.save()]);
-
+                
                 const receiverSocket = userIdToSocketIdMap[receiverId];
                 console.log("receiverSocket: ", receiverSocket);
+
                 if (receiverSocket) {
-                    console.log(
-                        `Sending message to receiver with socket ID ${receiverSocket}`
-                    );
+                    console.log(`Sending message to receiver with socket ID ${receiverSocket}`);
+                    newMessage.delivered = true;
                     io.to(receiverSocket).emit("new-message", newMessage);
                 }
+                else {
+                    console.log("Receiver is offline, saving message to database");
+                }
+                conversation.messages.push(newMessage);
+                await Promise.all([newMessage.save(), conversation.save()]);                
 
 
             } catch (error) {

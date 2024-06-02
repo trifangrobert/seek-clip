@@ -22,6 +22,10 @@ const messageSchema = new Schema(
       type: String,
       required: true,
     },
+    delivered: {
+      type: Boolean,
+      default: false,
+    },
   },
   { collection: "messages", timestamps: true }
 );

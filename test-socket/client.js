@@ -3,14 +3,14 @@ const io = require('socket.io-client');
 // Command line arguments for user and token
 const userId = process.argv[2];
 const token = process.argv[3];
-const serverUrl = 'http://localhost:5000'; // or the appropriate URL
+const serverUrl = 'http://localhost:5000';
 
 const socket = io(serverUrl, {
     query: {
         "userId": userId
     },
     auth: {
-        token: token  // Assuming token-based authentication
+        token: token  
     },
     transports: ['websocket']
 });
@@ -37,7 +37,7 @@ readline.on('line', (line) => {
     const [command, receiverId, ...messageParts] = line.split(' ');
     if (command === 'send') {
         const message = messageParts.join(' ');
-        console.log(`Sending message to ${receiverId}: ${message}`);
+        console.log(`Message sent ${receiverId}: ${message}`);
         socket.emit('send-message', { receiverId, message });
     }
 });
