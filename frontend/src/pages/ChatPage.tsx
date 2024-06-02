@@ -7,6 +7,9 @@ import Chat from "../components/Chat";
 import { useAuthContext } from "../context/AuthContext";
 import { Loading } from "../components/Loading";
 import { MessageType } from "../models/MessageType";
+import { getMessages } from "../services/MessageService";
+import { getUserById } from "../services/UserService";
+import { UserProfile } from "../models/UserType";
 
 const ChatPage: React.FC = () => {
   const { receiverId } = useParams<{ receiverId: string }>();
@@ -15,6 +18,7 @@ const ChatPage: React.FC = () => {
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState<any>(null);
   const [conversations, setConversations] = useState<any>([]);
+  const [receiverDetails, setReceiverDetails] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     if (!user || !token) return;
@@ -27,7 +31,9 @@ const ChatPage: React.FC = () => {
     });
 
     newSocket.on("new-message", (message: any) => {
-      setMessages((prev: MessageType[]) => [...prev, message]);
+      if (message.senderId === receiverId) {
+        setMessages((prev: MessageType[]) => [...prev, message]);
+      }
     });
 
     setSocket(newSocket);
@@ -37,32 +43,32 @@ const ChatPage: React.FC = () => {
   }, [user, token]);
 
   useEffect(() => {
+    if (!user || !token || !receiverId) return;
     const fetchMessages = async () => {
-      if (!user || !token) return;
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/message/${receiverId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        const fetchedMessages = await getMessages(receiverId, token);
+        setMessages(
+          fetchedMessages.map((msg: MessageType) => ({
+            ...msg,
+            self: msg.senderId === user._id,
+          }))
         );
-        if (res.ok) {
-          const data = await res.json();
-          setMessages(
-            data.map((msg: MessageType) => ({
-              ...msg,
-              self: msg.senderId === user._id,
-            }))
-          );
-        }
       } catch (error) {
         console.error("Error fetching messages: ", error);
       }
     };
 
+    const fetchReceiverDetails = async () => {
+      try {
+        const fetchedReceiver = await getUserById(receiverId);
+        setReceiverDetails(fetchedReceiver);
+      } catch (error) {
+        console.error("Error fetching receiver details: ", error);
+      }
+    }
+
     fetchMessages();
+    fetchReceiverDetails();
   }, [receiverId, token, user]);
 
   // Placeholder for fetching other conversations
@@ -74,7 +80,7 @@ const ChatPage: React.FC = () => {
     ]); // Example conversation
   }, []);
 
-  if (!user || !token || !receiverId) {
+  if (!user || !token || !receiverId || !receiverDetails || !socket) {
     return <Loading />;
   }
 
@@ -112,6 +118,8 @@ const ChatPage: React.FC = () => {
         sendMessage={sendMessage}
         newMessage={newMessage}
         setNewMessage={setNewMessage}
+        user={user}
+        receiver={receiverDetails}
       />
     </Box>
   );
