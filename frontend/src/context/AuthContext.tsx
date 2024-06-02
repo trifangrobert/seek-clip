@@ -6,11 +6,13 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React from "react";
 import { updateUserProfile } from "../services/UserService";
+import { Socket, io } from "socket.io-client";
 
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
   loading: boolean;
+  socket: Socket | null;
   registerUser: (email: string, username: string, password: string, firstName: string, lastName: string, profilePicture: File) => void;
   loginUser: (username: string, password: string) => void;
   logoutUser: () => void;
@@ -29,7 +31,17 @@ const AuthContext = createContext<UserContextType>(
 export const AuthProvider = ({ children }: Props) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const initSocketConnection = (token: string) => {
+    const newSocket = io(process.env.REACT_APP_API_URL || "http://localhost:5000", {
+      query: { token },
+      transports: ["websocket"],
+    });
+    setSocket(newSocket);
+    // console.log(`User token ${token} is connected to socket.`);
+  }
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -38,6 +50,7 @@ export const AuthProvider = ({ children }: Props) => {
       setUser(JSON.parse(user));
       setToken(token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      initSocketConnection(token);
     }
     setLoading(false);
   }, []);
@@ -59,6 +72,7 @@ export const AuthProvider = ({ children }: Props) => {
           localStorage.setItem("user", JSON.stringify(userObj));
           setToken(res?.data.token!);
           setUser(userObj);
+          initSocketConnection(res?.data.token!);
           toast.success('User registered successfully!', {
             position: "bottom-center",
             autoClose: 2000,
@@ -106,6 +120,7 @@ export const AuthProvider = ({ children }: Props) => {
           console.log("this is the token:", res?.data.token);
           setToken(res?.data.token!);
           setUser(userObj);
+          initSocketConnection(res?.data.token!);
           toast.success('User logged in successfully!', {
             position: "bottom-center",
             autoClose: 2000,
@@ -138,10 +153,14 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   const logoutUser = () => {
+    if (socket) {
+      socket.disconnect();
+    }
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setUser(null);
     setToken(null);
+    setSocket(null);
   };
 
   const updateProfile = async (username: string, firstName: string, lastName: string, profilePicture: File | null) => {
@@ -179,7 +198,7 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, registerUser, loginUser, logoutUser, isLoggedIn, updateProfile }}>
+    <AuthContext.Provider value={{ user, token, socket, loading, registerUser, loginUser, logoutUser, isLoggedIn, updateProfile }}>
       {children}  
     </AuthContext.Provider>
   )

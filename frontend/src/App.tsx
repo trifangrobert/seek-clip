@@ -78,6 +78,12 @@ function App() {
       isVideoOwnerProtected: false,
     },
     {
+      path: "/chat",
+      element: <ChatPage />,
+      isUserProtected: true,
+      isVideoOwnerProtected: false,
+    },
+    {
       path: "*",
       element: <NotFoundPage />,
       isUserProtected: false,

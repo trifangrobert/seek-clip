@@ -2,6 +2,7 @@ import { Server as SocketIOServer, Socket } from "socket.io";
 import http from "http";
 const Conversation = require("../models/conversationModel");
 const Message = require("../models/messageModel");
+import jwt from "jsonwebtoken";
 
 const userIdToSocketIdMap: Record<string, string> = {};
 
@@ -13,6 +14,26 @@ export const setupSocket = (server: http.Server) => {
             origin: "*",
             methods: ["GET", "POST"],
         },
+    });
+
+    // this is a middleware that checks JWT before allowing a connection
+    io.use((socket, next) => {
+        let token = socket.handshake.query.token as string;
+        if (token?.startsWith('"') && token?.endsWith('"')) {
+            token = token.slice(1, -1);
+        }
+        console.log("Socket token check", token);
+        if (!token) {
+            return next(new Error("Authentication error: Token not provided"));
+        }
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+            socket.handshake.query.userId = (decoded as any)._id;
+            next();
+        } catch (error) {
+            console.log("Socket authentication error:", error);
+            return next(new Error("Authentication error: Invalid token"));
+        }
     });
 
     io.on("connection", (socket) => {
@@ -32,7 +53,12 @@ export const setupSocket = (server: http.Server) => {
             });
         });
 
-        io.emit("onlineUsers", Object.keys(userIdToSocketIdMap));
+        socket.on("request-online-users", () => {
+            console.log("Request for online users");
+            socket.emit("online-users", Object.keys(userIdToSocketIdMap));
+        });
+
+        io.emit("online-users", Object.keys(userIdToSocketIdMap));
 
         socket.on("send-message", async ({receiverId, message}) => {
             const senderId = socket.handshake.query.userId as string;
@@ -89,7 +115,7 @@ export const setupSocket = (server: http.Server) => {
         socket.on("disconnect", () => {
             console.log(`User with ID ${userId} disconnected`);
             delete userIdToSocketIdMap[userId];
-            io.emit("onlineUsers", Object.keys(userIdToSocketIdMap));
+            io.emit("online-users", Object.keys(userIdToSocketIdMap));
         });
     });
 

@@ -18,6 +18,7 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import { MessageType } from "../models/MessageType";
 import { UserProfile } from "../models/UserType";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   messages: MessageType[];
@@ -36,6 +37,7 @@ const Chat: React.FC<Props> = ({
   user,
   receiver,
 }) => {
+  const navigate = useNavigate();
   const bottomListRef = useRef<HTMLLIElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -57,8 +59,15 @@ const Chat: React.FC<Props> = ({
   const receiverProfilePicture = `${process.env.REACT_APP_API_URL}/${receiver.profilePicture}`;
 
   return (
-    <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-      <AppBar position="static" color="default">
+    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
+      <AppBar
+        position="static"
+        color="default"
+        onClick={() =>
+          navigate(`/profile/${receiver.username}`, { replace: true })
+        }
+        sx={{ cursor: "pointer" }}
+      >
         <Toolbar>
           <Avatar src={receiverProfilePicture} sx={{ marginRight: 2 }} />
           <Typography variant="h6" color="inherit">

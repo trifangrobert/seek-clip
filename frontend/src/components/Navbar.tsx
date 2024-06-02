@@ -55,6 +55,10 @@ const Navbar = () => {
         </IconButton>
         {user ? (
           <>
+            <Typography onClick={() => navigate("/chat")} variant="h6" component="div" sx={{ mr: 3, cursor: "pointer" }}>
+              Chat
+            </Typography>
+
             <Avatar
               src={userProfilePicUrl}
               alt={`${user.firstName} ${user.lastName}`}
