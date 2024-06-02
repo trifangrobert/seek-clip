@@ -1,4 +1,5 @@
 import { profile } from "console";
+import { Request, Response } from "express";
 
 const User = require("../models/authModel");
 const fs = require("fs");
@@ -21,6 +22,25 @@ const getUserByUsername = async (req: any, res: any) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+const getUserById = async (req: Request, res: Response) => {
+  console.log("Getting user by id...");
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id);
+    console.log("this is the user:", user);
+    res.status(200).json({
+      email: user["email"],
+      username: user["username"],
+      firstName: user["firstName"],
+      lastName: user["lastName"],
+      _id: user["_id"],
+      profilePicture: user["profilePicture"],
+    });
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+}
 
 interface UpdateUserProfile {
   username: string;
@@ -261,4 +281,4 @@ const getFollowing = async (req: any, res: any) => {
   }
 };
 
-export { getUserByUsername, updateUserProfile, followUser, unfollowUser, isFollowing, getFollowers, getFollowing };
+export { getUserByUsername, updateUserProfile, followUser, unfollowUser, isFollowing, getFollowers, getFollowing, getUserById };

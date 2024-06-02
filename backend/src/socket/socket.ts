@@ -70,7 +70,8 @@ export const setupSocket = (server: http.Server) => {
                 if (receiverSocket) {
                     console.log(`Message sent to receiver with socket ID ${receiverSocket}`);
                     newMessage.delivered = true;
-                    io.to(receiverSocket).emit("new-message", newMessage);
+                    // include the senderId, receiverId, and content in the message object
+                    io.to(receiverSocket).emit("new-message", { senderId, receiverId, content: message });
                 }
                 else {
                     console.log("Receiver is offline, saving message to database");
