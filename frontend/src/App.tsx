@@ -13,6 +13,7 @@ import VideoOwnerProtectedRoute from "./components/VideoOwnerProtectedRoute";
 import SearchedVideos from "./pages/SearchedVideos";
 import ProfilePage from "./pages/ProfilePage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ChatPage from "./pages/ChatPage";
 
 function App() {
   const routes = [
@@ -67,6 +68,12 @@ function App() {
     {
       path: "/search/:searchTerm",
       element: <SearchedVideos />,
+      isUserProtected: true,
+      isVideoOwnerProtected: false,
+    },
+    {
+      path: "/chat/:receiverId",
+      element: <ChatPage />,
       isUserProtected: true,
       isVideoOwnerProtected: false,
     },

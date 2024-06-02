@@ -68,7 +68,7 @@ export const setupSocket = (server: http.Server) => {
                 console.log("receiverSocket: ", receiverSocket);
 
                 if (receiverSocket) {
-                    console.log(`Sending message to receiver with socket ID ${receiverSocket}`);
+                    console.log(`Message sent to receiver with socket ID ${receiverSocket}`);
                     newMessage.delivered = true;
                     io.to(receiverSocket).emit("new-message", newMessage);
                 }
