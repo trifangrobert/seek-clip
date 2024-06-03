@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { List, ListItem, ListItemText, Avatar, Box, Badge } from "@mui/material";
+import { List, ListItem, ListItemText, Avatar, Box, Badge, Typography } from "@mui/material";
 import { getUserById } from "../services/UserService";
 import { useNavigate } from "react-router-dom";
 
@@ -47,6 +47,7 @@ const SideActiveUsers: React.FC<Props> = ({ activeUserIds, offlineFollowedIds })
 
   return (
     <Box sx={{ padding: 2 }}>
+      <Typography variant="h6">Active Users</Typography>
       <List>
         {users.map((user) => (
           <ListItem key={user._id} onClick={() => navigate(`/chat/${user._id}`, { replace: true })} button>
