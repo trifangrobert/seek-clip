@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Hidden, Typography } from "@mui/material";
+import { Box, Hidden, SwipeableDrawer, Typography } from "@mui/material";
 import SideActiveUsers from "../components/SideActiveUsers";
 import Chat from "../components/Chat";
 import { useAuthContext } from "../context/AuthContext";
@@ -24,6 +24,7 @@ const ChatPage: React.FC = () => {
   );
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
   const [following, setFollowing] = useState<UserProfile[]>([]);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!user || !token || !socket) return;
@@ -31,13 +32,19 @@ const ChatPage: React.FC = () => {
     socket.emit("request-online-users");
 
     socket.on("new-message", (message: any) => {
-      if (message.senderId === receiverId) {
+      console.log("Received new message: ", message);
+      console.log(`message.senderId: ${message.senderId}`);
+      console.log(`receiverId: ${receiverId}`);
+      console.log(`user._id: ${user._id}`);
+      if (message.senderId === receiverId && message.senderId !== user._id) {
         setMessages((prev: MessageType[]) => [...prev, message]);
       }
     });
 
     socket.on("online-users", (onlineUsers: string[]) => {
       console.log("Online users: ", onlineUsers);
+      // filter out the current user from the list of online users
+      onlineUsers = onlineUsers.filter((id) => id !== user._id);
       setActiveUsers(onlineUsers);
     });
 
@@ -52,6 +59,9 @@ const ChatPage: React.FC = () => {
     const fetchMessages = async () => {
       try {
         if (!receiverId) return;
+        if (receiverId === user._id) {
+          throw new Error("Cannot chat with yourself!");
+        }
         const fetchedMessages = await getMessages(receiverId, token);
         if (!fetchedMessages) throw new Error("No messages found");
         setMessages(
@@ -61,9 +71,13 @@ const ChatPage: React.FC = () => {
           }))
         );
         setError(null);
-      } catch (error) {
+      } catch (error: any) {
         // console.error("Error fetching messages: ", error);
-        setError("Could not fetch messages!");
+        if (error.response?.status >= 400 && error.response?.status < 500) {
+          setError("User not found");
+        } else {
+          setError(error.message);
+        }
         setMessages([]);
       }
     };
@@ -71,13 +85,20 @@ const ChatPage: React.FC = () => {
     const fetchReceiverDetails = async () => {
       try {
         if (!receiverId) return;
+        if (receiverId === user._id) {
+          throw new Error("Cannot chat with yourself!");
+        }
         const fetchedReceiver = await getUserById(receiverId);
         if (!fetchedReceiver) throw new Error("Receiver not found");
         setReceiverDetails(fetchedReceiver);
         setError(null);
-      } catch (error) {
+      } catch (error: any) {
         // console.error("Error fetching receiver details: ", error);
-        setError("Could not find user!");
+        if (error.response?.status >= 400 && error.response?.status < 500) {
+          setError("User not found");
+        } else {
+          setError(error.message);
+        }
         setReceiverDetails(null);
       }
     };
@@ -124,12 +145,34 @@ const ChatPage: React.FC = () => {
     }
   };
 
-  const borderColor = theme.currentTheme === 'dark' ? "#424242" : "#e0e0e0";
+  const borderColor = theme.currentTheme === "dark" ? "#424242" : "#e0e0e0";
 
   return (
     <Box sx={{ display: "flex", height: "90vh", overflow: "hidden" }}>
+      <SwipeableDrawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onOpen={() => setDrawerOpen(true)}
+        sx={{
+          display: { xs: "block", sm: "none" },
+          "& .MuiDrawer-paper": { boxSizing: "border-box", width: 240 },
+        }}
+      >
+        <SideActiveUsers
+          activeUserIds={activeUsers}
+          offlineFollowedIds={offlineFollowed}
+        />
+      </SwipeableDrawer>
+
       <Hidden smDown>
-        <Box sx={{ width: "25%", overflowY: "auto", borderRight: `1px solid ${borderColor}` }}>
+        <Box
+          sx={{
+            width: "25%",
+            overflowY: "auto",
+            borderRight: `1px solid ${borderColor}`,
+          }}
+        >
           <SideActiveUsers
             activeUserIds={activeUsers}
             offlineFollowedIds={offlineFollowed}

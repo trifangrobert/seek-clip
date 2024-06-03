@@ -3,7 +3,6 @@ import {
   Box,
   List,
   ListItem,
-  ListItemText,
   Typography,
   Paper,
   TextField,
@@ -12,8 +11,6 @@ import {
   AppBar,
   Toolbar,
   Avatar,
-  ListItemAvatar,
-  Grid,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { MessageType } from "../models/MessageType";
@@ -59,7 +56,9 @@ const Chat: React.FC<Props> = ({
   const receiverProfilePicture = `${process.env.REACT_APP_API_URL}/${receiver.profilePicture}`;
 
   return (
-    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
+    <Box
+      sx={{ flex: 1, display: "flex", flexDirection: "column", height: "100%" }}
+    >
       <AppBar
         position="static"
         color="default"
@@ -82,33 +81,36 @@ const Chat: React.FC<Props> = ({
             alignItems="flex-start"
             ref={index === messages.length - 1 ? bottomListRef : null}
             sx={{
-              flexDirection: msg.self ? "row-reverse" : "row",
-              textAlign: msg.self ? "right" : "left",
+              justifyContent: msg.self ? "flex-end" : "flex-start", // Position the entire block on the right or left
+              width: "100%", // Ensures full width to allow proper alignment
+              marginBottom: "10px", // Spacing between messages
             }}
           >
-            <ListItemAvatar sx={{ marginLeft: msg.self ? 2 : 0 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: msg.self ? "row-reverse" : "row", // Reverse the order for the sender
+                alignItems: "center",
+              }}
+            >
               <Avatar
                 src={msg.self ? userProfilePicture : receiverProfilePicture}
+                sx={{ mx: 1 }} // Adds margin to create space between the avatar and the message
               />
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                <Typography
-                  component="span"
-                  variant="body2"
-                  sx={{
-                    display: "inline",
-                    backgroundColor: msg.self ? "#e0f7fa" : "#fff9c4",
-                    borderRadius: "10px",
-                    padding: "5px 10px",
-                    color: "black",
-                  }}
-                >
+              <Box
+                sx={{
+                  backgroundColor: msg.self ? "#e0f7fa" : "#fff9c4",
+                  borderRadius: "15px",
+                  padding: "10px 15px",
+                  maxWidth: "80%",
+                  wordWrap: "break-word",
+                }}
+              >
+                <Typography variant="body2" color="black">
                   {msg.content}
                 </Typography>
-              }
-              secondary={msg.self ? user.firstName : receiver.firstName}
-            />
+              </Box>
+            </Box>
           </ListItem>
         ))}
       </List>

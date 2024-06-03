@@ -44,7 +44,7 @@ export const setupSocket = (server: http.Server) => {
         console.log(`User with ID ${userId} connected with socket ID ${socket.id}`);
 
         console.log(`Checking for received messages while user was offline`);
-        Message.find({ receiverId: userId, delivered: false }).then((messages: any) => {
+        Message.find({ receiverId: userId, senderId: { $ne: userId }, delivered: false }).then((messages: any) => {
             messages.forEach((message: any) => {
                 console.log(`Sending message to user with socket ID ${socket.id}`);
                 socket.emit("new-message", message);
@@ -61,6 +61,7 @@ export const setupSocket = (server: http.Server) => {
         io.emit("online-users", Object.keys(userIdToSocketIdMap));
 
         socket.on("send-message", async ({receiverId, message}) => {
+            console.log("Received message from client");
             const senderId = socket.handshake.query.userId as string;
             console.log("senderId: ", senderId);
             console.log("receiverId: ", receiverId);
@@ -94,9 +95,10 @@ export const setupSocket = (server: http.Server) => {
                 console.log("receiverSocket: ", receiverSocket);
 
                 if (receiverSocket) {
-                    console.log(`Message sent to receiver with socket ID ${receiverSocket}`);
+                    // console.log(`Message sent to receiver with socket ID ${receiverSocket}`);
                     newMessage.delivered = true;
                     // include the senderId, receiverId, and content in the message object
+                    console.log(`Message sent from ${senderId} to ${receiverId}: ${message} on socket ID ${receiverSocket}`)
                     io.to(receiverSocket).emit("new-message", { senderId, receiverId, content: message });
                 }
                 else {

@@ -60,9 +60,12 @@ export const getMessages = async (req: AuthRequest, res: Response) => {
   const { id: receiverId } = req.params;
   const senderId = req.userId;
 
+  console.log(
+    `Getting conversation between: senderId: ${senderId} and receiverId: ${receiverId}`
+  );
   try {
     let conversation = await Conversation.findOne({
-      members: { $all: [senderId, receiverId] },
+      members: { $all: [senderId, receiverId], $size: 2 },
     }).populate("messages");
 
     if (!conversation) {
