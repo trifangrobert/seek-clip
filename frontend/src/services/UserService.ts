@@ -7,7 +7,7 @@ export const getUserByUsername = async (
   username: string
 ): Promise<UserProfile> => {
   try {
-    const response = await axios.post<UserProfile>(userApi + `/${username}`);
+    const response = await axios.post<UserProfile>(userApi + `/username/${username}`);
     if (!response) {
       throw new Error("No response from server");
     }
@@ -21,6 +21,23 @@ export const getUserByUsername = async (
     throw error;
   }
 };
+
+export const getUserById = async (userId: string): Promise<UserProfile> => {
+  try {
+    const response = await axios.get<UserProfile>(userApi + `/id/${userId}`);
+    if (!response) {
+      throw new Error("No response from server");
+    }
+    if (response.status !== 200) {
+      throw new Error("Error fetching user");
+    }
+    const user: UserProfile = response.data;
+    return user;
+  } catch (error) {
+    console.log("Error fetching user: ", error);
+    throw error;
+  }
+}
 
 export const updateUserProfile = async (
   username: string,

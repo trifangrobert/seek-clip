@@ -216,7 +216,10 @@ const ProfilePage = () => {
 
   const handleUnfollow = async () => {
     try {
-      const response = await unfollowUser(userProfileInfo?._id!);
+      if (!userProfileInfo) {
+        return;
+      }
+      const response = await unfollowUser(userProfileInfo._id);
       if (response) {
         setFollowing(false);
         setNumFollowers(numFollowers - 1);
@@ -227,6 +230,13 @@ const ProfilePage = () => {
       console.error("Error unfollowing user: ", error);
     }
   };
+
+  const handleChat = () => {
+    if (!userProfileInfo) {
+      return;
+    }
+    navigate(`/chat/${userProfileInfo._id}`);
+  }
 
   const isOwner = user?.username === urlUsername;
 
@@ -369,7 +379,7 @@ const ProfilePage = () => {
                       Follow
                     </Button>
                   )}
-                  <Button variant="outlined" color="primary">
+                  <Button variant="outlined" color="primary" onClick={handleChat}>
                     Chat
                   </Button>
                 </>

@@ -1,5 +1,5 @@
 import express from "express";
-import { getUserByUsername, updateUserProfile, followUser, unfollowUser, isFollowing, getFollowers, getFollowing } from "../controllers/userController";
+import { getUserByUsername, updateUserProfile, followUser, unfollowUser, isFollowing, getFollowers, getFollowing, getUserById } from "../controllers/userController";
 import authenticate from "../middleware/authenticate";
 
 const { imageUpload } = require("../middleware/multerConfig");
@@ -12,6 +12,7 @@ router.put("/follow", authenticate, followUser);
 router.put("/unfollow", authenticate, unfollowUser);
 router.get("/followers/:username", getFollowers);
 router.get("/following/:username", getFollowing);
-router.post("/:username", getUserByUsername);
+router.post("/username/:username", getUserByUsername);
+router.get("/id/:id", getUserById);
 
 export default router;
