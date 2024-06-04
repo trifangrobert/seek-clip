@@ -41,6 +41,19 @@ services:
       mynet:
         ipv4_address: 172.28.1.6
 
+  backend-qa:
+      build: ./backend-qa
+      container_name: qa-server
+      ports:
+        - "5004:5004"
+      depends_on:
+        - mongodb
+      working_dir: /app/src
+      command: [ "python", "app.py" ]
+      networks:
+        mynet:
+          ipv4_address: 172.28.1.9
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
     container_name: bt-elasticsearch
