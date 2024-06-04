@@ -54,7 +54,7 @@ export const setupSocket = (server: http.Server) => {
         });
 
         socket.on("request-online-users", () => {
-            console.log("Request for online users");
+            console.log(`Request for online users: ${Object.keys(userIdToSocketIdMap)}`);
             socket.emit("online-users", Object.keys(userIdToSocketIdMap));
         });
 

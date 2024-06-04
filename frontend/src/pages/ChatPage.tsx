@@ -27,9 +27,24 @@ const ChatPage: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!user || !token || !socket) return;
-
+    if (!socket) return;
+    console.log("Requesting online users...");
     socket.emit("request-online-users");
+
+    socket.on("online-users", (onlineUsers: string[]) => {
+      console.log("Online users: ", onlineUsers);
+      // filter out the current user from the list of online users
+      onlineUsers = onlineUsers.filter((id) => id !== user?._id);
+      setActiveUsers(onlineUsers);
+    });
+
+    return () => {
+      socket.off("online-users");
+    }
+  }, [socket, user]);
+
+  useEffect(() => {
+    if (!user || !token || !socket || !receiverId) return;
 
     socket.on("new-message", (message: any) => {
       console.log("Received new message: ", message);
@@ -41,18 +56,12 @@ const ChatPage: React.FC = () => {
       }
     });
 
-    socket.on("online-users", (onlineUsers: string[]) => {
-      console.log("Online users: ", onlineUsers);
-      // filter out the current user from the list of online users
-      onlineUsers = onlineUsers.filter((id) => id !== user._id);
-      setActiveUsers(onlineUsers);
-    });
 
     return () => {
       socket.off("new-message");
       socket.off("online-users");
     };
-  }, [user, token, socket]);
+  }, [user, token, socket, receiverId]);
 
   useEffect(() => {
     if (!user || !token) return;
