@@ -31,6 +31,7 @@ import VideoGrid from "../components/VideoGrid";
 import { validateEditProfileForm } from "../utils/Validation";
 import { useVideosByUser } from "../hooks/useVideosByUser";
 import { formatNumber } from "../utils/FormatNumbers";
+import StarIcon from "@mui/icons-material/Star";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -236,7 +237,7 @@ const ProfilePage = () => {
       return;
     }
     navigate(`/chat/${userProfileInfo._id}`);
-  }
+  };
 
   const isOwner = user?.username === urlUsername;
 
@@ -251,6 +252,8 @@ const ProfilePage = () => {
   if (!userProfileInfo) {
     return <Typography>User not found</Typography>;
   }
+
+  console.log("User profile info: ", userProfileInfo);
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", my: 4, mt: 10 }}>
@@ -322,6 +325,9 @@ const ProfilePage = () => {
                 <Box sx={{ ml: 2 }}>
                   <Typography variant="h5" component="h1">
                     {userProfileInfo.username}
+                    {userProfileInfo.premium && (
+                      <StarIcon color="primary" sx={{ ml: 1.5 }} />
+                    )}
                   </Typography>
                   <Typography variant="body1" sx={{ color: "text.secondary" }}>
                     {userProfileInfo.firstName} {userProfileInfo.lastName}
@@ -379,7 +385,11 @@ const ProfilePage = () => {
                       Follow
                     </Button>
                   )}
-                  <Button variant="outlined" color="primary" onClick={handleChat}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={handleChat}
+                  >
                     Chat
                   </Button>
                 </>

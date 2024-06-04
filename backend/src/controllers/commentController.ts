@@ -5,8 +5,10 @@ const Video = require("../models/videoModel");
 import { Request, Response } from "express";
 import { AuthRequest } from "../middleware/authenticate";
 
+import { craftPopulateUser } from "../utils/craftQuery";
+
 const addComment = async (req: AuthRequest, res: Response) => {
-    console.log("req.body: ", req.body)
+  // console.log("req.body: ", req.body)
   const { videoId, content } = req.body;
   const userId = req.userId;
   try {
@@ -15,7 +17,7 @@ const addComment = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    console.log("videoId: ", videoId);
+    // console.log("videoId: ", videoId);
     const video = await Video.findById(videoId);
     if (!video) {
       return res.status(404).json({ error: "Video not found" });
@@ -35,9 +37,12 @@ const addComment = async (req: AuthRequest, res: Response) => {
       isDeleted,
     });
     await comment.save();
-    
+
     // populate the userId field in the comment object
-    const populatedComment = await Comment.findById(comment._id).populate("userId", "username profilePicture firstName lastName email _id");
+    const populatedComment = await Comment.findById(comment._id).populate(
+      "userId",
+      craftPopulateUser()
+    );
     return res.status(201).json(populatedComment);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
@@ -66,13 +71,13 @@ const updateComment = async (req: AuthRequest, res: Response) => {
 
     comment.content = content;
     await comment.save();
-    
-    // populate the userId field in the comment object
-    const populatedComment = await Comment
-        .findById(comment._id)
-        .populate("userId", "username profilePicture firstName lastName email _id");
-    return res.status(200).json(populatedComment);
 
+    // populate the userId field in the comment object
+    const populatedComment = await Comment.findById(comment._id).populate(
+      "userId",
+      craftPopulateUser()
+    );
+    return res.status(200).json(populatedComment);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
@@ -108,14 +113,18 @@ const deleteComment = async (req: AuthRequest, res: Response) => {
 };
 
 const getCommentsForVideo = async (req: Request, res: Response) => {
-    const { videoId } = req.params;
-    
-    try {
-        const comments = await Comment.find({ videoId }).populate("userId", "username profilePicture firstName lastName email _id");
-        return res.status(200).json(comments);
-    } catch (error: any) {
-        return res.status(500).json({ error: error.message });
-    }
+  const { videoId } = req.params;
+
+  try {
+    const comments = await Comment.find({ videoId }).populate(
+      "userId",
+      craftPopulateUser()
+    );
+    return res.status(200).json(comments);
+  } catch (error: any) {
+    // console.log(error);
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 export { addComment, updateComment, deleteComment, getCommentsForVideo };

@@ -9,6 +9,6 @@ export interface Video {
   subtitles?: string;
   topic: string;
   createdAt: string;
-  user: UserProfile;
+  authorId: UserProfile;
   transcription?: string;
 }

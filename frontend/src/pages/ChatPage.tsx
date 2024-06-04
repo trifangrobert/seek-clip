@@ -40,7 +40,7 @@ const ChatPage: React.FC = () => {
 
     return () => {
       socket.off("online-users");
-    }
+    };
   }, [socket, user]);
 
   useEffect(() => {
@@ -55,7 +55,6 @@ const ChatPage: React.FC = () => {
         setMessages((prev: MessageType[]) => [...prev, message]);
       }
     });
-
 
     return () => {
       socket.off("new-message");
@@ -133,6 +132,14 @@ const ChatPage: React.FC = () => {
       .map((f) => f._id);
   }, [following, activeUsers]);
 
+  const onlineFollowed = useMemo(() => {
+    return following.filter((f) => activeUsers.includes(f._id)).map((f) => f._id);
+  }, [following, activeUsers]);
+
+  const onlineNotFollowed = useMemo(() => {
+    return activeUsers.filter((id) => !onlineFollowed.includes(id));
+  }, [activeUsers, onlineFollowed]);
+
   if (!user || !token || !socket) {
     return <Loading />;
   }
@@ -169,8 +176,9 @@ const ChatPage: React.FC = () => {
         }}
       >
         <SideActiveUsers
-          activeUserIds={activeUsers}
-          offlineFollowedIds={offlineFollowed}
+          onlineFollowingIds={onlineFollowed}
+          offlineFollowingIds={offlineFollowed}
+          onlineNotFollowingIds={onlineNotFollowed}
         />
       </SwipeableDrawer>
 
@@ -183,8 +191,9 @@ const ChatPage: React.FC = () => {
           }}
         >
           <SideActiveUsers
-            activeUserIds={activeUsers}
-            offlineFollowedIds={offlineFollowed}
+            onlineFollowingIds={onlineFollowed}
+            offlineFollowingIds={offlineFollowed}
+            onlineNotFollowingIds={onlineNotFollowed}
           />
         </Box>
       </Hidden>

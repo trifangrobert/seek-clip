@@ -57,6 +57,11 @@ const userSchema = new Schema(
         ref: "User",
       },
     ],
+    premium: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { collection: "users", timestamps: true }
 );

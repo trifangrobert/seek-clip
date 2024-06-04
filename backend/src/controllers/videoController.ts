@@ -8,6 +8,7 @@ import { getTranscription } from "../utils/transcription";
 import { getTopic } from "../utils/topic";
 import { promises as fs } from "fs";
 import path from "path";
+import { craftPopulateUser } from "../utils/craftQuery";
 
 const uploadVideo = async (req: AuthRequest, res: Response) => {
   console.log("uploading video...");
@@ -38,7 +39,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   const transcription = await getTranscription(file);
   console.log("transcription: ", transcription);
 
-  const topic = await getTopic(title + transcription);
+  const topic = await getTopic(title + description + transcription);
   console.log("topic: ", topic);
 
   try {
@@ -166,24 +167,8 @@ const deleteVideo = async (req: AuthRequest, res: Response) => {
 const getAllVideos = async (req: Request, res: Response) => {
   console.log("getting all videos...");
   try {
-    const videos = await Video.find();
-    const populatedVideos = await Promise.all(
-      videos.map(async (video: any) => {
-        const user = await User.findById(video.authorId);
-        return {
-          ...video._doc,
-          url: process.env.BASE_URL + video.url,
-          user: {
-            username: user.username,
-            profilePicture: user.profilePicture,
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-          }
-        }
-      }
-    ));
-    res.status(200).json(populatedVideos);
+    const videos = await Video.find().populate("authorId", craftPopulateUser());
+    res.status(200).json(videos);
   } catch (error) {
     res.status(500).json({ message: "Error getting videos" });
   }
@@ -193,24 +178,8 @@ const getVideosByUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
   console.log(`getting videos by user ${userId}`);
   try {
-    const videos = await Video.find({ authorId: userId });
-    const populatedVideos = await Promise.all(
-      videos.map(async (video: any) => {
-        const user = await User.findById(video.authorId);
-        return {
-          ...video._doc,
-          url: process.env.BASE_URL + video.url,
-          user: {
-            username: user.username,
-            profilePicture: user.profilePicture,
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-          }
-        };
-      }
-    ));
-    res.status(200).json(populatedVideos);
+    const videos = await Video.find({ authorId: userId }).populate("authorId", craftPopulateUser());
+    res.status(200).json(videos);
   } catch (error) {
     res.status(500).json({ message: "Error getting videos" });
   }
@@ -220,24 +189,11 @@ const getVideoById = async (req: Request, res: Response) => {
   const { videoId } = req.params;
   console.log(`getting video ${videoId}`);
   try {
-    const video = await Video.findById(videoId);
-    const author = await User.findById(video.authorId);
+    const video = await Video.findById(videoId).populate("authorId", craftPopulateUser());
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
     }
-
-    res.status(200).json({
-      ...video._doc,
-      url: process.env.BASE_URL + video.url,
-      user: {
-        username: author.username,
-        profilePicture: author.profilePicture,
-        _id: author._id,
-        firstName: author.firstName,
-        lastName: author.lastName,
-      }
-      
-    });
+    res.status(200).json(video);
   } catch (error) {
     res.status(500).json({ message: "Error getting video" });
   }
