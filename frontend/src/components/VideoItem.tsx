@@ -2,6 +2,7 @@ import { Box, Card, CardContent, Typography } from "@mui/material";
 import { Video } from "../models/VideoType";
 import { useNavigate } from "react-router-dom";
 import { topicColorMap } from "../utils/TopicColors";
+import { useTheme } from "../context/ThemeContext";
 
 interface VideoItemProps {
   video: Video;
@@ -9,6 +10,7 @@ interface VideoItemProps {
 
 const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
   // console.log("video from VideoItem: ", video);
+  const theme = useTheme();
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/video/${video._id}`);
@@ -25,7 +27,7 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
         cursor: "pointer",
         transition: "background-color 0.3s ease",
         "&:hover": {
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          backgroundColor: theme.currentTheme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.2)",
         },
       }}
     >
