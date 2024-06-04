@@ -10,4 +10,5 @@ export interface Video {
   topic: string;
   createdAt: string;
   user: UserProfile;
+  transcription?: string;
 }
