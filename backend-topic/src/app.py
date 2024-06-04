@@ -6,18 +6,23 @@ app = Flask(__name__)
 CORS(app)
 
 pipe = pipeline("text-classification", model="3funnn/bert-topic-classification")
+CHUNK_SIZE = 512
+NUM_CHUNKS = 10
 
 @app.route("/topic", methods=["POST"])
 def get_topic():
     data = request.get_json()
     text = data["text"]
     
-    chunk_size = 512
-    chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+    chunks = [text[i:i+CHUNK_SIZE] for i in range(0, len(text), CHUNK_SIZE)][:NUM_CHUNKS]
     
     res = []
-    for chunk in chunks:
-        res.extend(pipe(chunk))
+    for index, chunk in enumerate(chunks):
+        chunk_results = pipe(chunk)
+        if index == 0:
+            res.extend(chunk_results * 5)
+        else:
+            res.extend(chunk_results)
     
     # majority voting
     res = [r["label"] for r in res]
