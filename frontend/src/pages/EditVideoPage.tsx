@@ -33,7 +33,7 @@ const EditVideoPage = () => {
   const [deleting, setDeleting] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
 
-  const [newHashtag, setNewHashtag] = useState("");
+  const [newHashtag, setNewHashtag] = useState("#");
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -58,18 +58,26 @@ const EditVideoPage = () => {
   }, [id]);
 
   const handleHashtagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewHashtag(event.target.value);
+    const value = event.target.value;
+    if (value === "") {
+      setNewHashtag("#");
+    } else if (!value.startsWith("#")) {
+      setNewHashtag("#" + value);
+    } else {
+      setNewHashtag(value);
+    }
   };
 
   const handleAddHashtag = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && newHashtag.trim() !== "") {
+    if (event.key === "Enter" && newHashtag.trim() !== "#") {
       event.preventDefault();
-      if (!formValues.hashtags.includes(newHashtag.trim())) {
+      const formattedHashtag = newHashtag.trim().substring(1); // Remove the `#`
+      if (!formValues.hashtags.includes(formattedHashtag)) {
         setFormValues((prev) => ({
           ...prev,
-          hashtags: [...prev.hashtags, newHashtag.trim()],
+          hashtags: [...prev.hashtags, formattedHashtag],
         }));
-        setNewHashtag("");
+        setNewHashtag("#"); 
       }
     }
   };
@@ -199,7 +207,7 @@ const EditVideoPage = () => {
             {formValues.hashtags.map((tag, index) => (
               <Chip
                 key={index}
-                label={`${tag}`}
+                label={`#${tag}`}
                 onDelete={() => handleDeleteHashtag(tag)}
                 color="primary"
               />

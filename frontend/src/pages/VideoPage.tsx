@@ -225,7 +225,7 @@ const VideoPage: React.FC = () => {
               {video.hashtags?.map((hashtag, index) => (
                 <Chip
                   key={index}
-                  label={hashtag}
+                  label={`#${hashtag}`}
                   // onClick={() => handleHashtagClick(hashtag)}
                   sx={{ cursor: "pointer" }}
                 />

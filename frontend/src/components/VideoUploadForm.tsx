@@ -22,7 +22,7 @@ const VideoUploadForm = () => {
     description: "",
     hashtags: [],
   });
-  const [newHashtag, setNewHashtag] = useState<string>("");
+  const [newHashtag, setNewHashtag] = useState<string>("#");
   const [selectedFileName, setSelectedFileName] = useState<string>("");
   const [formErrors, setFormErrors] = useState<VideoFormErrors>({});
   const [uploading, setUploading] = useState<boolean>(false);
@@ -40,18 +40,26 @@ const VideoUploadForm = () => {
   };
 
   const handleHashtagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewHashtag(event.target.value);
+    const value = event.target.value;
+    if (value === "") {
+      setNewHashtag("#");
+    } else if (!value.startsWith("#")) {
+      setNewHashtag("#" + value);
+    } else {
+      setNewHashtag(value);
+    }
   };
 
-  const handleAddHashtag = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && newHashtag.trim() !== "") {
+  const handleAddHashtag = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && newHashtag.trim() !== "#") {
       event.preventDefault();
-      if (!formValues.hashtags.includes(newHashtag.trim())) {
+      const formattedHashtag = newHashtag.trim().substring(1); 
+      if (!formValues.hashtags.includes(formattedHashtag)) {
         setFormValues((prev) => ({
           ...prev,
-          hashtags: [...prev.hashtags, newHashtag.trim()],
+          hashtags: [...prev.hashtags, formattedHashtag],
         }));
-        setNewHashtag(""); // Clear the input field after adding the hashtag
+        setNewHashtag("#");
       }
     }
   };
@@ -186,7 +194,7 @@ const VideoUploadForm = () => {
             {formValues.hashtags.map((tag, index) => (
               <Chip
                 key={index}
-                label={`${tag}`}
+                label={`#${tag}`}
                 onDelete={() => handleDeleteHashtag(tag)}
                 color="primary"
               />
