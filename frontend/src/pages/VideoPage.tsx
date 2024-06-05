@@ -248,6 +248,7 @@ const VideoPage: React.FC = () => {
                   {video.authorId.firstName + " " + video.authorId.lastName}
                 </Typography>
               </Box>
+              {/* change to user.premium here */}
               {user && (
                 <Button
                   startIcon={<QuestionAnswerIcon />}
