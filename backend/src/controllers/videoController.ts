@@ -23,6 +23,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   const url = req.file.path;
   const title = req.body.title;
   const description = req.body.description;
+  const hashtags = req.body.hashtags;
   const authorId = req.userId;
   const subtitlesDir = "captions/";
   const subtitlesFilename = path.basename(url, path.extname(url)) + ".vtt";
@@ -31,6 +32,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   console.log("url: ", url);
   console.log("title: ", title);
   console.log("author: ", authorId);
+  console.log("hashtags: ", hashtags);
 
   if (!title) {
     return res.status(400).json({ error: "Invalid input" });
@@ -53,6 +55,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
       transcription,
       subtitles,
       topic,
+      hashtags,
     });
     await newVideo.save();
 
@@ -78,6 +81,7 @@ const updateVideo = async (req: AuthRequest, res: Response) => {
   const { videoId } = req.params;
   const title = req.body.title;
   const description = req.body.description;
+  const hashtags = req.body.hashtags;
   console.log(req.body);
   try {
     const video = await Video.findById(videoId);
@@ -97,8 +101,12 @@ const updateVideo = async (req: AuthRequest, res: Response) => {
     console.log("New title: ", title);
     console.log("New description: ", description);
 
+    console.log("Old hashtags: ", video.hashtags);
+    console.log("New hashtags: ", hashtags);
+
     video.title = title || video.title;
     video.description = description || video.description;
+    video.hashtags = hashtags || video.hashtags;
     console.log("Updated video: ", video);
     await video.save();
 

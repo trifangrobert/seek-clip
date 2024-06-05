@@ -221,10 +221,20 @@ const VideoPage: React.FC = () => {
                 </Button>
               </Box>
             </Box>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              {video.hashtags?.map((hashtag, index) => (
+                <Chip
+                  key={index}
+                  label={hashtag}
+                  // onClick={() => handleHashtagClick(hashtag)}
+                  sx={{ cursor: "pointer" }}
+                />
+              ))}
+            </Box>
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "space-between", // Ensures items are spaced between
+                justifyContent: "space-between",
                 alignItems: "center",
                 width: "100%",
               }}
@@ -279,7 +289,11 @@ const VideoPage: React.FC = () => {
         onClose={handleModalClose}
         subtitles={video.transcription || ""}
       />
-      <ShareModal open={shareModalOpen} onClose={() => setShareModalOpen(false)} videoUrl={window.location.href} />
+      <ShareModal
+        open={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        videoUrl={window.location.href}
+      />
     </CommentProvider>
   );
 };

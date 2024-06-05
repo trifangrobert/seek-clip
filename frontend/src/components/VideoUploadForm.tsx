@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import {
+  Chip,
   CircularProgress,
   IconButton,
   InputAdornment,
@@ -19,7 +20,9 @@ const VideoUploadForm = () => {
     url: null,
     title: "",
     description: "",
+    hashtags: [],
   });
+  const [newHashtag, setNewHashtag] = useState<string>("");
   const [selectedFileName, setSelectedFileName] = useState<string>("");
   const [formErrors, setFormErrors] = useState<VideoFormErrors>({});
   const [uploading, setUploading] = useState<boolean>(false);
@@ -36,6 +39,30 @@ const VideoUploadForm = () => {
     }
   };
 
+  const handleHashtagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewHashtag(event.target.value);
+  };
+
+  const handleAddHashtag = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && newHashtag.trim() !== "") {
+      event.preventDefault();
+      if (!formValues.hashtags.includes(newHashtag.trim())) {
+        setFormValues((prev) => ({
+          ...prev,
+          hashtags: [...prev.hashtags, newHashtag.trim()],
+        }));
+        setNewHashtag(""); // Clear the input field after adding the hashtag
+      }
+    }
+  };
+
+  const handleDeleteHashtag = (tagToDelete: string) => {
+    setFormValues((prev) => ({
+      ...prev,
+      hashtags: prev.hashtags.filter((tag) => tag !== tagToDelete),
+    }));
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const validationErrors = validateVideoForm(formValues);
@@ -45,7 +72,12 @@ const VideoUploadForm = () => {
       setUploading(true);
       // Form is valid, proceed with submission
       try {
-        const data = await uploadVideo(formValues.title, formValues.description, formValues.url);
+        const data = await uploadVideo(
+          formValues.title,
+          formValues.description,
+          formValues.hashtags,
+          formValues.url
+        );
         // console.log("Video uploaded successfully");
         toast.success("Video uploaded successfully", {
           position: "bottom-center",
@@ -139,6 +171,27 @@ const VideoUploadForm = () => {
               ),
             }}
           />
+          <TextField
+            margin="normal"
+            fullWidth
+            id="new-hashtag"
+            label="Add Hashtags (press Enter to add)"
+            value={newHashtag}
+            onChange={handleHashtagChange}
+            onKeyDown={handleAddHashtag}
+            helperText="Type a hashtag and press Enter"
+            variant="outlined"
+          />
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
+            {formValues.hashtags.map((tag, index) => (
+              <Chip
+                key={index}
+                label={`${tag}`}
+                onDelete={() => handleDeleteHashtag(tag)}
+                color="primary"
+              />
+            ))}
+          </Box>
           {uploading ? (
             <Box
               sx={{
