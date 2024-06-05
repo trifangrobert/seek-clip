@@ -59,8 +59,13 @@ const Chat: React.FC<Props> = ({
     const target = event.target as any;
     if (target.tagName === "A" && target.href) {
       const absoluteUrl = new URL(target.href);
-      console.log("absoluteUrl: ", absoluteUrl);
-      navigate(absoluteUrl.pathname, { replace: true });
+      console.log("absoluteUrl: ", absoluteUrl)
+      if (absoluteUrl.origin === window.location.origin) {
+        navigate(absoluteUrl.pathname, { replace: true });
+      }
+      else {
+        window.open(target.href, "_blank");
+      }
     }
   }
 
@@ -129,6 +134,11 @@ const Chat: React.FC<Props> = ({
                     __html: linkifyHtml(msg.content, {
                       defaultProtocol: "https",
                     }),
+                  }}
+                  sx={{
+                    wordBreak: 'break-word', 
+                    cursor: 'pointer',
+                    maxWidth: '100%',
                   }}
                 ></Typography>
               </Box>

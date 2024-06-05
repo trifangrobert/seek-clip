@@ -29,6 +29,8 @@ import { useAuthContext } from "../context/AuthContext";
 import { Loading } from "../components/Loading";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import QAModal from "../components/QAModal";
+import ShareIcon from "@mui/icons-material/Share";
+import ShareModal from "../components/ShareModal";
 
 const VideoPage: React.FC = () => {
   const navigate = useNavigate();
@@ -44,6 +46,7 @@ const VideoPage: React.FC = () => {
   const [showEdit, setShowEdit] = useState<boolean>(false);
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
@@ -114,6 +117,10 @@ const VideoPage: React.FC = () => {
 
   const goToEditPage = () => {
     navigate(`/edit/${videoId}`);
+  };
+
+  const handleShareModalOpen = () => {
+    setShareModalOpen(true);
   };
 
   const topicColor =
@@ -197,6 +204,9 @@ const VideoPage: React.FC = () => {
                 )}
               </Typography>
               <Box>
+                <Button onClick={handleShareModalOpen}>
+                  <ShareIcon />
+                </Button>
                 <Button onClick={handleLike}>
                   <Typography component="span" sx={{ mr: 1 }}>
                     {likeCount}
@@ -269,6 +279,7 @@ const VideoPage: React.FC = () => {
         onClose={handleModalClose}
         subtitles={video.transcription || ""}
       />
+      <ShareModal open={shareModalOpen} onClose={() => setShareModalOpen(false)} videoUrl={window.location.href} />
     </CommentProvider>
   );
 };
