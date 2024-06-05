@@ -70,3 +70,5 @@ Updates:
 - topic classification improved (choose 10 chunks and give bigger weight to the first chunk)
 - chat system (socket.io)
 - online users (followed, not followed)
+- profile modal
+- scoate sectiunile cu cod din documentatie
