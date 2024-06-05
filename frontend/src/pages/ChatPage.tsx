@@ -27,6 +27,10 @@ const ChatPage: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!receiverId) setError(null);
+  }, [receiverId]);
+
+  useEffect(() => {
     if (!socket) return;
     console.log("Requesting online users...");
     socket.emit("request-online-users");
@@ -133,7 +137,9 @@ const ChatPage: React.FC = () => {
   }, [following, activeUsers]);
 
   const onlineFollowed = useMemo(() => {
-    return following.filter((f) => activeUsers.includes(f._id)).map((f) => f._id);
+    return following
+      .filter((f) => activeUsers.includes(f._id))
+      .map((f) => f._id);
   }, [following, activeUsers]);
 
   const onlineNotFollowed = useMemo(() => {
@@ -165,23 +171,52 @@ const ChatPage: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", height: "90vh", overflow: "hidden" }}>
-      <SwipeableDrawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        onOpen={() => setDrawerOpen(true)}
-        sx={{
-          display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": { boxSizing: "border-box", width: 240 },
-        }}
-      >
-        <SideActiveUsers
-          onlineFollowingIds={onlineFollowed}
-          offlineFollowingIds={offlineFollowed}
-          onlineNotFollowingIds={onlineNotFollowed}
-        />
-      </SwipeableDrawer>
-
+      <Hidden smUp>
+        {error && (
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: "error.main",
+              }}
+            >
+              {error}
+            </Typography>
+          </Box>
+        )}
+        {!error &&
+          (receiverId && receiverDetails ? (
+            <Chat
+              messages={messages}
+              sendMessage={sendMessage}
+              newMessage={newMessage}
+              setNewMessage={setNewMessage}
+              user={user}
+              receiver={receiverDetails}
+            />
+          ) : (
+            <Box
+              sx={{
+                width: "100%",
+                overflowY: "auto",
+                borderRight: `1px solid ${borderColor}`,
+              }}
+            >
+              <SideActiveUsers
+                onlineFollowingIds={onlineFollowed}
+                offlineFollowingIds={offlineFollowed}
+                onlineNotFollowingIds={onlineNotFollowed}
+              />
+            </Box>
+          ))}
+      </Hidden>
       <Hidden smDown>
         <Box
           sx={{
@@ -196,54 +231,54 @@ const ChatPage: React.FC = () => {
             onlineNotFollowingIds={onlineNotFollowed}
           />
         </Box>
+        {error ? (
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: "error.main",
+              }}
+            >
+              {error}
+            </Typography>
+          </Box>
+        ) : receiverId && receiverDetails ? (
+          <Chat
+            messages={messages}
+            sendMessage={sendMessage}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            user={user}
+            receiver={receiverDetails}
+          />
+        ) : (
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: "medium",
+                color: "primary.main",
+              }}
+            >
+              👋 Hey there! Select a conversation and start chatting. 🚀
+            </Typography>
+          </Box>
+        )}
       </Hidden>
-      {error ? (
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              color: "error.main",
-            }}
-          >
-            {error}
-          </Typography>
-        </Box>
-      ) : receiverId && receiverDetails ? (
-        <Chat
-          messages={messages}
-          sendMessage={sendMessage}
-          newMessage={newMessage}
-          setNewMessage={setNewMessage}
-          user={user}
-          receiver={receiverDetails}
-        />
-      ) : (
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: "medium",
-              color: "primary.main",
-            }}
-          >
-            👋 Hey there! Select a conversation and start chatting. 🚀
-          </Typography>
-        </Box>
-      )}
     </Box>
   );
 };
