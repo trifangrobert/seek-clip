@@ -107,7 +107,7 @@ const EditVideoPage = () => {
           hideProgressBar: false,
         });
         setEditing(false);
-        navigate("/home", { replace: true });
+        navigate("/video/" + id, { replace: true });
       } catch (error) {
         toast.error("Error updating video", {
           position: "bottom-center",
