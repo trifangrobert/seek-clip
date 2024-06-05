@@ -67,7 +67,8 @@ export const AuthProvider = ({ children }: Props) => {
             firstName: res.data.firstName,
             lastName: res.data.lastName,
             _id: res.data._id,
-            profilePicture: res.data.profilePicture
+            profilePicture: res.data.profilePicture,
+            premium: res.data.premium
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           setToken(res?.data.token!);
@@ -113,7 +114,8 @@ export const AuthProvider = ({ children }: Props) => {
             firstName: res.data.firstName,
             lastName: res.data.lastName,
             _id: res.data._id,
-            profilePicture: res.data.profilePicture
+            profilePicture: res.data.profilePicture,
+            premium: res.data.premium
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           console.log("this is the user:", userObj);
@@ -174,7 +176,8 @@ export const AuthProvider = ({ children }: Props) => {
         firstName: response.firstName,
         lastName: response.lastName,
         profilePicture: response.profilePicture,
-        _id: response._id
+        _id: response._id,
+        premium: response.premium
       };
 
       setUser(updatedUser);

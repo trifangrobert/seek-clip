@@ -16,7 +16,12 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
     navigate(`/video/${video._id}`);
   };
 
+  if (!video) {
+    return <div>Loading...</div>;
+  }
+
   const topicColor = topicColorMap[video.topic.toLowerCase()] || "#222831";
+  const videoURL = process.env.REACT_APP_API_URL + "/" + video.url;
 
   return (
     <Card
@@ -53,7 +58,7 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
           }}
           // poster={video.thumbnail}
         >
-          <source src={`${video.url}#t=0.001`} type="video/mp4" />
+          <source src={`${videoURL}#t=0.001`} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </Box>
@@ -71,7 +76,7 @@ const VideoItem: React.FC<VideoItemProps> = ({ video }) => {
           {video.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {video.user.firstName + " " + video.user.lastName}
+          {video.authorId.firstName + " " + video.authorId.lastName}
         </Typography>
       </CardContent>
     </Card>

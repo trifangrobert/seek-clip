@@ -114,10 +114,10 @@ export default function SignUpPage() {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               badgeContent={
                 <IconButton
-                  color="primary"
                   aria-label="upload picture"
                   component="span"
                   sx={{
+                    color: "#6200ee",
                     backgroundColor: "white",
                     "&:hover": { backgroundColor: "#e0e0e0" },
                     width: 30,

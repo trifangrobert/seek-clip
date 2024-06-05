@@ -17,6 +17,7 @@ const getUserByUsername = async (req: any, res: any) => {
       lastName: user["lastName"],
       _id: user["_id"],
       profilePicture: user["profilePicture"],
+      premium: user["premium"],
     });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -36,6 +37,7 @@ const getUserById = async (req: Request, res: Response) => {
       lastName: user["lastName"],
       _id: user["_id"],
       profilePicture: user["profilePicture"],
+      premium: user["premium"],
     });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -93,6 +95,7 @@ const updateUserProfile = async (req: any, res: any) => {
       lastName: updatedUser["lastName"],
       profilePicture: updatedUser["profilePicture"],
       _id: updatedUser["_id"],
+      premium: updatedUser["premium"],
     });
 
     console.log("User profile updated successfully");
@@ -228,6 +231,7 @@ const getFollowers = async (req: any, res: any) => {
               lastName: follower.lastName,
               _id: follower._id,
               profilePicture: follower.profilePicture,
+              premium: follower.premium,
             };
           })
           .catch((error: any) => {
@@ -267,6 +271,7 @@ const getFollowing = async (req: any, res: any) => {
               lastName: following.lastName,
               _id: following._id,
               profilePicture: following.profilePicture,
+              premium: following.premium,
             };
           })
           .catch((error: any) => {

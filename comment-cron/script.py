@@ -36,8 +36,10 @@ def mark_deletable_comments(comment_tree, comment_id, deletable):
             return True
     
         return False
-    
-    return False
+    else:
+        for child_id in node["children"]:
+            mark_deletable_comments(comment_tree, child_id, deletable)
+        return False
     
 def delete_comments(deletable):
     for comment_id in deletable:

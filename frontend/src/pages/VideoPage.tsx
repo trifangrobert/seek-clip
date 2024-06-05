@@ -32,15 +32,16 @@ import QAModal from "../components/QAModal";
 
 const VideoPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+
   const videoId: string = useParams<{ id: string }>().id || "";
   const { video, loading, error } = useVideo(videoId);
-  const [subtitlesURL, setSubtitlesURL] = useState<string>("");
+
   const [liked, setLiked] = useState<boolean>(false);
   const [disliked, setDisliked] = useState<boolean>(false);
   const [likeCount, setLikeCount] = useState<number>(0);
   const [dislikeCount, setDislikeCount] = useState<number>(0);
   const [showEdit, setShowEdit] = useState<boolean>(false);
-  const { user } = useAuthContext();
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -51,9 +52,8 @@ const VideoPage: React.FC = () => {
 
   useEffect(() => {
     if (video) {
-      setSubtitlesURL(process.env.REACT_APP_API_URL + "/" + video.subtitles);
       const userId = user?._id;
-      if (userId && video.user._id === userId) setShowEdit(true);
+      if (userId && video.authorId._id === userId) setShowEdit(true);
     }
   }, [video]);
 
@@ -119,9 +119,12 @@ const VideoPage: React.FC = () => {
   const topicColor =
     (video && topicColorMap[video.topic.toLowerCase()]) || "#757575";
 
-  if (loading || !video) {
+  if (loading || !video || !user) {
     return <Loading />;
   }
+
+  const subtitlesURL = process.env.REACT_APP_API_URL + "/" + video.subtitles;
+  const videoURL = process.env.REACT_APP_API_URL + "/" + video.url;
   // console.log("video: ", video);
   return (
     <CommentProvider videoId={videoId}>
@@ -129,7 +132,7 @@ const VideoPage: React.FC = () => {
         <Box sx={{ position: "relative", paddingTop: "56.25%" }}>
           {subtitlesURL && video && (
             <ReactPlayer
-              url={video?.url}
+              url={videoURL}
               playing
               controls
               width="100%"
@@ -216,20 +219,22 @@ const VideoPage: React.FC = () => {
                 width: "100%",
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2}}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <Avatar
                   src={
                     process.env.REACT_APP_API_URL +
                     "/" +
-                    video.user.profilePicture
+                    video.authorId.profilePicture
                   }
-                  alt={`${video.user.firstName} ${video.user.lastName}`}
+                  alt={`${video.authorId.firstName} ${video.authorId.lastName}`}
                   sx={{ width: 35, height: 35 }}
                 />
                 <Typography
                   variant="subtitle1"
                   color="text.secondary"
-                  onClick={() => navigate(`/profile/${video.user.username}`)}
+                  onClick={() =>
+                    navigate(`/profile/${video.authorId.username}`)
+                  }
                   sx={{
                     cursor: "pointer",
                     maxWidth: "fit-content",
@@ -240,16 +245,19 @@ const VideoPage: React.FC = () => {
                     },
                   }}
                 >
-                  {video.user.firstName + " " + video.user.lastName}
+                  {video.authorId.firstName + " " + video.authorId.lastName}
                 </Typography>
               </Box>
-              <Button
-                startIcon={<QuestionAnswerIcon />}
-                onClick={handleModalOpen}
-                sx={{ ml: 2 }}
-              >
-                Ask GPT about this video
-              </Button>
+              {/* change to user.premium here */}
+              {user && (
+                <Button
+                  startIcon={<QuestionAnswerIcon />}
+                  onClick={handleModalOpen}
+                  sx={{ ml: 2 }}
+                >
+                  Ask GPT about this video
+                </Button>
+              )}
             </Box>
             <DescriptionAccordion description={video?.description || ""} />
             <Comments videoId={videoId} />

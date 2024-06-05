@@ -31,6 +31,8 @@ import VideoGrid from "../components/VideoGrid";
 import { validateEditProfileForm } from "../utils/Validation";
 import { useVideosByUser } from "../hooks/useVideosByUser";
 import { formatNumber } from "../utils/FormatNumbers";
+import StarIcon from "@mui/icons-material/Star";
+import ProfileModal from "../components/ProfileModal";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -54,10 +56,18 @@ const ProfilePage = () => {
   const [formErrors, setFormErrors] = useState<EditUserProfileErrors>({});
 
   const [following, setFollowing] = useState<boolean>(false);
+
   const [numFollowers, setNumFollowers] = useState<number>(0);
   const [stringNumFollowers, setStringNumFollowers] = useState<string>("");
   const [numFollowing, setNumFollowing] = useState<number>(0);
   const [stringNumFollowing, setStringNumFollowing] = useState<string>("");
+
+  const [followingData, setFollowingData] = useState<UserProfile[]>([]);
+  const [followersData, setFollowersData] = useState<UserProfile[]>([]);
+
+  const [modalType, setModalType] = useState<"followers" | "following" | null>(
+    null
+  );
 
   const { videos: userVideos, loading: videosLoading } = useVideosByUser(
     userProfileInfo?._id!
@@ -81,6 +91,7 @@ const ProfilePage = () => {
       try {
         const followers = await getFollowers(userProfileInfo.username);
         let value = formatNumber(followers.length);
+        setFollowersData(followers);
         setNumFollowers(followers.length);
         setStringNumFollowers(value);
       } catch (error) {
@@ -92,6 +103,7 @@ const ProfilePage = () => {
       try {
         const following = await getFollowing(userProfileInfo.username);
         let value = formatNumber(following.length);
+        setFollowingData(following);
         setNumFollowing(following.length);
         setStringNumFollowing(value);
       } catch (error) {
@@ -236,7 +248,11 @@ const ProfilePage = () => {
       return;
     }
     navigate(`/chat/${userProfileInfo._id}`);
-  }
+  };
+
+  const handleCloseModal = () => {
+    setModalType(null);
+  };
 
   const isOwner = user?.username === urlUsername;
 
@@ -251,6 +267,8 @@ const ProfilePage = () => {
   if (!userProfileInfo) {
     return <Typography>User not found</Typography>;
   }
+
+  // console.log("User profile info: ", userProfileInfo);
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", my: 4, mt: 10 }}>
@@ -322,6 +340,9 @@ const ProfilePage = () => {
                 <Box sx={{ ml: 2 }}>
                   <Typography variant="h5" component="h1">
                     {userProfileInfo.username}
+                    {userProfileInfo.premium && (
+                      <StarIcon color="primary" sx={{ ml: 1.5 }} />
+                    )}
                   </Typography>
                   <Typography variant="body1" sx={{ color: "text.secondary" }}>
                     {userProfileInfo.firstName} {userProfileInfo.lastName}
@@ -379,7 +400,11 @@ const ProfilePage = () => {
                       Follow
                     </Button>
                   )}
-                  <Button variant="outlined" color="primary" onClick={handleChat}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={handleChat}
+                  >
                     Chat
                   </Button>
                 </>
@@ -400,10 +425,20 @@ const ProfilePage = () => {
               <Typography>{userVideos.length} posts</Typography>
             </Grid>
             <Grid item xs={4}>
-              <Typography>{stringNumFollowers} followers</Typography>
+              <Typography
+                onClick={() => setModalType("followers")}
+                sx={{ cursor: "pointer" }}
+              >
+                {stringNumFollowers} followers
+              </Typography>
             </Grid>
             <Grid item xs={4}>
-              <Typography>{stringNumFollowing} following</Typography>
+              <Typography
+                onClick={() => setModalType("following")}
+                sx={{ cursor: "pointer" }}
+              >
+                {stringNumFollowing} following
+              </Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -414,6 +449,11 @@ const ProfilePage = () => {
       <Grid container spacing={2}>
         <VideoGrid videos={userVideos} loading={videosLoading} />
       </Grid>
+      <ProfileModal
+        modalType={modalType}
+        data={modalType === "followers" ? followersData : followingData}
+        onClose={handleCloseModal}
+      />
     </Box>
   );
 };

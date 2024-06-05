@@ -5,6 +5,7 @@ export type UserProfile = {
     lastName: string,
     _id: string,
     profilePicture: string
+    premium: boolean
 }
 
 export type EditUserProfile = {
@@ -26,4 +27,5 @@ export type UserProfileToken = {
     _id: string,
     token: string,
     profilePicture: string
+    premium: boolean
 }
