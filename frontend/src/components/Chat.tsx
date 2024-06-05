@@ -16,6 +16,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { MessageType } from "../models/MessageType";
 import { UserProfile } from "../models/UserType";
 import { useNavigate } from "react-router-dom";
+import linkifyHtml from "linkify-html";
 
 interface Props {
   messages: MessageType[];
@@ -52,6 +53,17 @@ const Chat: React.FC<Props> = ({
     inputRef.current?.focus();
   };
 
+  const handleContentClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+
+    const target = event.target as any;
+    if (target.tagName === "A" && target.href) {
+      const absoluteUrl = new URL(target.href);
+      console.log("absoluteUrl: ", absoluteUrl);
+      navigate(absoluteUrl.pathname, { replace: true });
+    }
+  }
+
   const userProfilePicture = `${process.env.REACT_APP_API_URL}/${user.profilePicture}`;
   const receiverProfilePicture = `${process.env.REACT_APP_API_URL}/${receiver.profilePicture}`;
 
@@ -81,21 +93,21 @@ const Chat: React.FC<Props> = ({
             alignItems="flex-start"
             ref={index === messages.length - 1 ? bottomListRef : null}
             sx={{
-              justifyContent: msg.self ? "flex-end" : "flex-start", // Position the entire block on the right or left
-              width: "100%", // Ensures full width to allow proper alignment
-              marginBottom: "10px", // Spacing between messages
+              justifyContent: msg.self ? "flex-end" : "flex-start", 
+              width: "100%", 
+              marginBottom: "10px", 
             }}
           >
             <Box
               sx={{
                 display: "flex",
-                flexDirection: msg.self ? "row-reverse" : "row", // Reverse the order for the sender
+                flexDirection: msg.self ? "row-reverse" : "row", 
                 alignItems: "center",
               }}
             >
               <Avatar
                 src={msg.self ? userProfilePicture : receiverProfilePicture}
-                sx={{ mx: 1 }} // Adds margin to create space between the avatar and the message
+                sx={{ mx: 1 }} 
               />
               <Box
                 sx={{
@@ -105,10 +117,20 @@ const Chat: React.FC<Props> = ({
                   maxWidth: "80%",
                   wordWrap: "break-word",
                 }}
+                onClick={handleContentClick}
               >
-                <Typography variant="body2" color="black">
-                  {msg.content}
-                </Typography>
+                {/* <Typography variant="body2" color="black"> */}
+                {/* {msg.content} */}
+                {/* </Typography> */}
+                <Typography
+                  variant="body2"
+                  color="black"
+                  dangerouslySetInnerHTML={{
+                    __html: linkifyHtml(msg.content, {
+                      defaultProtocol: "https",
+                    }),
+                  }}
+                ></Typography>
               </Box>
             </Box>
           </ListItem>
