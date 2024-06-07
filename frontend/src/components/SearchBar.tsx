@@ -13,9 +13,11 @@ const SearchBar = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!searchTerm) return;
-    console.log("Searching for: ", searchTerm);
-    navigate(`/search/${searchTerm}`);
+    if (!searchTerm.trim()) return;
+    const encodedSearchTerm = encodeURIComponent(searchTerm.trim());
+    // console.log("Searching for: ", searchTerm);
+    // console.log("Encoded search term: ", encodedSearchTerm);
+    navigate(`/search/${encodedSearchTerm}`);
   };
 
   return (

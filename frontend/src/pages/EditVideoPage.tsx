@@ -5,11 +5,16 @@ import {
   EditVideoFormErrors,
 } from "../models/VideoFormType";
 import { validateEditVideoForm } from "../utils/Validation";
-import { deleteVideo, getVideoById, updateVideo } from "../services/VideoService";
+import {
+  deleteVideo,
+  getVideoById,
+  updateVideo,
+} from "../services/VideoService";
 import { toast } from "react-toastify";
 import {
   Box,
   Button,
+  Chip,
   CircularProgress,
   Container,
   TextField,
@@ -21,32 +26,68 @@ const EditVideoPage = () => {
   const [formValues, setFormValues] = useState<EditVideoFormValues>({
     title: "",
     description: "",
+    hashtags: [],
   });
   const [formErrors, setFormErrors] = useState<EditVideoFormErrors>({});
   const [editing, setEditing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
 
+  const [newHashtag, setNewHashtag] = useState("#");
+
   useEffect(() => {
     const fetchVideo = async () => {
-        try {
-            if (!id) {
-                return;
-            }
-            const video = await getVideoById(id);
-            setFormValues({
-                title: video.title,
-                description: video.description,
-            });
-        } catch (error) {
-            toast.error("Error fetching video", {
-                position: "bottom-center",
-                autoClose: 2000,
-            });
+      try {
+        if (!id) {
+          return;
         }
-    }
+        const video = await getVideoById(id);
+        setFormValues({
+          title: video.title,
+          description: video.description,
+          hashtags: video.hashtags ?? [],
+        });
+      } catch (error) {
+        toast.error("Error fetching video", {
+          position: "bottom-center",
+          autoClose: 2000,
+        });
+      }
+    };
     fetchVideo();
   }, [id]);
+
+  const handleHashtagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (value === "") {
+      setNewHashtag("#");
+    } else if (!value.startsWith("#")) {
+      setNewHashtag("#" + value);
+    } else {
+      setNewHashtag(value);
+    }
+  };
+
+  const handleAddHashtag = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && newHashtag.trim() !== "#") {
+      event.preventDefault();
+      const formattedHashtag = newHashtag.trim().substring(1); // Remove the `#`
+      if (!formValues.hashtags.includes(formattedHashtag)) {
+        setFormValues((prev) => ({
+          ...prev,
+          hashtags: [...prev.hashtags, formattedHashtag],
+        }));
+        setNewHashtag("#"); 
+      }
+    }
+  };
+
+  const handleDeleteHashtag = (tagToDelete: string) => {
+    setFormValues((prev) => ({
+      ...prev,
+      hashtags: prev.hashtags.filter((tag) => tag !== tagToDelete),
+    }));
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -61,10 +102,11 @@ const EditVideoPage = () => {
       setEditing(true);
       try {
         // Call API to update video
-        console.log("Form is valid, proceed with submission");
+        // console.log("Form is valid, proceed with submission");
         const data = await updateVideo(
           formValues.title,
           formValues.description,
+          formValues.hashtags,
           id as string
         );
         toast.success("Video updated successfully", {
@@ -73,7 +115,7 @@ const EditVideoPage = () => {
           hideProgressBar: false,
         });
         setEditing(false);
-        navigate("/home", { replace: true });
+        navigate("/video/" + id, { replace: true });
       } catch (error) {
         toast.error("Error updating video", {
           position: "bottom-center",
@@ -89,7 +131,7 @@ const EditVideoPage = () => {
     setDeleting(true);
     try {
       // Call API to delete video
-      console.log("Delete video");
+      // console.log("Delete video");
       const data = await deleteVideo(id as string);
       toast.success("Video deleted successfully", {
         position: "bottom-center",
@@ -113,7 +155,7 @@ const EditVideoPage = () => {
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
+          marginTop: 10,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -150,6 +192,27 @@ const EditVideoPage = () => {
             error={!!formErrors.description}
             helperText={formErrors.description}
           />
+          <TextField
+            margin="normal"
+            fullWidth
+            id="new-hashtag"
+            label="Add Hashtags (press Enter to add)"
+            value={newHashtag}
+            onChange={handleHashtagChange}
+            onKeyDown={handleAddHashtag}
+            variant="outlined"
+            helperText="Type a hashtag and press Enter"
+          />
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
+            {formValues.hashtags.map((tag, index) => (
+              <Chip
+                key={index}
+                label={`#${tag}`}
+                onDelete={() => handleDeleteHashtag(tag)}
+                color="primary"
+              />
+            ))}
+          </Box>
           {editing || deleting ? (
             <CircularProgress
               color="primary"

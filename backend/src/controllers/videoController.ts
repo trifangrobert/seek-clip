@@ -1,5 +1,4 @@
 const Video = require("../models/videoModel");
-const User = require("../models/authModel");
 const esClient = require("../config/elasticsearchClient");
 
 import { Request, Response } from "express";
@@ -23,14 +22,17 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   const url = req.file.path;
   const title = req.body.title;
   const description = req.body.description;
+  const hashtags = req.body.hashtags;
   const authorId = req.userId;
   const subtitlesDir = "captions/";
   const subtitlesFilename = path.basename(url, path.extname(url)) + ".vtt";
   const subtitles = path.join(subtitlesDir, subtitlesFilename);
+  const views = 0;
 
   console.log("url: ", url);
   console.log("title: ", title);
   console.log("author: ", authorId);
+  console.log("hashtags: ", hashtags);
 
   if (!title) {
     return res.status(400).json({ error: "Invalid input" });
@@ -53,6 +55,8 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
       transcription,
       subtitles,
       topic,
+      hashtags,
+      views,
     });
     await newVideo.save();
 
@@ -78,6 +82,7 @@ const updateVideo = async (req: AuthRequest, res: Response) => {
   const { videoId } = req.params;
   const title = req.body.title;
   const description = req.body.description;
+  const hashtags = req.body.hashtags;
   console.log(req.body);
   try {
     const video = await Video.findById(videoId);
@@ -97,8 +102,12 @@ const updateVideo = async (req: AuthRequest, res: Response) => {
     console.log("New title: ", title);
     console.log("New description: ", description);
 
+    console.log("Old hashtags: ", video.hashtags);
+    console.log("New hashtags: ", hashtags);
+
     video.title = title || video.title;
     video.description = description || video.description;
+    video.hashtags = hashtags || video.hashtags;
     console.log("Updated video: ", video);
     await video.save();
 
@@ -199,6 +208,21 @@ const getVideoById = async (req: Request, res: Response) => {
   }
 };
 
+const increaseViewCount = async (req: Request, res: Response) => {
+  const { videoId } = req.params;
+  console.log(`increasing view count for video ${videoId}`);
+  try {
+    const video = await Video.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+    video.views += 1;
+    await video.save();
+    res.status(200).json({ message: "View count increased" });
+  } catch (error) {
+    res.status(500).json({ message: "Error increasing view count" });
+  }
+}
 
 // access endpoint: POST /api/video/:id/like
 const likeVideo = async (req: AuthRequest, res: Response) => {
@@ -326,7 +350,7 @@ const searchVideos = async (req: Request, res: Response) => {
         query: {
           multi_match: {
             query: query,
-            fields: ["title", "description", "transcription", "topic"],
+            fields: ["title^2", "description", "transcription", "topic"],
             fuzziness: "AUTO",
           },
         },
@@ -337,6 +361,7 @@ const searchVideos = async (req: Request, res: Response) => {
     const videos = body.hits.hits.map((hit: any) => ({
       ...hit._source,
       _id: hit._id,
+      score: hit._score,
     }));
     res.status(200).json(videos);
     // res.status(200).json(body.hits.hits);
@@ -357,4 +382,5 @@ export {
   getLikes,
   getDislikes,
   searchVideos,
+  increaseViewCount
 };

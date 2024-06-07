@@ -16,6 +16,23 @@ export const getAllVideos = async (): Promise<Video[]> => {
   }
 };
 
+export const increaseViewCount = async (id: string): Promise<void> => {
+  try {
+    const response = await fetch(videoAPI + `/view/${id}`, {
+      method: "POST",
+    });
+    if (!response.ok) {
+      throw new Error("Error increasing view count");
+    }
+    const data = await response.json();
+    return data;   
+  }
+  catch (error) {
+    console.log("Error increasing view count: ", error);
+    throw error;
+  }
+}
+
 export const getVideoById = async (id: string): Promise<Video> => {
   try {
     const response = await fetch(videoAPI + `/${id}`);
@@ -47,11 +64,15 @@ export const getVideoByUserId = async (id: string): Promise<Video[]> => {
 export const uploadVideo = async (
   title: string,
   description: string,
+  hashtags: string[],
   url: File
 ): Promise<String> => {
   const formData = new FormData();
   formData.append("title", title);
   formData.append("description", description);
+  hashtags.forEach(tag => {
+    formData.append("hashtags", tag);
+  });
   formData.append("url", url);
   console.log(formData);
   const token = localStorage.getItem("token");
@@ -74,6 +95,7 @@ export const uploadVideo = async (
 export const updateVideo = async (
   title: string,
   description: string,
+  hashtags: string[],
   id: string
 ): Promise<void> => {
   const token = localStorage.getItem("token");
@@ -83,7 +105,7 @@ export const updateVideo = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ title, description }),
+    body: JSON.stringify({ title, description, hashtags }),
   });
 
   if (!response.ok) {

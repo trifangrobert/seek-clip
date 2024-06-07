@@ -10,6 +10,7 @@ interface IVideo extends Document {
   transcription?: string;
   subtitles?: string;
   topic?: string;
+  hashtags?: string[];
 }
 
 const videoSchema = new Schema(
@@ -37,6 +38,10 @@ const videoSchema = new Schema(
         ref: "User",
       },
     ],
+    views: {
+      type: Number,
+      default: 0,
+    },
     dislikes: [
       {
         type: Schema.Types.ObjectId,
@@ -52,6 +57,11 @@ const videoSchema = new Schema(
     topic: {
       type: String,
     },
+    hashtags: [
+      {
+        type: String,
+      },
+    ],
   },
   { collection: "videos", timestamps: true }
 );

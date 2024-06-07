@@ -42,6 +42,32 @@ export const ThemeProvider: React.FC<Props> = ({ children }) => {
           main: getPrimaryColor(),
         },
       },
+      components: {
+        MuiCssBaseline: {
+          styleOverrides: `
+            body {
+              &::-webkit-scrollbar {
+                width: 8px;
+                height: 8px; // For horizontal scrollbars
+              }
+              &::-webkit-scrollbar-track {
+                background-color: transparent;
+              }
+              &::-webkit-scrollbar-thumb {
+                background-color: ${
+                  themeMode === "dark" ? "#6b6b6b" : "#bfbfbf"
+                };
+                border-radius: 10px;
+                &:hover {
+                  background-color: ${
+                    themeMode === "dark" ? "#a8a8a8" : "#949494"
+                  };
+                }
+              }
+            }
+          `,
+        },
+      },
     });
   }, [themeMode]);
 

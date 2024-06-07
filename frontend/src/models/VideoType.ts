@@ -11,4 +11,7 @@ export interface Video {
   createdAt: string;
   authorId: UserProfile;
   transcription?: string;
+  hashtags?: string[];
+  views: number;
+  score?: number;
 }

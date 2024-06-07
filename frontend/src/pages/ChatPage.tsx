@@ -24,7 +24,6 @@ const ChatPage: React.FC = () => {
   );
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
   const [following, setFollowing] = useState<UserProfile[]>([]);
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!receiverId) setError(null);
