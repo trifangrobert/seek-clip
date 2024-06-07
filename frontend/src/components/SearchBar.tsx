@@ -14,7 +14,7 @@ const SearchBar = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!searchTerm) return;
-    console.log("Searching for: ", searchTerm);
+    // console.log("Searching for: ", searchTerm);
     navigate(`/search/${searchTerm}`);
   };
 

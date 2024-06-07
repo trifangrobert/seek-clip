@@ -14,7 +14,7 @@ const VideoOwnerProtectedRoute: React.FC<VideoOwnerProtectedRouteProps> = ({elem
     const [owner, setOwner] = useState<boolean>(false);
     const { id } = useParams<{ id: string }>(); // Get video ID from URL
     const location = useLocation();
-    console.log("user data from VideoOwnerProtectedRoute: ", user);
+    // console.log("user data from VideoOwnerProtectedRoute: ", user);
     const userId = user?._id;
     // const userId = "123"
 

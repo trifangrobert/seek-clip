@@ -52,7 +52,7 @@ const VideoPage: React.FC = () => {
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
-  console.log("video from VideoPage: ", video);
+  // console.log("video from VideoPage: ", video);
 
   useEffect(() => {
     if (!video || !videoId) return;
@@ -64,7 +64,7 @@ const VideoPage: React.FC = () => {
     const updateViewCount = async () => {
       try {
         const response = await increaseViewCount(videoId);
-        console.log("View count increased: ", response);
+        // console.log("View count increased: ", response);
       } catch (error) {
         console.log("Error increasing view count: ", error);
       }

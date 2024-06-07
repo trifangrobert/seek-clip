@@ -102,7 +102,7 @@ const EditVideoPage = () => {
       setEditing(true);
       try {
         // Call API to update video
-        console.log("Form is valid, proceed with submission");
+        // console.log("Form is valid, proceed with submission");
         const data = await updateVideo(
           formValues.title,
           formValues.description,
@@ -131,7 +131,7 @@ const EditVideoPage = () => {
     setDeleting(true);
     try {
       // Call API to delete video
-      console.log("Delete video");
+      // console.log("Delete video");
       const data = await deleteVideo(id as string);
       toast.success("Video deleted successfully", {
         position: "bottom-center",
