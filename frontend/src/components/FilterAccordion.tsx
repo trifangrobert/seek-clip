@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Accordion,
   AccordionSummary,
@@ -6,31 +6,39 @@ import {
   Typography,
   Chip,
   Box,
-  Slider,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { topicColorMap } from "../utils/TopicColors";
+import FastSlider from "./FastSlider";
 
 interface FilterAccordionProps {
   selectedTopics: string[];
-  onToggleTopic: (topic: string) => void;
-  onPopularityChange: (popularityRange: number[]) => void;
+  onApplyFilters: (topics: string[], popularityRange: number[]) => void;
 }
 
 const FilterAccordion: React.FC<FilterAccordionProps> = ({
   selectedTopics,
-  onToggleTopic,
-  onPopularityChange,
+  onApplyFilters,
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const [popularityRange, setPopularityRange] = useState<number[]>([0, 1000]);
+  const [stagedTopics, setStagedTopics] = useState<string[]>(selectedTopics);
+  const [stagedPopularityRange, setStagedPopularityRange] = useState<number[]>([
+    0, 100,
+  ]);
 
   const handleToggleAccordion = () => {
     setExpanded((prev) => !prev);
   };
 
+  const handleApplyFilters = () => {
+    onApplyFilters(stagedTopics, stagedPopularityRange);
+  };
+
   const handleToggleTopic = (topic: string) => {
-    onToggleTopic(topic);
+    setStagedTopics((prev) =>
+      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
+    );
   };
 
   return (
@@ -50,11 +58,9 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                   clickable
                   onClick={() => handleToggleTopic(topic)}
                   color="primary"
-                  variant={
-                    selectedTopics.includes(topic) ? "filled" : "outlined"
-                  }
+                  variant={stagedTopics.includes(topic) ? "filled" : "outlined"}
                   sx={{
-                    bgcolor: selectedTopics.includes(topic)
+                    bgcolor: stagedTopics.includes(topic)
                       ? `${topicColorMap[topic]}CC`
                       : undefined,
                   }}
@@ -64,19 +70,20 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Typography variant="subtitle1">Popularity Range:</Typography>
-            <Slider
-              value={popularityRange}
-              onChange={(event, newValue) => {
-                setPopularityRange(newValue as number[]);
-                onPopularityChange(newValue as number[]);
-              }}
-              valueLabelDisplay="auto"
-              min={0}
-              max={1000}
-              marks
-              sx={{ width: 300 }} // Adjust the width to fit within the layout
+            <FastSlider
+              setValue={setStagedPopularityRange}
+              startValue={0}
+              endValue={100}
             />
           </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleApplyFilters}
+            sx={{ mt: 2 }}
+          >
+            Apply Filters
+          </Button>
         </Box>
       </AccordionDetails>
     </Accordion>

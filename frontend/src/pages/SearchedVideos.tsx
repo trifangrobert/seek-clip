@@ -18,14 +18,14 @@ const SearchedVideos = () => {
       try {
         setLoading(true);
         const videosData: Video[] = await searchVideo(searchTerm as string);
-        console.log("videosData: ", videosData);
+        // console.log("videosData: ", videosData);
         const videos = await Promise.all(
           videosData.map(async (video) => {
             const videoData = await getVideoById(video._id);
             return videoData;
           })
         );
-        console.log("videos: ", videos);
+        // console.log("videos: ", videos);
         setVideos(videos);
         setLoading(false);
       } catch (error: any) {

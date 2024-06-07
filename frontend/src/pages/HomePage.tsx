@@ -1,5 +1,4 @@
-// HomePage.tsx
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   AppBar,
   Box,
@@ -17,25 +16,37 @@ import { Loading } from "../components/Loading";
 import FilterAccordion from "../components/FilterAccordion";
 import { Video } from "../models/VideoType";
 
+interface Filters {
+  topics: string[];
+  popularityRange: number[];
+}
+
 const HomePage = () => {
   const navigate = useNavigate();
   const { videos, loading, error } = useVideos();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [popularityRange, setPopularityRange] = useState<number[]>([0, 1000]);
+  const [activeFilters, setActiveFilters] = useState<Filters>({
+    topics: [],
+    popularityRange: [0, 1000],
+  });
 
-  // Filter videos based on the selected criteria
-  const filteredVideos = filterVideos(videos);
-
-  function filterVideos(videos: Video[]) {
+  // Filter videos based on the active filters
+  const filteredVideos = useCallback(() => {
     return videos.filter((video) => {
-      const videoDate = new Date(video.createdAt);
-      // const withinPopularity =
-      //   video.views >= popularityRange[0] && video.views <= popularityRange[1];
+      const withinPopularity =
+        video.views >= activeFilters.popularityRange[0] &&
+        video.views <= activeFilters.popularityRange[1];
       const topicMatch =
-        selectedTopics.length === 0 || selectedTopics.includes(video.topic);
+        (activeFilters.topics.length === 0 ||
+          activeFilters.topics.includes(video.topic)) &&
+        withinPopularity;
       return topicMatch;
     });
-  }
+  }, [videos, activeFilters]);
+
+  const handleApplyFilters = (topics: string[], popularityRange: number[]) => {
+    setActiveFilters({ topics, popularityRange });
+  };
 
   return (
     <>
@@ -45,14 +56,7 @@ const HomePage = () => {
             <SearchBar />
             <FilterAccordion
               selectedTopics={selectedTopics}
-              onToggleTopic={(topic) =>
-                setSelectedTopics((prev) =>
-                  prev.includes(topic)
-                    ? prev.filter((t) => t !== topic)
-                    : [...prev, topic]
-                )
-              }
-              onPopularityChange={setPopularityRange}
+              onApplyFilters={handleApplyFilters}
             />
           </Box>
           <Tooltip title="Upload Video" placement="right">
@@ -74,7 +78,7 @@ const HomePage = () => {
         </Typography>
       )}
       {loading && <Loading />}
-      {!loading && <VideoGrid videos={filteredVideos} />}
+      {!loading && <VideoGrid videos={filteredVideos()} />}
     </>
   );
 };
