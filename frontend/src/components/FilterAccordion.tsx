@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { topicColorMap } from "../utils/TopicColors";
-import FastSlider from "./FastSlider";
 
 interface FilterAccordionProps {
   defaultFilters: {
@@ -85,7 +84,6 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {/* Filter settings */}
               <Typography variant="subtitle1">Select Topics:</Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {Object.keys(topicColorMap).map((topic) => (
@@ -138,8 +136,10 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                   label="Sort By"
                   onChange={handleSortChange}
                 >
-                  <MenuItem value="date">Date</MenuItem>
-                  <MenuItem value="popularity">Popularity</MenuItem>
+                  <MenuItem value="newest">Newest</MenuItem>
+                  <MenuItem value="oldest">Oldest</MenuItem>
+                  <MenuItem value="most-viewed">Most Viewed</MenuItem>
+                  <MenuItem value="least-viewed">Least Viewed</MenuItem>
                 </Select>
               </FormControl>
             </Box>
