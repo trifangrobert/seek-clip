@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useAuthContext } from "../context/AuthContext";
 import { UserProfile } from "../models/UserType";
-import { getFollowers } from "../services/UserService";
+import { getFollowing } from "../services/UserService";
 import { useTheme } from "../context/ThemeContext";
 import CheckIcon from "@mui/icons-material/Check";
 
@@ -25,33 +25,33 @@ interface ShareModalProps {
 const ShareModal: React.FC<ShareModalProps> = ({ open, onClose, videoUrl }) => {
   const theme = useTheme();
   const { user, socket } = useAuthContext();
-  const [followers, setFollowers] = useState<UserProfile[]>([]);
+  const [followings, setFollowings] = useState<UserProfile[]>([]);
   const [sharedWith, setSharedWith] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!user || !open) return;
-    const fetchFollowers = async () => {
-      const followers = await getFollowers(user.username);
-      setFollowers(followers);
+    const fetchFollowing = async () => {
+      const followers = await getFollowing(user.username);
+      setFollowings(followers);
     };
 
-    fetchFollowers();
+    fetchFollowing();
   }, [open, user]);
 
-  const handleShare = (follower: UserProfile) => {
-    if (!sharedWith.has(follower._id)) {
+  const handleShare = (following: UserProfile) => {
+    if (!sharedWith.has(following._id)) {
       const message = `Check out this video: ${videoUrl}`;
       if (socket) {
-        socket.emit("send-message", { receiverId: follower._id, message });
-        console.log(`Message sent to ${follower._id}: ${message}`);
-        setSharedWith(new Set(Array.from(sharedWith).concat(follower._id)));
+        socket.emit("send-message", { receiverId: following._id, message });
+        // console.log(`Message sent to ${following._id}: ${message}`);
+        setSharedWith(new Set(Array.from(sharedWith).concat(following._id)));
       }
     }
   };
 
   const listStyle = {
-    overflowY: "auto", // Enable vertical scrolling
-    maxHeight: "250px", // Set a max height to activate scrolling
+    overflowY: "auto",
+    maxHeight: "250px", 
     "&::-webkit-scrollbar": {
       width: "6px",
     },
@@ -86,33 +86,33 @@ const ShareModal: React.FC<ShareModalProps> = ({ open, onClose, videoUrl }) => {
           Share Video
         </Typography>
         <List sx={listStyle}>
-          {followers.map((follower) => (
+          {followings.map((following) => (
             <ListItem
-              key={follower._id}
+              key={following._id}
               sx={{
-                cursor: sharedWith.has(follower._id) ? "default" : "pointer",
+                cursor: sharedWith.has(following._id) ? "default" : "pointer",
                 transition: "background-color 0.3s ease",
                 "&:hover": {
-                  backgroundColor: sharedWith.has(follower._id)
+                  backgroundColor: sharedWith.has(following._id)
                     ? "inherit"
                     : theme.currentTheme === "dark"
                     ? "rgba(255, 255, 255, 0.2)"
                     : "rgba(0, 0, 0, 0.2)",
                 },
-                opacity: sharedWith.has(follower._id) ? 0.5 : 1,
+                opacity: sharedWith.has(following._id) ? 0.5 : 1,
               }}
               onClick={() =>
-                !sharedWith.has(follower._id) && handleShare(follower)
+                !sharedWith.has(following._id) && handleShare(following)
               }
             >
               <ListItemAvatar>
                 <Avatar
-                  src={`${process.env.REACT_APP_API_URL}/${follower.profilePicture}`}
-                  alt={follower.username}
+                  src={`${process.env.REACT_APP_API_URL}/${following.profilePicture}`}
+                  alt={following.username}
                 />
               </ListItemAvatar>
-              <ListItemText primary={follower.username} />
-              {sharedWith.has(follower._id) && (
+              <ListItemText primary={following.username} />
+              {sharedWith.has(following._id) && (
                 <CheckIcon color="success" sx={{ ml: 2 }} />
               )}
             </ListItem>
