@@ -12,11 +12,10 @@ const VideoGrid: React.FC<VideoGridProps> = ({ videos, loading }) => {
     if (loading) {
         return <p>Loading...</p>;
     }
-    const sortedVideos = videos.sort((a, b) => { return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime() });
 
     return (
         <Grid container spacing={4} sx={{padding: '20px'}}>
-            {sortedVideos.map((video) => (
+            {videos.map((video) => (
                 // console.log("video: ", video),
                 <Grid item xs={12} sm={6} md={4} lg={3} key={video._id}>
                     <VideoItem video={video} />
