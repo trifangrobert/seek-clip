@@ -350,7 +350,7 @@ const searchVideos = async (req: Request, res: Response) => {
         query: {
           multi_match: {
             query: query,
-            fields: ["title", "description", "transcription", "topic"],
+            fields: ["title^2", "description", "transcription", "topic"],
             fuzziness: "AUTO",
           },
         },
@@ -361,6 +361,7 @@ const searchVideos = async (req: Request, res: Response) => {
     const videos = body.hits.hits.map((hit: any) => ({
       ...hit._source,
       _id: hit._id,
+      score: hit._score,
     }));
     res.status(200).json(videos);
     // res.status(200).json(body.hits.hits);

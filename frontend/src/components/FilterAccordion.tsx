@@ -29,11 +29,13 @@ interface FilterAccordionProps {
     popularityRange: number[],
     sortCriteria: string
   ) => void;
+  filterSearch: boolean;
 }
 
 const FilterAccordion: React.FC<FilterAccordionProps> = ({
   defaultFilters,
   onApplyFilters,
+  filterSearch = false,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [stagedTopics, setStagedTopics] = useState<string[]>(
@@ -140,6 +142,8 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                   <MenuItem value="oldest">Oldest</MenuItem>
                   <MenuItem value="most-viewed">Most Viewed</MenuItem>
                   <MenuItem value="least-viewed">Least Viewed</MenuItem>
+                  {filterSearch && <MenuItem value="most-relevant">Most Relevant</MenuItem>}
+                  {filterSearch && <MenuItem value="least-relevant">Least Relevant</MenuItem>}
                 </Select>
               </FormControl>
             </Box>

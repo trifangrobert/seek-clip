@@ -14,7 +14,6 @@ import VideoGrid from "../components/VideoGrid";
 import { useVideos } from "../hooks/useVideos";
 import { Loading } from "../components/Loading";
 import FilterAccordion from "../components/FilterAccordion";
-import { Video } from "../models/VideoType";
 
 interface Filters {
   topics: string[];
@@ -58,7 +57,7 @@ const HomePage = () => {
       result.sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      )
+      );
     } else if (activeFilters.sortCriteria === "most-viewed") {
       result.sort((a, b) => b.views - a.views);
     } else if (activeFilters.sortCriteria === "least-viewed") {
@@ -84,10 +83,6 @@ const HomePage = () => {
         <Toolbar>
           <Box sx={{ flexGrow: 1 }}>
             <SearchBar />
-            <FilterAccordion
-              defaultFilters={defaultFilters}
-              onApplyFilters={handleApplyFilters}
-            />
           </Box>
           <Tooltip title="Upload Video" placement="right">
             <IconButton
@@ -100,6 +95,13 @@ const HomePage = () => {
             </IconButton>
           </Tooltip>
         </Toolbar>
+        <Box sx={{pl: 2}}>
+          <FilterAccordion
+            defaultFilters={defaultFilters}
+            onApplyFilters={handleApplyFilters}
+            filterSearch={false}
+          />
+        </Box>
       </AppBar>
 
       {error && (

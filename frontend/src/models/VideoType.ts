@@ -13,4 +13,5 @@ export interface Video {
   transcription?: string;
   hashtags?: string[];
   views: number;
+  score?: number;
 }
