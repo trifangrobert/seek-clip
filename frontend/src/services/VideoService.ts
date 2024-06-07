@@ -16,6 +16,23 @@ export const getAllVideos = async (): Promise<Video[]> => {
   }
 };
 
+export const increaseViewCount = async (id: string): Promise<void> => {
+  try {
+    const response = await fetch(videoAPI + `/view/${id}`, {
+      method: "POST",
+    });
+    if (!response.ok) {
+      throw new Error("Error increasing view count");
+    }
+    const data = await response.json();
+    return data;   
+  }
+  catch (error) {
+    console.log("Error increasing view count: ", error);
+    throw error;
+  }
+}
+
 export const getVideoById = async (id: string): Promise<Video> => {
   try {
     const response = await fetch(videoAPI + `/${id}`);

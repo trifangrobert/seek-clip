@@ -38,6 +38,10 @@ const videoSchema = new Schema(
         ref: "User",
       },
     ],
+    views: {
+      type: Number,
+      default: 0,
+    },
     dislikes: [
       {
         type: Schema.Types.ObjectId,

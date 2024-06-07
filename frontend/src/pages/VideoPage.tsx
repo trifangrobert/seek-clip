@@ -17,6 +17,7 @@ import {
   dislikeVideo,
   getLikes,
   getDislikes,
+  increaseViewCount,
 } from "../services/VideoService";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
@@ -54,11 +55,24 @@ const VideoPage: React.FC = () => {
   console.log("video from VideoPage: ", video);
 
   useEffect(() => {
-    if (video) {
+    if (!video || !videoId) return;
+    const updateShowEdit = () => {
       const userId = user?._id;
       if (userId && video.authorId._id === userId) setShowEdit(true);
-    }
-  }, [video]);
+    };
+
+    const updateViewCount = async () => {
+      try {
+        const response = await increaseViewCount(videoId);
+        console.log("View count increased: ", response);
+      } catch (error) {
+        console.log("Error increasing view count: ", error);
+      }
+    };
+
+    updateShowEdit();
+    updateViewCount();
+  }, [videoId, video]);
 
   useEffect(() => {
     checkUserReaction();
@@ -221,15 +235,58 @@ const VideoPage: React.FC = () => {
                 </Button>
               </Box>
             </Box>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {video.hashtags?.map((hashtag, index) => (
-                <Chip
-                  key={index}
-                  label={`#${hashtag}`}
-                  // onClick={() => handleHashtagClick(hashtag)}
-                  sx={{ cursor: "pointer" }}
-                />
-              ))}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Box
+                sx={{
+                  overflowX: "auto",
+                  whiteSpace: "nowrap",
+                  flexGrow: 1,
+                  mr: 3,
+                  "&::-webkit-scrollbar": {
+                    height: "8px", 
+                    backgroundColor: "transparent", 
+                  },
+                  "&:hover": {
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#888",
+                    },
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    backgroundColor: "transparent", 
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    borderRadius: "10px",
+                    backgroundColor: "transparent",
+                    "&:hover": {
+                      backgroundColor: "#555",
+                    },
+                  },
+                }}
+              >
+                {video.hashtags?.map((hashtag, index) => (
+                  <Chip
+                    key={index}
+                    label={`#${hashtag}`}
+                    sx={{ cursor: "pointer", mr: 0.5, mb: 0.5 }}
+                  />
+                ))}
+              </Box>
+              <Typography
+                sx={{
+                  fontWeight: "medium",
+                  color: "text.secondary",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {video?.views || 0} views
+              </Typography>
             </Box>
             <Box
               sx={{

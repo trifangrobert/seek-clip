@@ -1,5 +1,4 @@
 const Video = require("../models/videoModel");
-const User = require("../models/authModel");
 const esClient = require("../config/elasticsearchClient");
 
 import { Request, Response } from "express";
@@ -28,6 +27,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
   const subtitlesDir = "captions/";
   const subtitlesFilename = path.basename(url, path.extname(url)) + ".vtt";
   const subtitles = path.join(subtitlesDir, subtitlesFilename);
+  const views = 0;
 
   console.log("url: ", url);
   console.log("title: ", title);
@@ -56,6 +56,7 @@ const uploadVideo = async (req: AuthRequest, res: Response) => {
       subtitles,
       topic,
       hashtags,
+      views,
     });
     await newVideo.save();
 
@@ -207,6 +208,21 @@ const getVideoById = async (req: Request, res: Response) => {
   }
 };
 
+const increaseViewCount = async (req: Request, res: Response) => {
+  const { videoId } = req.params;
+  console.log(`increasing view count for video ${videoId}`);
+  try {
+    const video = await Video.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+    video.views += 1;
+    await video.save();
+    res.status(200).json({ message: "View count increased" });
+  } catch (error) {
+    res.status(500).json({ message: "Error increasing view count" });
+  }
+}
 
 // access endpoint: POST /api/video/:id/like
 const likeVideo = async (req: AuthRequest, res: Response) => {
@@ -365,4 +381,5 @@ export {
   getLikes,
   getDislikes,
   searchVideos,
+  increaseViewCount
 };
