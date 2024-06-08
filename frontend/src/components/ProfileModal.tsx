@@ -1,8 +1,16 @@
-import React from 'react';
-import { Modal, Box, Typography, Avatar, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import { UserProfile } from '../models/UserType';
-import { useNavigate } from 'react-router-dom';
-
+import React from "react";
+import {
+  Modal,
+  Box,
+  Typography,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+} from "@mui/material";
+import { UserProfile } from "../models/UserType";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileModalProps {
   modalType: "followers" | "following" | null;
@@ -29,7 +37,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   data,
   onClose,
 }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   if (!modalType) return null;
 
   const title = modalType === "followers" ? "Followers" : "Following";
@@ -37,7 +45,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const handleUserClick = (userId: string) => {
     onClose();
     navigate(`/profile/${userId}`);
-  }
+  };
 
   return (
     <Modal
@@ -50,9 +58,38 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         <Typography id="modal-title" variant="h6" component="h2">
           {title}
         </Typography>
-        <List>
+        <List
+          sx={{
+            height: "30vh",
+            overflow: "auto",
+            "&::-webkit-scrollbar": {
+              height: "8px",
+              width: "8px",
+              backgroundColor: "transparent",
+            },
+            "&:hover": {
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#888",
+              },
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "transparent",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              borderRadius: "10px",
+              backgroundColor: "transparent",
+              "&:hover": {
+                backgroundColor: "#555",
+              },
+            },
+          }}
+        >
           {data.map((person) => (
-            <ListItem key={person._id} onClick={() => handleUserClick(person.username)} sx={{ cursor: "pointer" }}>
+            <ListItem
+              key={person._id}
+              onClick={() => handleUserClick(person.username)}
+              sx={{ cursor: "pointer" }}
+            >
               <ListItemAvatar>
                 <Avatar
                   src={`${process.env.REACT_APP_API_URL}/${person.profilePicture}`}
