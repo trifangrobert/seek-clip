@@ -1,15 +1,15 @@
-\chapter{Inginerie software}
+\chapter{Prezentarea aplicației}
 
 \section{Arhitectura aplicației}
 Am ales să folosesc arhitectura MERN (MongoDB, Express.js, React, Node.js), la care am mai adăugat
 două servere de Flask pentru recunoașterea vorbirii și clasificarea videoclip-urilor, o bază de
 date Elasticsearch pentru căutare și Kibana pentru vizualizarea datelor din Elasticsearch.
 \par
-În figura de mai jos \ref{fig:project-architecture} este prezentată arhitectura aplicației:
+În figura de mai jos (Fig. \ref{fig:project-architecture}) este prezentată arhitectura aplicației:
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\textwidth]{project_architecture.png}
+    \includegraphics[width=0.8\textwidth]{project_architecture.png}
     \caption{Arhitectura aplicației}
     \label{fig:project-architecture}
 \end{figure}
@@ -55,9 +55,9 @@ propriu de înregistrare și logare. Fiecărei cereri de la client i se atașeaz
 identitatea utilizatorului. 
 
 \subsubsection{JWT}
-JSON Web Token (JWT) encodează în structura sa 3 componente: header, payload și signature.
-Header-ul stochează tipul de token și algoritmul de criptare, payload-ul conține informații
-despre utilizator precum numele și data emiterii, iar signature-ul este un hash al primelor
+JSON Web Token (JWT) encodează în structura sa 3 componente: \textit{header}, \textit{payload} și \textit{signature}.
+\textit{Header}-ul stochează tipul de token și algoritmul de criptare, \textit{payload}-ul conține informații
+despre utilizator precum numele și data emiterii, iar \textit{signature}-ul este un hash al primelor
 două componente la care se mai adaugă un secret.
 
 % poate adaugi o figura aici cu un exemplu de JWT, cea de jos e cam urata
@@ -82,7 +82,7 @@ două componente la care se mai adaugă un secret.
 
 
 \subsubsection{Înregistrare și logare}
-Atât înregistrarea \ref{fig:register} cât și logarea \ref{fig:login} sunt realizate prin
+Atât înregistrarea \ref{fig:register}, cât și logarea \ref{fig:login} sunt realizate prin
 intermediul unor formulare care cer informații precum numele, prenumele, adresa de email,
 numele de utilizator, parola și poza de profil. Pentru aceste formulare au fost folosite
 validatoare care verifică dacă datele introduse sunt corecte.
@@ -110,102 +110,168 @@ Pentru deconectare, token-ul este șters din memoria locală și contextul utili
     \end{minipage}
 \end{figure}
 
-\subsubsection{Profil}
-Pagina de profil prezintă informați despre utilizator precum numele, prenumele, numele de utilizator,
-adresa de email și poza de profil și îi permite acestuia să le actualizeze cu ajutorul unui formular.
+\subsection{Profil}
+Pagina de profil prezintă informați despre utilizator precum:
+\begin{itemize}
+    \item \textbf{Date despre utilizator}: nume, prenume, nume de utilizator și poza de profil. 
+    \item \textbf{Date despre interacțiunea cu platforma}: numărul de videoclip-uri încărcate,
+    numărul de utilizatori urmăriți și numărul de utilizatori care îl urmăresc.
+    \item \textbf{Postări}: postările utilizatorului pe platformă sub forma unui grid.
+    \item \textbf{Urmăritori și urmăriți}: vizibile în \textit{Modal}-uri separate.
+    \item \textbf{Setări}: posibilitatea de a-și edita datele personale.
+\end{itemize}
+
+\par
+Când un alt utilizator îi accesează profilul, acesta îl poate adăuga sau scoate din lista de urmăriți,
+poate începe o conversație cu acesta sau poate vizualiza postările acestuia. (Fig. \ref{fig:profile})
+\par
+De asemenea, poate vizualiza listele menționate anterior de urmăritori și urmăriți cu ajutorul unui
+\textit{Modal} care se deschide atunci când se apasă pe numărul de urmăritori/urmăriți. De aici, poate
+naviga mai departe la profilul utilizatorilor respectivi.
 
 \begin{figure}[h!]
     \centering
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{profile.png}
-        \caption{Pagina de profil}
-        \label{fig:profile}
-    \end{minipage}\hfill
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{profile-edit.png}
-        \caption{Editare profil}
-        \label{fig:profile-edit}
-    \end{minipage}
+    \includegraphics[width=0.99\textwidth]{profile-new.png}
+    \caption{Pagina de profil}
+    \label{fig:profile}
 \end{figure}
-
-\vspace{1em}
 
 \subsection{Video}
 Platforma permite utilizatorilor să încarce videoclip-uri, să le vizualizeze și să
 interacționeze cu acestea prin intermediul unor funcții precum aprecieri și comentarii.
 \subsubsection{Încărcare videoclip}
 Încărcarea videoclip-urilor se face print-un buton care redirecționează utilizatorul către
-pagina de încărcare. Aici, utilizatorul poate selecta un fișier video și adăuga un titlu și
-o descriere. După ce videoclip-ul este încărcat, acesta este trimis către server pentru a fi
-prelucrat (stocarea în baza de date, extragerea subtitrărilor, clasificarea videoclip-ului).
+pagina de încărcare. Aici, utilizatorul poate selecta un fișier video, adăuga un titlu și
+o descriere, precum și hashtags care descriu conținutul videoclip-ului. După ce
+videoclip-ul este încărcat, începe un proces de salvare a metadatelor în baza de date,
+de salvare a videoclip-ului pe mașina serverului, de extragere și recunoaștere a vorbirii
+și de generare a subtitrărilor, precum și de clasificare a videoclip-ului într-un anumit
+topic. (Fig. \ref{fig:upload})
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{upload.png}
-    \caption{Pagina de încărcare a videoclip-urilor}
-    \label{fig:upload}
-\end{figure}
-
-\subsubsection{Vizualizare}
-Videoclip-urile încărcate sunt afișate pe pagina principală a aplicației web sub forma unui
-grid, fiecare videoclip având un thumbnail, un titlu și numele autorului. Atunci când este 
-accesat un videoclip, utilizatorul este redirecționat către o pagină dedicată unde poate
-vizualiza videoclip-ul și interacționa cu acesta prin intermediul aprecierilor și comentariilor.
-
-\begin{figure}[h] 
-    \centering
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{video-grid.png}
-        \caption{Grid de videoclip-uri}
-        \label{fig:video-grid}
-    \end{minipage}\hfill
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=0.9\textwidth]{video-view.png}
-        \caption{Vizualizare videoclip}
-        \label{fig:video-view}
-    \end{minipage}
-\end{figure}
 
 \subsubsection{Editare}
 Autorii videoclip-urilor încărcate pot accesa pagina de editare a videoclip-ului prin butonul
 de editare de pe pagina de vizualizare. Fiind o rută protejată, utilizatorul trebuie să fie
 autentificat și să fie autorul videoclip-ului pentru a putea schimba metadatele videoclip-ului.
+(Fig. \ref{fig:video-edit})
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\textwidth]{video-edit.png}
-    \caption{Editare videoclip}
-    \label{fig:video-edit}
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{upload.png}
+        \caption{Încărcare videoclip}
+        \label{fig:upload}
+    \end{minipage}\hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{video-edit.png}
+        \caption{Editare videoclip}
+        \label{fig:video-edit}
+    \end{minipage}
 \end{figure}
+
+\subsubsection{Pagina principală}
+Pagina principală (Fig. \ref{fig:video-grid}) a aplicației conține următoarele elemente:
+\begin{itemize}
+    \item \textbf{Bara de căutare}: permite utilizatorului căutarea videoclip-urilor după cuvintele
+    cheie introduse în bara de căutare.
+    \item \textbf{Butonul de încărcare}: redirecționează către pagina de încărcare a videoclip-urilor.
+    \item \textbf{Grid de videoclip-uri}: afișează toate videoclip-urile încărcate de utilizatori pe
+    platformă. Fiecare videoclip conține o imagine reprezentativă, titlul și numele autorului și o 
+    bară colorată care reprezintă topicul videoclip-ului. Accesarea acestuia redirecționează utilizatorul
+    către pagina de vizualizare.
+    \item \textbf{Filtre și sortare}: utilizatorul poate filtra videoclip-urile după filtre precum: topic 
+    și intervalul de popularitate (numărul de vizualizări) și le poate sorta după criterii precum: nou-vechi,
+    vechi-nou, popularitate-crescător, popularitate-descrescător.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.99\textwidth]{main-page-small.png}
+    \caption{Grid de videoclip-uri}
+    \label{fig:video-grid}
+\end{figure}
+
+\subsubsection{Vizualizarea unui videoclip}
+Videoclip-urile încărcate sunt afișate pe pagina principală a aplicației web sub forma
+unui grid, fiecare videoclip având o imagine reprezentativă pentru acesta, un titlu,
+numele autorului și o bară colorată, reprezentativă pentru topicul videoclipului.
+\par
+Atunci când este accesat un videoclip, utilizatorul este redirecționat către o pagină
+dedicată (Fig. \ref{fig:video-page}) unde poate interacționa cu videoclip-ul astfel:
+\begin{itemize}
+    \item \textbf{Vizualizare}: videoclip-ul este afișat într-o fereastră video care
+    permite alegerea subtitrărilor, schimbarea volumului și manipularea videoclip-ului.
+    \item \textbf{Editare}: editarea videoclip-ului poate fi accesată doar de autorul acestuia
+    și permite schimbarea informațiilor despre videoclip. (titlu, descriere, hashtags)
+    \item \textbf{Informații}: titlul și descrierea videoclip-ului sunt afișate sub fereastra
+    menționată anterior, descrierea fiind accesată printr-un buton de expandare într-o componentă
+    acordeon.
+    \item \textbf{Autor}: numele și poza de profil a autorului videoclip-ului permit
+    redirecționarea către profilul acestuia.
+    \item \textbf{Aprecieri}: utilizatorul poate da aprecia sau nu videoclip-ul apăsând pe
+    iconițele dedicate în acest sens.
+    \item \textbf{Distribuire}: videoclip-ul poate fi împărtășit cu utilizatorii platformei
+    prin intermediul unui buton de distribuire care deschide un \textit{Modal} și listează
+    persoanele urmărite de utilizator.
+    \item \textbf{Vizualizări}: numărul de accesări ale videoclip-ului este afișat sub numărul
+    de aprecieri.
+    \item \textbf{Comentarii}: lista de comentarii este afișată sub formă de ierarhie, unde
+    comentariile pot fi fie răspunsuri la alte comentarii, fie comentarii directe la videoclip.
+    \item \textbf{Adăugare comentariu}: utilizatorul poate adăuga și el la rândul lui comentarii la videoclip
+    sau răspunde la alte comentarii.
+    \item \textbf{Editare comentarii}: doar autorii comentariilor își pot edita sau șterge propriile comentarii.
+    \item \textbf{Întrebări}: utilizatorul poate pune întrebări referitoare la conținutul videoclip-ului
+    prin intermediul unui \textit{Modal}. În spatele acestui \textit{Modal} se află un serviciu care
+    folosește subtitrările videoclip-ului și acceseaza API-ul de la ChatGPT pentru a genera răspunsuri.
+    \item \textbf{Hashtags}: lista de hashtag-uri afișată sub descrierea videoclip-ului oferă mai
+    multă expresivitate pe lângă topicurile alese anterior.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{video-page-small.png}
+    \caption{Pagina de vizualizare a unui videoclip}
+    \label{fig:video-page}
+\end{figure}
+
+% \begin{figure}[h] 
+%     \centering
+%     \begin{minipage}{0.49\textwidth}
+%         \centering
+%         \includegraphics[width=0.9\textwidth]{video-grid.png}
+%         \caption{Grid de videoclip-uri}
+%         \label{fig:video-grid}
+%     \end{minipage}\hfill
+%     \begin{minipage}{0.49\textwidth}
+%         \centering
+%         \includegraphics[width=0.9\textwidth]{video-view.png}
+%         \caption{Vizualizare videoclip}
+%         \label{fig:video-view}
+%     \end{minipage}
+% \end{figure}
 
 \subsubsection{Aprecieri \& Comentarii}
-Pagina de vizualizare a videoclip-ului permite utilizatorului să dea like/dislike videoclip-ului
-sau să își retragă aprecierea și să adauge comentarii. 
+După cum am menționat anterior, pagina de vizualizare permite utilizatorului să aprecieze
+sau nu videoclip-ul și să adauge comentarii. Fiecare videoclip reține o listă cu id-urile
+utilizatorilor care au dat și-au exprimat aprecierea pentru și o listă cu comentariile adăugate.
+De asemenea, utilizatorii pot răspunde la comentarii, creând astfel o ierarhie de comentarii
+și pot edita sau șterge comentariile proprii.
 \par
-Fiecare videoclip reține o listă cu id-urile utilizatorilor care au dat like sau dislike și o
-listă cu comentariile adăugate. De asemenea, utilizatorii pot răspunde la comentarii, creând astfel
-o ierarhie de comentarii și pot edita sau șterge comentariile proprii.
-\par
-Dacă un comentariu are răspunsuri, atunci textul devine [deleted], fiind un \textit{soft-delete}.
+Dacă un comentariu are răspunsuri, atunci textul devine șters \textit{[deleted]}, fiind un \textit{soft-delete}.
 Altfel, dacă un comentariu nu are răspunsuri, atunci acesta este șters complet din baza de date,
 fiind considerat un \textit{hard-delete}. Comentariile sunt sortate după data adăugării, cele mai
-recente fiind afișate mai sus. 
+recente fiind afișate mai sus. (Fig. \ref{fig:comment-section})
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.95\textwidth]{video-interaction.png}
-    \caption{Interacțiunea cu videoclip-ul}
-    \label{fig:video-interaction}
-
+    \includegraphics[width=0.4\textwidth]{comment-section.png}
+    \caption{Secțiunea de comentarii}
+    \label{fig:comment-section}
 \end{figure}
 
-\par
-
-Trebuie să menționez un detaliu important legat de ierarhia comentariilor. Ar fi foarte costisitor,
+Trebuie să menționăm un detaliu important legat de ierarhia comentariilor. Ar fi foarte costisitor,
 din punct de vedere al performanței, ca de fiecare dată când se șterge un comentariu să se reconstruiască
 arborele de comentarii. De aceea, am creat un serviciu care rulează o dată pe zi, construiește ierarhia
 comentariilor și șterge acele drumuri în arbore care nu mai sunt folosite. Mai multe detalii despre
@@ -214,52 +280,89 @@ acest serviciu se găsesc în secțiunea \ref{sec:cron-jobs}.
 \subsection{Căutare}
 \subsubsection{Bara de căutare}
 Pe pagina principală a aplicației web se află o bară de căutare care permite utilizatorului
-introducerea unor cuvinte cheie specifice videoclip-urilor pe care le caută.
-\ref {fig:search-bar}.
+introducerea unor cuvinte cheie specifice videoclip-ulor căutate. De asemnea, poate filtra
+și sorta rezultatele obținute după criteriile menționate anterior. Am adăugat aici încă două
+criterii: relevanță-descrescător și relevanță-crescător, care sortează rezultatele după
+scorurile obținute de Elasticsearch.
+(Fig. \ref{fig:search-bar})
 
-\vspace{1em}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.95\textwidth]{search-bar.png}
+    \includegraphics[width=0.95\textwidth]{search-bar-new.png}
     \caption{Bară de căutare}
     \label{fig:search-bar}
 \end{figure}
 
 \par
 Când utilizatorul introduce textul în bara de căutare, aplicația web trimite o cerere 
-către server care caută videoclip-urile într-o bază de date Elasticsearch. Rezultatele
-sunt afișate pe aceeași pagină, sub forma unui grid asemănător cu cel de pe pagina principală.
+către server care caută apoi videoclip-urile într-o bază de date Elasticsearch. Datorită
+parametrului de \textit{confuzie} (\textit{fuzziness}), căutarea este tolerantă la greșeli
+de scriere și oferă rezultate relevante.
+
+\subsection{Conversație}
+Platforma oferă utilizatorilor posibilitatea de a comunica între ei în timp real prin mesaje private.
+Serviciul de mesagerie are la bază WebSocket, un protocol de comunicare bidirecțional între client
+și server care permite emiterea și ascultarea de evenimente. Practic, serverul joacă rolul de intermediar
+în conversația dintre doi utilizatori, în sensul că primește mesajele de la un utilizator și le trimite
+mai departe către celălalt utilizator cu care conversează. (Fig. \ref{fig:conversation})
+\par
+Utilizatorul poate accesa pagina de conversație din bara de navigare, unde îi sunt afișați utilizatorii
+pe care îi urmărește și statusul lor (activi/inactivi), dar și restul utilizatorilor de pe platformă activi.
+Aici poate citi mesajele anterioare, poate trimite/primi mesaje în timp real și poate vedea când un utilizator
+este activ/inactiv.
+\par
+De asemenea, poate distribui videoclip-urile de pe platformă cu alți utilizatori folosind butonul
+de distribuire, care deschide un \textit{Modal} cu lista de utilizatori urmăriți.
+\par
+Inițial, utilizatorul emite un eveniment de conectare către server, iar serverul îl salvează într-un
+dicționar de utilizatori conectați. Apoi, având un canal bidirecțional deschis, utilizatorul poate
+emite și asculta evenimente de la server. În cazul în care utilizatorul se deconectează, serverul
+închide canalul și îl șterge din dicționarul de utilizatori activi. React pune la dispoziție
+\textit{useEffect} pentru a gestiona evenimentele menționate anterior.
+\vspace{1em}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{conversation.png}
+    \caption{Pagina de conversație}
+    \label{fig:conversation}
+\end{figure}
+
+\par
+Mai multe detalii despre serviciul de mesagerie și socket-uri se găsesc în secțiunea. \ref{subsec:socketio}
+
 
 \subsection{Temă}
-Întreaga aplicație web poate fi personalizată prin intermediul a două teme: light și dark.
+Întreaga aplicație web poate fi personalizată prin intermediul a două teme: lumină și întuneric.
 Utilizatorul poate schimba tema din bara de navigare cu ajutorul unui buton care schimbă
 valoarea unei variabile din contextul temei și propagă această schimbare în întreaga
-aplicație web.
+aplicație web. (Fig. \ref{fig:light-theme}, \ref{fig:dark-theme})
 
 \begin{figure}[h]
     \centering
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=0.9\textwidth]{light-theme.png}
-        \caption{Tema light}
+        \includegraphics[width=0.99\textwidth]{light-theme-new.png}
+        \caption{Tema lumină}
         \label{fig:light-theme}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=0.9\textwidth]{dark-theme.png}
-        \caption{Tema dark}
+        \includegraphics[width=0.99\textwidth]{dark-theme-new.png}
+        \caption{Tema întuneric}
         \label{fig:dark-theme}
     \end{minipage}
 \end{figure}
 
 \subsection{Rute protejate}
-Pentru a interzice accesul la anumite pagini din motive de securitate, am folosit un sistem
-de rute protejate:
+Deoarece unele pagini impun existența token-ului JWT, implicit a utilizatorului autentificat,
+sau pot fi accesate doar de autor, am folosit un sistem de rute protejate. Acest sistem
+verifică accesul și redirecționează utilizatorul către alte pagini în cazul în care accesul
+nu este permis. 
 \begin{itemize}
-    \item \textbf{User Protected}: se asigură că sunt accesate doar de utilizatori autentificați,
+    \item \textbf{Rute protejate pentru utilizatorii autentificați}: se asigură că sunt accesate doar de utilizatori autentificați,
     în caz contrar fiind redirecționați către pagina de logare; de exemplu, pagina de profil,
     încărcarea videoclip-urilor, postarea de comentarii/aprecieri.
-    \item \textbf{Video Owner Protected}: se asigură că sunt accesate doar de autorii videoclip-urilor,
+    \item \textbf{Rute protejate pentru autorii videoclip-urilor}: se asigură că sunt accesate doar de autorii videoclip-urilor,
     și implicit de utilizatorii autentificați, în caz contrar fiind redirecționați către pagina principală;
     de exemplu, editarea videoclip-urilor.
 \end{itemize}
@@ -273,24 +376,24 @@ gestionează cererile primite de la client și le rutează către serviciile cor
 Astfel, codul este structurat în:
 
 \begin{itemize}
-    \item \textbf{Routes}: definesc rutele serverului și asociază cererile primite cu funcțiile
+    \item \textbf{Rute}: definesc rutele serverului și asociază cererile primite cu funcțiile
     corespunzătoare din controlere.
-    \item \textbf{Controllers}: conțin funcțiile care procesează cererile primite de la client
+    \item \textbf{Controlere}: conțin funcțiile care procesează cererile primite de la client
     și apelează serviciile necesare.
-    \item \textbf{Middlewares}: funcții care se execută între primirea cererilor și procesarea
+    \item \textbf{Controler intermediar}: funcții care se execută între primirea cererilor și procesarea
     acestora, adăugând/verificând informații suplimentare din cererea primită.
-    \item \textbf{Models}: definește structura entităților folosite în baza de date MongoDB 
+    \item \textbf{Modele}: definește structura entităților folosite în baza de date MongoDB 
     și a interfețelor pentru a asigura tipurile de date.
-    \item \textbf{Utils}: funcții utilitare care facilitează procesarea cererilor.
-    \item \textbf{Config}: inițializează comunicarea cu alte servicii precum baza de date Elasticsearch.
+    \item \textbf{Utilitare}: funcții utilitare care facilitează procesarea cererilor.
+    \item \textbf{Configurări}: inițializează comunicarea cu alte servicii precum baza de date Elasticsearch.
 \end{itemize}
 
 \subsubsection{REST API}
 Comunicarea între client și server se face prin intermediul unui REST API. Prin definiție,
-REST (Representational State Transfer) impune existența a 3 componente: client, server și resurse.
+REST (\textit{Representational State Transfer}) impune existența a 3 componente: client, server și resurse.
 \par
 Clientul îl reprezintă aplicația web care face cereri către server, serverul este aplicația
-care primește gestionează cererile și returnează răspunsuri, iar resursele sunt datele stocate
+care  gestionează cererile și returnează răspunsuri, iar resursele sunt datele stocate
 în baza de date pe care serverul le manipulează.
 
 \par
@@ -299,18 +402,18 @@ Conceptul de REST API are la bază 6 principii:
     \item \textbf{Separarea client-server}: clientul și serverul sunt entități separate și izolate,
     serverul nu poate face cereri către client, doar clientul poate face cereri către server; 
     în acest fel, cele două entități pot evolua independent.
-    \item \textbf{Uniform Interface}: având în vedere diversitatea limbajelor de programare folosite
-    atât pentru client cât și pentru server, este necesară o interfață comună, independentă de limbaj
+    \item \textbf{Interfață Uniformă (\textit{Uniform Interface})}: având în vedere diversitatea limbajelor de programare folosite
+    atât pentru client cât și pentru server, este necesară o interfață comună, independentă de limbaj,
     care să faciliteze comunicarea între cele două entități; astfel REST API este construit peste 
     protocolul HTTP și folosește metodele standardizate GET, POST, PUT, DELETE.
-    \item \textbf{Stateless}: fiecare cerere primite de la client conține toate informațiile necesare
+    \item \textbf{Cereri independente (\textit{Stateless})}: fiecare cerere primite de la client conține toate informațiile necesare
     pentru a fi procesată cu succes, serverul nefiind nevoit să păstreze informații despre cererile
     anterioare.
-    \item \textbf{Layered System}: cererea primită de la client poate trece prin mai multe straturi
+    \item \textbf{Sistem multistrat (\textit{Layered System})}: cererea primită de la client poate trece prin mai multe straturi
     intermediare folosite pentru a îmbunătăți performanța, securitatea sau scalabilitatea aplicației.
-    \item \textbf{Cacheable}: cererile anterioare pot fi stocate în cache pentru a fi refolosite
+    \item \textbf{Depozitabil (\textit{Cacheable})}: cererile anterioare pot fi stocate în cache pentru a fi refolosite
     la cereri ulterioare, reducând astfel timpul de răspuns și traficul de date între client și server.
-    \item \textbf{Code on Demand (Optional)}: serverul poate trimite cod executabil către client pentru
+    \item \textbf{Cod executabil (\textit{Code on Demand}) (Optional)}: serverul poate trimite cod executabil către client pentru
     a fi rulat în browser, însă această funcționalitate este opțională
 \end{itemize}
 
@@ -318,42 +421,44 @@ Conceptul de REST API are la bază 6 principii:
 Pentru a comunica rezultatul unei cereri, există un standard de coduri HTTP împărțit în
 următoarele 5 categorii:
 \begin{itemize}
-    \item \textbf{1xx}: informații, cererea a fost primită, se continuă procesarea.
-    \item \textbf{2xx}: succes, cererea a fost primită, procesată și răspunsul a fost generat cu succes.
-    \item \textbf{3xx}: redirecționare, clientul trebuie să facă o altă cerere pentru a obține răspunsul.
-    \item \textbf{4xx}: erori de la client, cererea a fost greșită sau nu poate fi procesată.
-    \item \textbf{5xx}: erori de la server, serverul a întâmpinat o problemă în procesarea cererii.
+    \item \textbf{1xx}: cod returnat atunci când cererea a fost primită, dar procesarea nu a fost finalizată. De exemplu, când se
+    face o îmbunătățire a protocolului de comunicare. (\textbf{informații})
+    \item \textbf{2xx}: cod returnat când cererea a fost gestionată cu succes. (\textbf{succes})
+    \item \textbf{3xx}: cod returnat atunci când clientul a fost redirecționat către o altă resursă. (\textbf{redirecționare})
+    \item \textbf{4xx}: erori provenite de la client, clientul a făcut o cerere greșită. (\textbf{client})
+    \item \textbf{5xx}: erori provenite de la server, serverul a întâmpinat o problemă în procesarea cererii. (\textbf{server})
 \end{itemize}
 
-\subsubsection{Routes}
+\subsubsection{Rute}
 Rutele sunt construite recursiv, plecând de la rădăcină și adăugând pentru fiecare API 
 un nou nivel de rute. În cadrul aplicației noastre, am definit următoarele rute:
 
 \begin{itemize}
     \item \textbf{/api/auth}: rutele responsabile de autentificarea utilizatorilor, care mai apoi 
     se specializează în /api/auth/register și /api/auth/login.
-    \item \textbf{/api/user}: rutele responsabile de gestionarea informațiilor utilizatorilor, se 
-    specializează în /api/user/:username și /api/user/update/:username.
+    \item \textbf{/api/user}: rutele responsabile de gestionarea informațiilor utilizatorilor și a 
+    interacțiunilor între aceștia, precum urmărirea/retragerea urmăririi unui utilizator.
     \item \textbf{/api/video}: rutele responsabile de gestionarea videoclip-urilor, se specializează
-    în operațiile CRUD (Create, Read, Update, Delete) pentru videoclipuri și a interacțiunilor cu acestea.
+    în operațiile CRUD (creare, citire, actualizare, ștergere) pentru videoclipuri și a interacțiunilor cu acestea.
     \item \textbf{/api/comment}: rutele responsabile de gestionarea comentariilor, aduc funcționalități
     precum adăugarea, editarea și ștergerea comentariilor.
+    \item \textbf{/api/message}: rutele responsabile de gestionarea mesajelor, permit citirea acestora
+    din baza de date. (trimiterea mesajelor este gestionată de WebSocket)
 \end{itemize}
 
-\subsubsection{Middlewares}
-Middleware-urile sunt funcții care se execută între primirea cererii și procesarea acesteia,
-de obicei adăugând sau verificând informații suplimentare din cererea primită. În cadrul
-aplicației noastre, am folosit două middleware-uri:
-
+\subsubsection{Funcții intermediare}
+Funcțiile intermediare (\textit{Middleware}) sunt funcții care se execută între primirea cereri
+și procesarea acesteia, de obicei adăugând sau verificând informații suplimentare din cererea
+primită. În cadrul aplicației noastre, am folosit două funcții intermediare:
 \begin{itemize}
-    \item \textbf{Auth Middleware}: se adaugă la cererile care necesită ca utilizatorul să fie
+    \item \textbf{Autentificare}: se adaugă la cererile care necesită ca utilizatorul să fie
     autentificat, verificând astfel existența token-ului JWT și dacă acesta este valid. Verificarea
     se face prin decriptarea token-ului și verificarea semnăturii cu ajutorul secretului stocat
     pe server. Fiecare cerere are în header-ul ei un câmp \textit{Bearer Token} care conține
-    token-ul JWT. Odată decriptat, middleware-ul adaugă în corpul cererii informațiile despre
+    token-ul JWT. Odată decriptat, se adaugă în corpul cererii informațiile despre
     utilizatorul autentificat.
-    \item \textbf{Multer Middleware}: se folosește pentru cererile care necesită încărcarea unor
-    fișiere de tip imagine sau videoclip; middleware-ul se asigură că fișierul are formatul corect
+    \item \textbf{Multer}: se folosește pentru cererile care necesită încărcarea unor
+    fișiere de tip imagine sau videoclip; se asigură că fișierul are formatul corect
     (de exemplu, imaginea este de tip .jpg/.png/.jpeg și videoclip-ul este de tip .mp4/.mov/.avi).
     Acesta creează un director în interiorul căruia se salvează fișierul încărcat și adaugă
     calea către fișier în baza de date. Serverul expune apoi url-ul către id-ul fișierului
@@ -361,32 +466,37 @@ aplicației noastre, am folosit două middleware-uri:
     
 \end{itemize}
 
-\subsubsection{Models}
+\subsubsection{Modele}
 Modelele sunt folosite pentru a defini structura entităților folosite în baza de date MongoDB. Deci,
-pentru fiecare entitate din baza de date, definim o \textit{Schema} care conține câmpurile, tipurile
-de date ale acestora, restricțiile și referințele către alte entități. În cadrul aplicației noastre,
-am definit următoarele modele:
+pentru fiecare entitate din baza de date, definim un schelet (\textit{Schema}) care conține câmpurile,
+tipurile de date ale acestora, restricțiile și referințele către alte entități. În cadrul aplicației
+noastre, am definit următoarele modele:
 \begin{itemize}
-    \item \textbf{User}: reține pentru fiecare utilizator numele, prenumele, adresa de email, numele
-    de utilizator, parola și poza de profil. De asemenea, adaugă și restricții pentru a asigura
-    unicitatea numelui de utilizator și a adresei de email, tipuri de date pentru fiecare câmp,
-    necesitatea completării câmpurilor și lungimea minimă și maximă a câmpurilor.
-    \item \textbf{Video}: reține pentru videoclip informații precum url-ul unde este stocat, titlul,
-    descrierea, id-ul autorului, textul din videoclip și calea către subtitrări în formatul .vtt,
-    o listă cu id-urile utilizatorilor care au dat like/dislike, topicul videoclip-ului și data.
-    Restricțiile impuse sunt similare cu cele de la modelul User, au grijă ca fiecare videoclip să
-    aibă obligatoriu metadatele necesare și să aibă un autor valid. De asemenea, sunt menționate
-    și tipurile de date ale câmpurilor.
-    \item \textbf{Comment}: reține pentru fiecare comentariu textul, id-ul autorului, id-ul videoclip-ului,
-    dacă este șters sau nu (\textit{soft-delete/hard-delete}) pentru eficientizarea procesului de ștergere
+    \item \textbf{Utilizator (\textit{User})}: reține pentru fiecare utilizator numele, prenumele,
+    adresa de email, numele de utilizator, parola criptată, poza de profil și două liste cu persoanele
+    care îl urmăresc și persoanele pe care le urmărește. De asemenea, adaugă și restricții
+    pentru a asigura unicitatea numelui de utilizator și a adresei de email, tipuri de date pentru
+    fiecare câmp, necesitatea completării câmpurilor și lungimea minimă și maximă a câmpurilor.
+    \item \textbf{Video (\textit{Video})}: reține pentru videoclip informații precum url-ul unde
+    este stocat, titlul, descrierea, id-ul autorului, textul din videoclip, calea către subtitrări în
+    formatul .vtt, o listă cu id-urile utilizatorilor care au apreciat sau nu postarea, topicul
+    videoclip-ului și o listă de hashtag-uri. Restricțiile impuse sunt similare cu cele de la modelul
+    anterior, au grijă ca fiecare videoclip să aibă obligatoriu metadatele necesare și să aibă un
+    autor valid. De asemenea, sunt menționate și tipurile de date ale câmpurilor.
+    \item \textbf{Comentariu (\textit{Comment})}: reține pentru fiecare comentariu textul, id-ul autorului, id-ul videoclip-ului,
+    dacă este șters complet sau nu (\textit{soft-delete/hard-delete}) pentru eficientizarea procesului de ștergere
     a comentariilor, și id-ul comentariului la care răspunde pentru a putea crea ierarhia comentariilor.
     Schema modelului impune restricția ca id-ul autorului și id-ul videoclip-ului să fie obligatorii,
     iar textul să fie completat.
+    \item \textbf{Mesaj (\textit{Message})}: reține pentru fiecare mesaj conțintulul său, id-ul autorului 
+    și id-ul destinatarului, precum și data la care a fost trimis. 
+    \item \textbf{Conversație (\textit{Conversation})}: reține pentru fiecare conversație o listă cu id-urile
+    participanților la conversație precum și o listă cu id-urile mesajelor trimise în cadrul conversației.
 \end{itemize}
 
 
-\subsubsection{Controllers}
-Fiecare rută menționată anterior are asociată un controller care procesează cererea primită, 
+\subsubsection{Controlere}
+Fiecare rută menționată anterior are asociată un controler care procesează cererea primită, 
 apelează serviciile necesare și returnează răspunsul.
 \par
 Menționez aici câteva dintre funcțiile mai importante:
@@ -395,20 +505,25 @@ Menționez aici câteva dintre funcțiile mai importante:
     \item \textbf{register/login}: funcții care se ocupă de înregistrarea și logarea utilizatorilor,
     creează token-ul JWT folosind secretul stocat pe server și id-ul utilizatorului, verifică
     existența utilizatorului în baza de date și returnează token-ul JWT.
-    \item \textbf{getUserByUsername/updateUserProfile}: funcții folosite pentru a obține informații
+    \item \textbf{getUserByUsername/getUserById/updateUserProfile}: funcții folosite pentru a obține informații
     despre utilizator, respectiv pentru a actualiza informațiile utilizatorului. Se observă aici
-    cum funcția de actualizare a profilului folosește atât middleware-ul de autentificare pentru a
-    se asigura că doar utilizatorul autentificat poate actualiza profilul, cât și middleware-ul
+    cum funcția de actualizare a profilului folosește atât funcția intermediară de autentificare pentru a
+    se asigura că doar utilizatorul autentificat poate actualiza profilul, cât și funcția intermediară
     de încărcare a fișierelor pentru a actualiza poza de profil. Ambele funcții accesează baza de
     date pentru a obține sau actualiza informațiile și returnează răspunsul.
+    \item \textbf{followUser/unfollowUser/isFollowing}: funcții care permit utilizatorului să urmărească
+    sau să nu un alt utilizator și să verifice dacă urmărește un alt utilizator. În mod natural,
+    funcția intermediară impune ca utilizatorul să fie autentificat pentru a putea executa aceste cereri.
+    \item \textbf{getFollowers/getFollowing}: funcții care returnează lista cu utilizatorii urmăriți de
+    un utilizator sau lista cu utilizatorii care îl urmăresc pe un utilizator. 
     \item \textbf{addComment/udpateComment/deleteComment/getCommentsForVideo}: după cum sugerează
     și numele, sunt funcții care permit adăugarea, actualizarea, ștergerea și obținerea comentariilor
-    pentru un videoclip. Funcțiile de adăugare și actualizare a comentariilor folosesc middleware-ul
+    pentru un videoclip. Funcțiile de adăugare și actualizare a comentariilor folosesc funcția intermediară
     de autentificare pentru a se asigura că doar utilizatorii autentificați pot executa aceste operații.
     Întâlnim aici si funcția \textit{populate} din Mongoose care ne permite să expandăm referințele
     din baza de date, în cazul nostru, să obținem informații despre autorul comentariului.
     \item \textbf{uploadVideo/updateVideo/deleteVideo}: funcții care permit încărcarea videoclip-urilor,
-    actualizarea și ștergerea acestora. Fiecare funcție necesită middleware-ul de autentificare pentru
+    actualizarea și ștergerea acestora. Fiecare funcție necesită funcția intermediară de autentificare pentru
     a asocierea unui videoclip cu autorul său, iar funcțiile de actualizare și ștergere a videoclip-urilor
     permit doar autorului videoclip-ului să execute aceste operații. Serviciul de încărcare a video-urilor
     apelează la rândul lui cele două servere de Flask pentru extragerea subtitrărilor și clasificarea
@@ -417,20 +532,22 @@ Menționez aici câteva dintre funcțiile mai importante:
     din baza de date în diferite moduri: toate videoclip-urile, videoclip-urile unui utilizator sau un
     videoclip anume după id-ul său. Funcțiile caută la rândul lor în baza de date după criteriile
     specificate și returnează răspunsul.
-    \item \textbf{likeVideo/dislikeVideo/getLikes/getDislikes}: funcții care permit interacțiunea cu 
-    un videoclip, adăugând sau ștergând id-ul utilizatorului care a dat like/dislike din lista de
-    referințe a videoclip-ului. De asemenea, sunt tratate aici și cazurile speciale în care utilizatorul
+    \item \textbf{likeVideo/dislikeVideo/getLikes/getDislikes/increaseViewCount}: funcții care permit
+    interacțiunea cu un videoclip, adăugând sau ștergând id-ul utilizatorului care a dat apreciat sau nu
+    postarea din lista de referințe și care incrementează numărul de vizualizări ale videoclip-ului la
+    fiecare accesare. De asemenea, sunt tratate aici și cazurile speciale în care utilizatorul
     dă dislike după ce a dat like sau invers și cazul în care utilizatorul retrage aprecierea.
     \item \textbf{searchVideos}: funcție care primește din cerere cuvintele cheie (titlu, descriere,
     subtitrări, topic), accesează baza de date Elasticsearch pentru a căuta videoclip-urile care conțin
-    acele cuvinte și returnează o listă cu id-urile videoclip-urilor găsite. De menționat că am ales
-    un threshold de 1.0 pentru a filtra rezultatele mai slabe și am setat parametrul \textit{fuzziness} 
-    pe \textit{AUTO} pentru a permite căutări aproximative.
-
-    
+    acele cuvinte și returnează o listă cu id-urile și scorurile videoclip-urilor găsite. De menționat
+    că am ales un prag (\textit{threshold}) de 1.0 pentru a filtra rezultatele irelevante și am setat
+    parametrul de confuzie (\textit{fuzziness}) pe \textit{AUTO} pentru a permite căutări aproximative.
+    \item \textbf{getMessages}: funcție care primește din corpul cererii id-ul destinatarului și id-ul
+    utilizatorului autentificat din funcția intermediară și accesează apoi baza de date pentru a returna
+    sub formă de listă de referințe către mesaje, conversațiile dintre cei doi utilizatori.
 \end{itemize}
 
-\subsubsection{Utils}
+\subsubsection{Utilitare}
 Funcțiile utilitare nu depind de o anumită entitate și sunt folosite pentru a facilita procesarea
 cererilor. În cadrul aplicației noastre, am definit următoarele funcții utilitare:
 
@@ -446,7 +563,7 @@ cererilor. În cadrul aplicației noastre, am definit următoarele funcții util
     Astfel, creez o cerere către serverul de Flask pentru clasificare și returnez topicul videoclip-ului.
 \end{itemize}
 
-\subsubsection{Config}
+\subsubsection{Configurări}
 Configurările sunt folosite pentru a inițializa comunicarea cu alte servicii precum baza de date
 Elasticsearch. Folosesc două fișiere de configurare: \textit{elasticsearchClient.ts} și
 \textit{elasticsearchSetup.ts}. Primul creează un client Elasticsearch folosind librăria
@@ -473,29 +590,29 @@ Serverul folosește algoritmul de criptare \textit{bcrypt} pentru a stoca parole
 în baza de date. Algortimul de criptare are la bază următoarele concepte:
 
 \begin{itemize}
-    \item \textbf{Salting}: librăria \textit{bcrypt} generează automat un salt (o valoare aleatoare)
-    pentru fiecare parolă, pentru a preveni atacurile de tip \textit{rainbow table}. Salt-ul este
+    \item \textbf{Adăugarea valorilor aleatore (\textit{Salting})}: librăria \textit{bcrypt} generează automat un o valoare aleatoare (\textit{salt})
+    pentru fiecare parolă, pentru a preveni atacurile de tip \textit{rainbow table}. Valoarea aleatoare este
     adăugat la parolă înainte de a fi criptată. Astfel, chiar dacă două parole sunt identice,
-    salt-ul diferit va genera hash-uri diferite.
-    \item \textbf{Cost Factor}: procesul de criptare implică aplicarea algoritmului de hashing
-    de un anumit număr de ori, numit \textit{cost factor}. Acest proces încetinește semnificativ
+    valoarile aleatoare diferite vor genera criptări diferite.
+    \item \textbf{Factorul de cost (\textit{Cost Factor})}: procesul de criptare implică aplicarea algoritmului de hashing
+    de un anumit număr de ori, numit factorul de cost (\textit{cost factor}). Acest proces încetinește semnificativ
     viteza de criptare, făcând astfel atacurile cu forță brută ineficiente, în special pentru
     atacurile la scară largă.
 \end{itemize}
 
-\subsubsection{Algoritm de criptare bcrypt}
+\subsubsection{Algoritmul de criptare bcrypt}
 
 \par
 Utilizarea algoritmului de criptare \textit{bcrypt}:
 
 \begin{itemize}
-    \item \textbf{Input}: \textit{bcrypt} primește ca input parola utilizatorului, salt-ul generat
+    \item \textbf{Intrare}: \textit{bcrypt} primește ca input parola utilizatorului, valoarea aleatoare generată (\textit{salt})
     și parametrul de cost. Valoarea implicită a costului este 10, dar poate fi modificată în funcție
     de necesitatea aplicației și de puterea de calcul a serverului.
-    \item \textbf{Processing}: algoritmul de criptare folosește Eksblowfish, un algoritm de hashing
-    variație a Blowfish, dar modificat să fie mai lent și să includă salt-ul și parola.
-    \item \textbf{Output}: rezultatul este un hash de 60 de caractere care conține informații despre
-    versiunea de \textit{bcrypt}, cost parameter, salt și hash-ul parolei.
+    \item \textbf{Procesare}: algoritmul de criptare folosește Eksblowfish, un algoritm de hashing
+    variație a Blowfish, dar modificat să fie mai lent și să includă valoarea aleatoare și parola.
+    \item \textbf{Ieșire}: rezultatul este un hash de 60 de caractere care conține informații despre
+    versiunea de \textit{bcrypt}, parametrul de cost, valoarea aleatoare și hash-ul parolei.
 \end{itemize}
 
 \par
@@ -542,12 +659,47 @@ Astfel, pentru eficientizarea codului în producție, codul este compilat o sing
 folosind fișierul \textit{dist/server.js}. Pentru a face acest lucru, am folosit librăria \textit{tsc}
 care dă \textit{build} și rulează comanda \textit{npx tsc}.
 
+\subsection{Socket.io Server - Comunicare în timp real}
+\label{subsec:socketio}
+Socket.io este o librărie specifică Node.js, care are la bază \textit{Engine.io} și oferă
+suport atât pentru metode de comunicare în timp real precum WebSocket, cât și pentru metode
+mai vechi precum \textit{long-polling} deoarece, din motive de securitate, unele rețele blochează
+comunicarea WebSocket. 
+\par
+Socket.io facilitează comunicarea în timp real cu ajutorul conceptului de \textbf{canale bidirecționale} (\textit{sockets})
+care permit emiterea și ascultarea evenimentelor între client și server. Practic, serverul creează câte un proces
+pentru fiecare client, se ocupă de comunicarea între procese și de transmiterea evenimentelor între acestea.
+\par
+De asemnea, librăria Socket.io introduce conceptul de \textbf{camere} (\textit{rooms}) identificate unic
+printr-o adresă, care permite gruparea clienților în funcție de anumite criterii și izolează comunicarea cu
+un subset din toți clienții conectați.
+\par
+În cadrul aplicației, am folosit Socket.io pentru serviciul de mesagerie și pentru utilizatorii activi folosind
+următoarele evenimente:
+
+\begin{itemize}
+    \item \textbf{connectare (\textit{connection})}: de fiecare dată când un utilizator se conectează la server, acesta emite
+    evenimentul de conectare către server, serverul extrage id-ul utilizatorului din token-ul JWT și id-ul canalului bidirecțional
+    și îl salvează într-un dicționar. De asemenea, la conectare, serverul verifică mesajele primite în absența utilizatorului 
+    și emite evenimente de tipul mesaj-nou (\textit{new-message}) pentru fiecare mesaj primit.
+    \item \textbf{deconectare (\textit{disconnect})}: acest eveniment este emis de utilizator când se deconectează de la server. 
+    În acest fel, putem actualiza lista utilizatorilor activi, putem șterge utilizatorul din dicționar și putem emite evenimentul
+    de utilizatori-activi (\textit{online-users}) care notifică toți utilizatorii activi despre schimbarea listei.
+    \item \textbf{trimite-mesaj (\textit{send-message})}: eveniment emis de utilizator la fiecare mesaj trimis. Astfel, serverul
+    joacă rolul de intermediar care primește mesajul, îl salvează în baza de date și emite evenimentul de mesaj-nou dacă
+    destinatarul este activ.
+    \item \textbf{mesaj-nou (\textit{new-message})}: eveniment emis de server către destinatarul mesajului când acesta este activ.
+    \item \textbf{utilizatori-activi (\textit{online-users})}: eveniment emis de server către toate canalele deschise pentru a
+    notifica schimbarea listei de utilizatori activi.
+    \item \textbf{cerere-utilizatori-activi (\textit{request-online-users})}: eveniment emis de client când deschide pagina de
+    conversații pentru a cere serverului lista utilizatorilor activi.
+\end{itemize}
 
 \subsection{Flask Server - Recunoașterea vorbirii}
 Deși este un server de Flask, structura este similară cu cea a serverului Express în sensul
 că este împărțit în app, rute, controlere, config și utils.
 
-\subsubsection{Routes}
+\subsubsection{Rute}
 
 Sintaxa specifică Flask-ului pentru definirea rutelor constă în a folosi decoratorul @app.route
 pentru a asocia o funcție cu o cale specifică și pentru a specifica metoda HTTP folosită.
@@ -562,73 +714,14 @@ pentru a asocia o funcție cu o cale specifică și pentru a specifica metoda HT
     funcție este apelată după ce subtitrările au fost livrate cu succes pentru a elibera spațiul de stocare.
 \end{itemize}
 
-\subsubsection{Audio}
-Înainte de a explica cum funcționează recunoașterea vorbirii, vreau să explic ce este un fișier audio,
-cum este reprezentat și cum este procesat.
 
-\par
-Definim un convertor analog-digital ca fiind un dispozitiv care transformă semnalul recepționat 
-de la microfon (variații în presiunea aerului/unde sonore) într-un semnal digital.
-Practic, convertește semnalul analogic continuu într-un
-semnal digital discret care poate fi stocat și procesat de un calculator. Acest proces implică
-conceptul de cuantizare și introduce o eroare de cuantizare care depinde de rezoluția convertorului.
-În acest sens, convertorul analog-digital convertește periodic semnalul analogic, eșantionând semnalul
-la intervale de timp egale.
-\par
-Perioada de timp dintre două eșantioane consecutive este cunoscută sub numele de \textbf{frecvență de eșantionare}
-și este măsurată în Hz. Cu cât frecvența de eșantionare este mai mare, cu atât semnalul digital este mai apropiat
-de semnalul analogic original. Această frecvență măsoară numărul de sample-uri pe secundă.
-\par
-Conceptul de \textbf{rezoluție} indică numărul de valori discrete distincte pe care le poate 
-reprezenta un convertor analog-digital. Cu cât rezoluția este mai mare, cu atât semnalul digital
-este mai apropiat de semnalul analogic original.
-\par
-De exemplu, un convertor analog-digital cu o rezoluție de 8 biți poate encoda un semnal analogic
-în $2^8 = 256$ de valori discrete. Figura de mai jos ilustrează procesul de conversie analog-digital
-și digital-analog. \ref{fig:conversion-ad-da}
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\textwidth]{Conversion_AD_DA.png}
-    \caption{Procesul de conversie analog-digital și digital-analog\protect\footnotemark[1]}
-    \label{fig:conversion-ad-da}
-\end{figure}
-
-\par
-Acum că am definit cum sunt interpretate semnalele audio, putem să trecem la procesarea acestora.
-Definim ce semnifică valorile obținute:
-
-\begin{itemize}
-    \item \textbf{Amplitudinea}: reprezintă presiunea undelor sonore măsurată la un moment de timp.
-    Cu cât amplitudinea este mai mare, cu atât sunetul este mai puternic.
-    \item \textbf{Ampitudinea zero}: valoarea 0 reprezintă linia de bază a semnalului audio, punctul
-    principal de referință după care se măsoară amplitudinea.
-    \item \textbf{Valori pozitive și negative}: valorile sunt reprezentate în formatul PCM (Pulse Code Modulation),
-    unde valorile pozitive sunt reprezentate de valori între 0 și 1, iar valorile negative sunt reprezentate
-    de valori între 0 și -1.
-\end{itemize}
-\footnotetext[1]{Imagine preluată de pe Wikipedia la adresa: \url{https://en.wikipedia.org/wiki/Analog-to-digital_converter}}
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{PCM.png}
-    \caption{Reprezentarea semnalului audio în format PCM\protect\footnotemark[2]}
-    \label{fig:pcm}
-\end{figure}
-
-\par
-De aici încolo vom lucra cu semnalul digital în Python folosind librăria \textit{soundfile},
-\textit{librosa} și \textit{numpy} pentru a procesa secvențele audio.
-
-
-\subsubsection{Controllers}
-Pentru a menține logica din rute cât mai simplă, am creat un controller care se ocupă de procesarea
+\subsubsection{Controlere}
+Pentru a menține logica din rute cât mai simplă, am creat un controler care se ocupă de procesarea
 secvețelor audio primite de la serverul Express. 
-\footnotetext[2]{Imagine preluată de pe Wikipedia la adresa: \url{https://en.wikipedia.org/wiki/Audio_bit_depth}}
 
 \subsubsection{Procesarea secvențelor audio}
 \par
-Funcția \textbf{speech\_to\_text} primește ca parametru calea către fișierul audio salvat temporar,
+Funcția \textbf{speech\_to\_text} (vorbire\_text) primește ca parametru calea către fișierul audio salvat temporar,
 îl deschide folosind \textit{soundfile} și îl transformă într-un șir de float-uri.
 Sunt două tipuri de fișiere audio: \textbf{mono} și \textbf{stereo}, iar funcția trebuie să facă distincția
 între cele două tipuri. 
@@ -660,16 +753,16 @@ procesarea cu succes a secvențelor audio. Exceptând aceste cazuri, bucățile 
 \subsubsection{Subtitrări}
 \label{subsec:subtitles}
 \par
-Funcția \textbf{make\_subtitles} primește ca parametru textul transcris din fiecare bloc de 30 de secunde
+Funcția \textbf{make\_subtitles} (crearea\_subtitrări) primește ca parametru textul transcris din fiecare bloc de 30 de secunde
 și creează subtitrările în formatul .vtt. În cadrul unui bloc, modelul de recunoaștere a vorbirii 
 folosește următoarele etape:
 \begin{itemize}
-    \item \textbf{Processing}: modelul primește secvența audio și folosește procesorul specific de pe
+    \item \textbf{Procesare}: modelul primește secvența audio și folosește procesorul specific de pe
     Hugging Face pentru a converti secvența audio în tensori. Vom numi acești tensori \textit{input\_values}.
-    \item \textbf{Prediction}: modelul primește \textit{input\_values} și returnează \textit{logits}, tot
+    \item \textbf{Predicție}: modelul primește \textit{input\_values} și returnează \textit{logits}, tot
     sub forma de tensori reprezentând probabilitățile pentru fiecare literă din vocabular. Sunt calculate
     apoi \textit{predicted\_ids}, fiind literele cu cele mai mari probabilități.
-    \item \textbf{Decoding}: folosind \textit{logits}, modelul folosește algoritmul de decodare pentru a
+    \item \textbf{Decodare}: folosind \textit{logits}, modelul folosește algoritmul de decodare pentru a
     converti tensorii în text și obtinem \textit{transcription}.
 \end{itemize}
 
@@ -707,9 +800,9 @@ Pentru a crea subtitrările, folosim următoarele etape:
     _____/                 \______________________/            |
                  |                   other
 
-    words: ['to', 'meet', 'was', 'to', 'find', 'each', 'other']
+    cuvinte: ['to', 'meet', 'was', 'to', 'find', 'each', 'other']
 
-    ids for letters and delimiter, but without pad
+    id-uri pentru litere și delimitator, dar fără pad
 
     [6, 6, 8, 4, 4, 17, 5, 5, 7, 6, 4, 4, 18, 7, 12, 12, 4, 4, 6, 8,
      \_____/        \____________/        \___________/        \__/
@@ -747,7 +840,7 @@ Pentru a crea subtitrările, folosim următoarele etape:
 \end{verbatim}
 
 \subsubsection{Formatarea subtitrărilor}
-Funcția \textbf{save\_subtitles} primește ca parametru subtitrările și creează un fișier \textit{.vtt},
+Funcția \textbf{save\_subtitles} (salvează\_subtitrări) primește ca parametru subtitrările și creează un fișier \textit{.vtt},
 respectând formatul specificat. Fișierele în formatul \textit{.vtt} încep cu antetul \textit{WEBVTT},
 iar pentru fiecare grup de subtitrări se specifică momentul de timp de început și de sfârșit, urmat
 de textul subtitrării.
@@ -777,7 +870,7 @@ Configurările sunt folosite pentru a specifica serverului cum să proceseze cer
     \item \textbf{ASR\_REPO}: numele modelului de recunoaștere a vorbirii folosit pentru a transcrie
     secvențele audio.
     \item \textbf{BOOSTED\_LM}: dacă este setat pe \textit{true}, folosește varianta îmbunătățită cu
-    un n-gram language model pentru recunoașterea vorbirii.
+    un model de limbaj bazat pe n-grame pentru recunoașterea vorbirii.
     \item \textbf{SAMPLE\_RATE}: frecvența de eșantionare a fișierelor audio, setată pe 16kHz pentru
     a respecta cerințele modelului.
     \item \textbf{BLOCK\_SIZE}: lungimea blocurilor folosite în fluxul de date, setată pe 30 de secunde.
@@ -786,18 +879,38 @@ Configurările sunt folosite pentru a specifica serverului cum să proceseze cer
 \subsection{Flask Server - Clasificarea videoclip-urilor}
 Serverul de Flask pentru clasificarea videoclip-urilor este similar cu cel pentru recunoașterea vorbirii,
 dar are o structură mai simplă, nefiind necesare mai multe etape de procesare.
-\subsubsection{Routes}
+\subsubsection{Rute}
 \par
 Astfel, serverul definește o singură rută \textit{/topic} care primește cereri de tipul \textit{POST}
-și returnează topicul textului primit. Deoarece secvența de intrare a modelului \textit{BERT} este 
+și returnează topicul textului primit. Deoarece secvența de intrare a modelului \textbf{BERT} este 
 limitată la 512 token-uri, am ales să împart textul în blocuri de câte 512 token-uri și să le trimit
-succesiv la model pentru a obține topicul. Pentru a obține topicul final, se contorizează frecvența
-apariției fiecărui topic și se returnează cel majoritar.
+succesiv la model pentru a obține topicul.
+\par
+Pentru a obține topicul final, am observat că informațiile din primul bloc de date (care conțin titlul 
+și descrierea videoclip-ului) tind să fie mai relevante decât restul blocurilor (care conțin doar subtitrările).
+Astfel, am ales să folosesc doar primele 10 blocuri și să măresc importanța contribuției primului bloc
+la clasificare.
+\par
+În final, serverul contorizează numărul de apariții ale fiecărui topic și returnează topicul majoritar.
 \subsubsection{Configurări}
 \par
 Serverul creează un \textit{pipeline} specific Hugging Face înaite de a primi cereri, pentru a reduce
 timpul de răspuns. Acest \textit{pipeline} conține modelul preantrenat și fine-tunat pe setul de date
 \textit{BBC News}. Mai multe detalii se regăsesc în secțiunea \ref{sec:clasificare-videoclipuri}.
+
+\subsection{Flask Server - Întrebări și răspunsuri pentru videoclip-uri}
+Serverul de Flask pentru întrebări și răspunsuri pentru videoclip-uri folosește API-ul pus
+la dispoziție de ChatGPT pentru a genera răspunsuri la întrebările legate de conținutul
+videoclip-urilor. Inițializarea serverului presupune crearea unui client din librăria 
+\textit{openai}.
+\subsubsection{Rute}
+\par
+Serverul creează o singură rută \textit{/qa} care primește cereri de tipul \textit{POST}
+a căror conținut este un obiect JSON cu două câmpuri: \textit{question} și \textit{subtitles}.
+Astfel, este apelată funcția \textit{/ask\_gpt} care la rândul ei apelează API-ul de la OpenAI
+folosind modelul \textit{gpt-3.5-turbo} pentru a genera răspunsul la întrebarea primită.
+
+
 
 \section{Baze de date}
 Pentru stocarea datelor, am ales să folosesc două baze de date: MongoDB, datorită structurii sale
@@ -806,11 +919,11 @@ rapid în metadatele videoclip-urilor.
 \subsection{MongoDB}
 \subsubsection{Arhitectura bazei de date}
 MongoDB este o bază de date de tip \textbf{NoSQL} care stochează datele sub formă de documente în 
-formatul \textit{JSON}. Documentele sunt grupate în colecții, iar colecțiile sunt apoi grupate în
+formatul \textit{BSON}. Documentele sunt grupate în colecții, iar colecțiile sunt apoi grupate în
 baze de date. 
 \par
 Intuitiv, un document este echivalentul unui rând dintr-o bază de date relațională, dar cu o structură
-similară unui obiect JSON. Acesta permite stocarea datelor fără a respecta un model de date fix, adică
+similară unui obiect \textit{BSON}. Acesta permite stocarea datelor fără a respecta un model de date fix, adică
 pot fi adăugate câmpuri noi, chiar și alte documente, diferite de celelalte documente din aceeași colecție.
 
 \subsubsection{Structura datelor}
@@ -830,22 +943,27 @@ Fiecare document conține, pe lângă datele propriu-zise, câmpuri speciale pre
 \par
 În cadrul aplicației noastre, am definit 3 colecții:
 \begin{itemize}
-    \item \textbf{users}: conține informații despre utilizatori precum: numele și prenumele, adresa de
+    \item \textbf{utilizatori (\textit{users})}: conține informații despre utilizatori precum: numele și prenumele, adresa de
     email, numele de utilizator, parola criptată și url-ul către poza de profil.
-    \item \textbf{videos}: conține informații despre videoclipuri precum: titlul, descrierea, topicul,
+    \item \textbf{videoclip-uri (\textit{videos})}: conține informații despre videoclipuri precum: titlul, descrierea, topicul,
     id-ul autorului (referință către colecția \textit{users}), url-ul către videoclip, url-ul către
     subtitrări și două liste separate pentru id-urile utilizatorilor care au dat like și dislike.
-    \item \textbf{comments}: conține informații despre comentarii precum: textul comentariului, 
+    \item \textbf{comentarii (\textit{comments})}: conține informații despre comentarii precum: textul comentariului, 
     id-ul autorului (referință către colecția \textit{users}), id-ul videoclipului (referință către
-    colecția \textit{videos}), isDeleted folosit la \textit{soft-delete} și \textit{hard-delete}, 
+    colecția \textit{videos}), \textit{isDeleted} folosit la \textit{soft-delete} și \textit{hard-delete}, 
     parentId în cazul în care comentariul este un răspuns la alt comentariu.
+    \item \textbf{mesaje (\textit{messages})}: conține pentru fiecare mesaj: id-ul utilizatorului care a trimis mesajul,
+    id-ul destinatarului, textul mesajului, momentul de timp al trimiterii și câmpul \textit{isDelivered} folosit pentru
+    obținerea mesajelor necitite.
+    \item \textbf{conversație (\textit{conversation})}: conține pentru fiecare conversație o listă cu id-urile participanților
+    la conversație și o listă cu id-urile mesajelor trimise.
 \end{itemize}
 
 \subsubsection{Interacțiunea cu baza de date}
 
 \par
 Interacțiunea cu baza de date are loc cu ajutorul librăriei \textit{mongoose} care definește modelele
-în serverul Express și execută operații de tip CRUD (Create, Read, Update, Delete) în baza de date.
+în serverul Express și execută operații de tip CRUD (Creează, Citește, Actualizează, Șterge) în baza de date.
 \textit{mongoose} este un ODM (Object Data Modeling) care oferă un nivel de abstractizare peste MongoDB
 și permite definirea de scheme pentru documente, validarea datelor și crearea de relații între colecții.
 
@@ -855,10 +973,54 @@ la nivel de colecție, numite \textit{indexes}. Deși aplicația noastră este u
 de scalările orizontale, dar în cazul unui volum mare de date, replicile facilitează operațiile de
 citire și scriere, îmbunătățind timpul de răspuns.
 
+\subsection{Elasticsearch}
+\subsubsection{Concept}
+Elasticsearch este un motor de căutare ce organizează datele în documente în formatul \textit{JSON} care
+sunt apoi grupate în indici. Indicii sunt echivalentul bazelor de date din MongoDB, iar documentele sunt
+echivalentul rândurilor din tabelele relaționale.
+
+\par
+Concepte cheie în Elasticsearch:
+\begin{itemize}
+    \item \textbf{Document}: unitatea de bază folosită de Elasticsearch în formatul \textit{JSON}
+    (considerat formatul standard pentru transferul de date)
+    \item \textbf{Indici}: o colecție de documente cu trăsături similare formează un indice și reprezintă
+    cel mai înalt nivel de organizare a datelor.
+    \item \textbf{Index inversat (\textit{Inverted Index})}: reprezintă mecanismul care stă la baza motoarelor de căutare și constă
+    într-o structură de date (similară cu un \textit{hashmap}) care mapează cuvintele (sau mai bine zis, termenii)
+    la locațiile unde apar în documente. Astfel, fiecare document este împărțit în termeni individuali 
+    care sunt folosiți la căutare.
+\end{itemize}
+
+\par
+Figura \ref{fig:elasticsearch} ilustrează conceptul \textit{Inverted Index}. \cite{elasticsearchexplained}
+
+\subsubsection{Inserare}
+\par
+În cazul aplicației noastre, am definit un singur indice \textit{videos} care conține metadatele
+videoclip-urilor: titlul, descrierea, topicul și subtitrările. De fiecare dată când un videoclip
+este încărcat în aplicație, inserarea se face atât în baza de date MongoDB, cât și în Elasticsearch.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{elasticsearch.png}
+    \caption{Inverted Index\protect\footnotemark[3]}
+    \label{fig:elasticsearch}
+\end{figure}
+
+\footnotetext[3]{Imagine preluată de pe site-ul knowi.io la adresa: \url{https://www.knowi.com/blog/what-is-elastic-search/}}
+
+\subsubsection{Căutare}
+Interogarea în Elasticsearch permite specificarea criteriului de căutare precum: textul întreg \textit{full-text}, 
+confuzie \textit{fuzzy}, prefix, expresii regulate etc. În cazul aplicației noastre, am ales să folosesc \textit{fuzziness AUTO}
+pentru a trece cu vederea greșelile de scriere și să folosesc \textit{match} pentru a căuta în câmpurile menționate anterior.
+
+
+\section{Servicii}
 \subsection{Cron Jobs}
 \label{sec:cron-jobs}
 \subsubsection{Definiție și utilitate}
-Un \textbf{cron job} este un proces care rulează automat la un momente de tip prestabilite. În cadrul proiectului,
+Un \textbf{cron job} este un proces care rulează automat la momente de tip prestabilite. În cadrul proiectului,
 un \textit{cron job} își găsește utilitatea în procesul de curățare al arborelui de comentarii pentru fiecare 
 videoclip. Problema constă în găsirea unei soluții eficiente care șterge comentariile marcate drept \textit{soft-delete}
 cu subarborele de răspunsuri gol.
@@ -947,48 +1109,6 @@ va adăuga nodurile \textit{c}, \textit{f}, \textit{j}, \textit{k} și \textit{l
 Chiar dacă nodurile \textit{d} și \textit{h} sunt marcate drept \textit{soft-delete}, ele nu pot fi șterse
 permanent (\textit{hard-delete}) din cauza subarborilor activi.
 
-\subsection{Elasticsearch}
-\subsubsection{Concept}
-Elasticsearch este un motor de căutare ce organizează datele în documente în formatul \textit{JSON} care
-sunt apoi grupate în indici. Indicii sunt echivalentul bazelor de date din MongoDB, iar documentele sunt
-echivalentul rândurilor din tabelele relaționale.
-
-\par
-Concepte cheie în Elasticsearch:
-\begin{itemize}
-    \item \textbf{Document}: unitatea de bază folosită de Elasticsearch în formatul \textit{JSON}
-    (considerat formatul standard pentru transferul de date)
-    \item \textbf{Indices}: o colecție de documente cu trăsături similare formează un indice și reprezintă
-    cel mai înalt nivel de organizare a datelor.
-    \item \textbf{Inverted Index}: reprezintă mecanismul care stă la baza motoarelor de căutare și constă
-    într-o structură de date (similară cu un hashmap) care mapează cuvintele (sau mai bine zis, termenii)
-    la locațiile unde apar în documente. Astfel, fiecare document este împărțit în termeni individuali 
-    care sunt folosiți la căutare.
-\end{itemize}
-
-\par
-Figura \ref{fig:elasticsearch} ilustrează conceptul \textit{Inverted Index}. \cite{elasticsearchexplained}
-
-\subsubsection{Inserare}
-\par
-În cazul aplicației noastre, am definit un singur indice \textit{videos} care conține metadatele
-videoclip-urilor: titlul, descrierea, topicul și subtitrările. De fiecare dată când un videoclip
-este încărcat în aplicație, inserarea se face atât în baza de date MongoDB, cât și în Elasticsearch.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.6\textwidth]{elasticsearch.png}
-    \caption{Inverted Index\protect\footnotemark[3]}
-    \label{fig:elasticsearch}
-\end{figure}
-
-\footnotetext[3]{Imagine preluată de pe site-ul knowi.io la adresa: \url{https://www.knowi.com/blog/what-is-elastic-search/}}
-
-\subsubsection{Căutare}
-Interogarea în Elasticsearch permite specificarea criteriului de căutare precum: full-text, fuzzy, prefix,
-expresii regulate etc. În cazul aplicației noastre, am ales să folosesc \textit{fuzziness AUTO} pentru a 
-permite căutarea cuvintelor similare cu cele din cerere.
-
 \section{Deployment}
 \subsection{Docker}
 
@@ -1010,10 +1130,10 @@ Avantajele folosirii containerelor Docker sunt:
     \item \textbf{utilizare eficientă a resurselor}: permite gestionarea eficientă a resurselor sistemului.
 \end{itemize}
 
-\subsubsection{Dockerfile și Docker image}
+\subsubsection{Dockerfile și Imagini Docker}
 \par
 Imaginile Docker reprezintă unitatea de bază a containerelor și conțin tot ce este necesar (codul sursă,
-dependințele, tool-urile, librăriile, variabile de mediu etc.) pentru a rula o aplicație. Imaginile
+dependințele, librăriile, variabile de mediu etc.) pentru a rula o aplicație. Imaginile
 sunt structurate în nivele de abstractizare construite pe baza unui fișier numit \textit{Dockerfile}.
 \par
 Un \textit{Dockerfile} enumeră instrucțiunile necesare pentru construirea imaginii. De obicei, se pleacă
@@ -1042,10 +1162,10 @@ a rula comenzi, fie pentru a monitoriza starea aplicației.
 \subsubsection{Docker Compose}
 \par
 Pe parcursul dezvoltării aplicației, apar din ce în ce mai multe servicii care trebuie gestionate separat
-și care depind unele de altele. Docker Compose este un tool care înglobează toate comenzile necesare
+și care depind unele de altele. \textit{Docker Compose} este un tool care înglobează toate comenzile necesare
 pentru pornirea și oprirea serviciilor, precum și pentru construirea imaginilor și a containerelor.
 \par
-Docker Compose folosește un fișier numit \textit{docker-compose.yml} care conține toate detaliile necesare
+\textit{Docker Compose} folosește un fișier numit \textit{docker-compose.yml} care conține toate detaliile necesare
 pentru fiecare serviciu, dintre care amintim: imaginea folosită, numele containerului, porturile expuse,
 variabilele de mediu, volumele, dependințele între alte servicii, rețelele folosite etc.
 
@@ -1063,8 +1183,8 @@ rețelelor Docker permite atribuirea manuală a IP-urilor.
 
 \subsection{Dockerizarea aplicației}
 \par
-Aplicația beneficiază de avantajele oferite de Docker și Docker Compose pentru a simplifica procesul
-de dezvoltare și de deployment. În cadrul proiectului, am definit următoarele servicii:
+Aplicația beneficiază de avantajele oferite de \textit{Docker} și \textit{Docker Compose} pentru a simplifica procesul
+de dezvoltare și de încărcare. În cadrul proiectului, am definit următoarele servicii:
 
 \begin{itemize}
     \item \textbf{MongoDB Container}: rulează o instanță de MongoDB pentru stocarea datelor, folosind
@@ -1077,9 +1197,12 @@ de dezvoltare și de deployment. În cadrul proiectului, am definit următoarele
     servicii sunt specificate ca dependințe.
     \item \textbf{Flask Server - Clasificarea Videoclipurilor}: rulează serverul Flask pentru clasificarea
     videoclipurilor, folosind portul 5003. Nu are dependințe.
+    \item \textbf{Flask Server - Întrebări și Răspunsuri}: rulează serverul Flask pentru întrebări și
+    răspunsuri, folosind portul 5004. Nu are dependințe.
 \end{itemize}
 
 \par
-Pentru serverele de React si Node.js am ales să nu folosesc containere Docker astfel încât să pot
-beneficia de o dezvoltare rapidă și de actualizare în timp real a codului sursă.
+Pentru serverele de \textit{React} si \textit{Node.js} am ales să nu folosesc containere \textit{Docker}
+astfel încât să pot beneficia de o dezvoltare rapidă și de actualizare în timp real a codului sursă. La
+nivel de producție însă, cele două servere pot fi containerizate și ele.
 
