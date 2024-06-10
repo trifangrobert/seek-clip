@@ -21,30 +21,39 @@ def calculate_article_stats(base_path):
     return categories_count, categories_avg_length
 
 def plot_data(categories_count, categories_avg_length):
+    translate_category = {
+        "business": "afaceri",
+        "entertainment": "divertisment",
+        "politics": "politica",
+        "sport": "sport",
+        "tech": "tehnologie"
+    }
     categories = list(categories_count.keys())
     num_articles = list(categories_count.values())
     avg_lengths = list(categories_avg_length.values())
+    translated_categories = [translate_category[category] for category in categories]
     
+    plt.rcParams.update({'font.size': 14})
     fig, ax1 = plt.subplots(figsize=(12, 6))
     
     # Bar plot for the number of articles
     color = 'tab:red'
-    ax1.set_xlabel('Category')
-    ax1.set_ylabel('Number of Articles', color=color)
-    ax1.bar(categories, num_articles, color=color, alpha=0.6)
+    ax1.set_xlabel('Categorii')
+    ax1.set_ylabel('Numărul de articole', color=color)
+    ax1.bar(translated_categories, num_articles, color=color, alpha=0.6)
     ax1.tick_params(axis='y', labelcolor=color)
     
     # Create a second y-axis for the average length of articles
     ax2 = ax1.twinx()
     color = 'tab:blue'
-    ax2.set_ylabel('Average Length of Articles (chars)', color=color)
-    ax2.plot(categories, avg_lengths, color=color, marker='o')
+    ax2.set_ylabel('Lungimea medie a articolelor', color=color)
+    ax2.plot(translated_categories, avg_lengths, color=color, marker='o')
     ax2.tick_params(axis='y', labelcolor=color)
     
-    plt.title('Article Count and Average Text Length by Category in BBC News Dataset')
+    plt.title('Numărul de articole și lungimea medie a textului după categorie în setul de date BBC News')
     plt.xticks(rotation=45)
     fig.tight_layout()
-    plt.savefig('bbc_stats.png')
+    plt.savefig('bbc_stats_ro.png')
     plt.show()
 
 # Base directory path

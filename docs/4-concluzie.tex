@@ -10,15 +10,15 @@ dar consider că  integrarea acestuia într-un context concret ilustrează mai b
 importanța acestuia. De aceea, mi-am structurat lucrarea de licență în două părți: partea de
 \textbf{Concepte teoretice despre învățare automată}, în care am detaliat arhitectura modelului \textit{wav2vec 2.0},
 cum am ales setul de date și cum am antrenat modelul, și arhitectura modelului \textit{BERT}
-pentru clasificarea videoclip-urilor, explicată în aceeași manieră, folosită pentru a îmbunătăți
+pentru clasificarea videoclipurilor, explicată în aceeași manieră, folosită pentru a îmbunătăți
 algoritmul de căutare, precum și partea de \textbf{Prezentare a aplicației}, în care am prezentat arhitectura
 aplicației web, tehnologiile folosite, structura frontend-ului, backend-ului, bazelor de date,
 dar și a serviciilor de încărcare și a serviciilor utilitare (Cron Jobs).
 \par
 Așa cum am menționat în secțiunea \textit{Prezentarea aplicației}, aplicația oferă utilizatorilor
-funcționalități precum: autentificare, CRUD pe informațiile proprii, dar si pe videoclip-uri și
-interacțiunea cu acestea, căutarea videoclip-urilor după cuvinte cheie și suport pentru recunoașterea
-vorbirii, crearea subtitrărilor și clasificarea videoclip-urilor.
+funcționalități precum: autentificare, CRUD pe informațiile proprii, dar si pe videoclipuri și
+interacțiunea cu acestea, căutarea videoclipurilor după cuvinte cheie și suport pentru recunoașterea
+vorbirii, crearea subtitrărilor și clasificarea videoclipurilor.
 \par
 În procesul de dezvoltare al aplicației, am gândit întâi funcționalitățile pe care le urmăresc
 și apoi am ales tehnologiile potrivite pentru a le implementa. Acest context mi-a oferit 
@@ -35,8 +35,12 @@ experiența mai personalizața în înțelegerea conținutului video. De asemene
 manual prin care omul adaugă subtitrări este unul consumator de timp și resurse, iar o soluție
 precum cea prezentată în această lucrare poate simplifica munca depusă.
 \par
+În plus, consider că integrarea API-ului de la ChatGPT pentru răspunderea la întrebări 
+legate de conținutul videoclipurilor este o funcționalitate cu mult potențial, care poate
+îmbunătăți procesul de căutare și înțelegere a conținutului video.
+\par
 În concluzie, lucrarea de licență prezintă un prototip de aplicație web care integrează
-recunoașterea vorbirii și generarea subtitrărilor în contextul videoclip-urilor și oferă
+recunoașterea vorbirii și generarea subtitrărilor în contextul videoclipurilor și oferă
 utilizatorilor o experiență mai bună în întelegerea conținutului video.
 
 \section{Perspective}
@@ -47,7 +51,7 @@ se numără:
 
 
 \begin{itemize}
-    \item \textbf{Suprimarea zgomotului}: am observat că unele videoclip-uri au melodii sau 
+    \item \textbf{Suprimarea zgomotului}: am observat că unele videoclipuri au melodii sau 
     zgomote de fundal care afectează performanța modelului de recunoaștere a vorbirii. Suprimarea
     acestor sunete ar putea îmbunătăți calitatea subtitrărilor.
     \item \textbf{Traducerea subtitrărilor}: m-am concentrat pe limba engleză, având mai multe
@@ -57,16 +61,15 @@ se numără:
     \item \textbf{Seturi de date mai mari}: am folosit seturi de date mici (\textit{MiniLibriSpeech},
     \textit{Common Voice Delta Segment 16.1}) din lipsa resurselor computaționale de antrenare,
     dar consider că antrenarea pe seturi de date mai mari ar îmbunătăți performanța modelului.
-    \item \textbf{Topicuri mai diverse}: videoclip-urile sunt clasificate în 5 categorii:
-    (tehnologie, sport, afaceri, politică, divertisment) (\textit{Tech, Sport, Business, Politics, Entertainment}),
-    dar natura materialelor video este mult mai diversă de atât. O clasificare mai detaliată ar
-    îmbunătăți experiența utilizatorilor.
+    \item \textbf{Topicuri mai diverse}: videoclipurile sunt clasificate în 5 categorii:
+    (tehnologie, sport, afaceri, politică, divertisment), dar natura materialelor video este mult
+    mai diversă de atât. O clasificare mai detaliată ar îmbunătăți experiența utilizatorilor.
     \item \textbf{Corector de greșeli ortografice}: deși am îmbunătățit modelul de recunoaștere a vorbirii
     cu un model de limbaj bazat pe n-grame, tot mai apar cuvinte greșite. Un corector de greșeli ortografice
-    (\textit{spell checker}) ar putea corecta aceste greșeli.
+    (\textit{spell checker}) ar putea îmbunătăți calitatea subtitrărilor.
     \item \textbf{Suport pentru subtitrări}: librăria \textit{transformers} de pe Huggingface nu oferă
     suport pentru generarea subtitrărilor și a trebuit să prelucrez separat momentele de timp
-    ale cuvintelor și să le sincronizez cu videoclip-ul. În implementarea mea am ales să grupez
+    ale cuvintelor și să le sincronizez cu videoclipul. În implementarea mea am ales să grupez
     câte 7 cuvinte într-o subtitrare, dar în mod normal, această valoare ar trebui să fie ajustată
     la viteza de vorbire.
     \item \textbf{Procesarea paralelă a secvențelor audio}: după cum am menționat mai sus,
@@ -76,9 +79,9 @@ se numără:
     am folosit un singur server pentru toate serviciile, dar într-un mediu de producție,
     arhitecturi precum \textit{nginx} sau \textit{Kubernetes} sunt vitale pentru existența aplicației.
     \item \textbf{Replici pentru bazele de date}: în aceeași manieră ca la punctul anterior, am folosit
-    o singură bază de date MongoDB și Elasticsearch, dar în producție, arhitecturi de tip 
+    o singură bază de date \textit{MongoDB} și \textit{Elasticsearch}, dar în producție, arhitecturi de tip 
     \textit{Master-Slave} sau \textit{Sharding} îmbunătățesc viteza de răspuns.
-    \item \textbf{Autentificare sigură}: am folosit autentificare cu token JWT, dar în producție,
+    \item \textbf{Autentificare sigură}: am folosit autentificare cu \textit{token JWT}, dar în producție,
     servicii de autentificare precum \textit{Auth0} sau \textit{Firebase} sunt mai sigure.
 \end{itemize}
 
