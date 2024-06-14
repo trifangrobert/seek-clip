@@ -1,4 +1,4 @@
-\chapter{Concepte teoretice despre învățare automată}
+\chapter{Concepte teoretice despre învățarea automată}
 
 \section{Recunoașterea vorbirii}
 Pentru a putea recunoaște vorbirea dintr-un videoclip, am ales să folosesc arhitectura
@@ -116,7 +116,7 @@ blocurilor convoluționale este structurată astfel:
 Se observă cum primul bloc convoluțional are dimensiunea filtrului 10 și lungimea pasului 5,
 fiind cele mai mari valori din cele 7 blocuri. Intuitiv, acest bloc încearcă să acopere o porțiune
 mai mare din semnalul audio, în timp ce blocurile următoare (cu dimensiuni mai mici) încearcă să
-înțeleagă detalii mai fine din semnalul audio. în
+înțeleagă detalii mai fine din semnalul audio.
 \footnotetext[1]{Imagine preluată de pe site-ul lui Jonathan Bgn, ``Illustrated Wav2Vec 2.0'', disponibil la: \url{https://jonathanbgn.com/2021/09/30/illustrated-wav2vec-2.html}.}
 
 \subsubsection{Rețea pentru Context}
@@ -165,10 +165,10 @@ corespunzătoare sunetului fonetic și 0 pe restul pozițiilor. Spre deosebire d
 funcția \textit{Gumbel Softmax} adaugă zgomot de medie 0 și deviație standard 1, zgomot reglat cu 
 ajutorul temperaturii, care ajută modelul să exploreze mai multe sunete fonetice în timpul antrenării.
 De asemnea, funcția \textit{Gumbel Softmax} este o funcție diferențiabilă care permite antrenarea modelului
-prin tehnica de \textbf{coborârii pe gradient}.
+prin tehnica \textbf{coborârii pe gradient}.
 \par
 Vectorii menționați anterior indică poziția sunetului fonetic în \textit{codebook} și sunt înmulțiți
-apoi cu o matrice de proiecție pentru a redimensionarea caracteristicile la dimensiunea ieșirilor
+apoi cu o matrice de proiecție pentru a redimensionam caracteristicile la dimensiunea ieșirilor
 codificatorului de tip Transformer.
 \footnotetext[1]{Imaginile au fost preluate de pe site-ul lui Jonathan Bgn, ``Illustrated Wav2Vec 2.0'', disponibil la: \url{https://jonathanbgn.com/2021/09/30/illustrated-wav2vec-2.html}.}
 
@@ -213,7 +213,7 @@ subset de sunete.
 \footnotetext[1]{Imaginile au fost preluate de pe site-ul lui Jonathan Bgn, ``Illustrated Wav2Vec 2.0'', disponibil la: \url{https://jonathanbgn.com/2021/09/30/illustrated-wav2vec-2.html}.}
 
 \subsection{Setul de date}
-Modelul oficial a fost preantrenat pe setul de date \textit{LibriSpeech}, iar eu am continuat
+Modelul oficial a fost preantrenat pe setul de date \textit{LibriSpeech}, iar noi am continuat
 antrenarea pe seturile de date \textit{Mini LibriSpeech} și \textit{Common Voice Delta Segment 16.1}.
 
 \subsubsection{Mini-LibriSpeech}
@@ -248,7 +248,7 @@ care pune la dispoziție o serie de librării precum \textit{transformers} și \
 Hiperparametrii folosiți pentru antrenarea modelului sunt:
 \begin{itemize}
     \item \textbf{Rata de învățare} - pentru a controla cât de mult se vor actualiza ponderile în timpul
-    antrenării, poate fi gândit ca lungimea pasului în direcția gradientului
+    antrenării, reprezentând lungimea pasului în direcția gradientului
     \item \textbf{Declinul ponderilor} - pentru a menține sub control creșterea ponderilor în timpul antrenării
     și pentru a evita gradienții instabili
     \item \textbf{Pași de încălzire} - pentru a controla cum se modifică rata de învățare în prima parte 
@@ -615,8 +615,8 @@ irelevante pentru clasificare.
 \par
 În acest sens, textul alcătuit din titlu, descriere și subtitrări va fi împărțit în blocuri de căte 512 token-uri
 pentru a respecta restricția de intrare a modelului \textit{BERT}. Pentru a exploata observația de mai sus,
-vom folosi doar primele 10 blocuri de text pentru a clasifica videoclipul și vom da o importanță mai mare în
-votul final primului bloc de text, care conține titlul și descrierea videoclipului.
+vom folosi doar primele 10 blocuri de text pentru a clasifica videoclipul și \textbf{vom da o importanță mai mare, în
+votul final, primului bloc de text}, care conține titlul și descrierea videoclipului.
 \par
 Pentru rezultatul final, vom alege topicul cu frecevența majoritară din cele 10 blocuri de text.
 

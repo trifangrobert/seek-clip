@@ -50,8 +50,8 @@ codul aplicației web. Dintre acestea, cele mai importante sunt:
 
 \subsection{Autentificare}
 Autentificarea utilizatorilor nu folosește niciun serviciu extern, ci se bazează pe un sistem
-propriu de înregistrare și logare. Fiecărei cereri de la client i se atașează un token JWT
-(JSON Web Token) generat de server la logare/înregistrare, fiind folosit pentru a verifica
+propriu de înregistrare și logare. Fiecărei cereri de la client i se atașează un token \textbf{JWT}
+(\textit{JSON Web Token}) generat de server la logare/înregistrare, fiind folosit pentru a verifica
 identitatea utilizatorului. 
 
 \subsubsection{JWT}
@@ -255,7 +255,7 @@ dedicată (Fig. \ref{fig:video-page}) unde poate interacționa cu videoclipul as
 \subsubsection{Aprecieri \& Comentarii}
 După cum am menționat anterior, pagina de vizualizare permite utilizatorului să aprecieze
 sau nu videoclipul și să adauge comentarii. Fiecare videoclip reține o listă cu id-urile
-utilizatorilor care au dat și-au exprimat aprecierea pentru și o listă cu comentariile adăugate.
+utilizatorilor care și-au exprimat aprecierea și o listă cu comentariile adăugate.
 De asemenea, utilizatorii pot răspunde la comentarii, creând astfel o ierarhie de comentarii
 și pot edita sau șterge comentariile proprii.
 \par
@@ -297,7 +297,7 @@ scorurile obținute de Elasticsearch.
 Când utilizatorul introduce textul în bara de căutare, aplicația web trimite o cerere 
 către server care caută apoi videoclipurile într-o bază de date Elasticsearch. Datorită
 parametrului de \textit{confuzie} (\textit{fuzziness}), căutarea este tolerantă la greșeli
-de scriere și oferă rezultate relevante.
+de scriere.
 
 \subsection{Conversație}
 Platforma oferă utilizatorilor posibilitatea de a comunica între ei în timp real prin mesaje private.
@@ -511,8 +511,8 @@ Menționez aici câteva dintre funcțiile mai importante:
     se asigura că doar utilizatorul autentificat poate actualiza profilul, cât și funcția intermediară
     de încărcare a fișierelor pentru a actualiza poza de profil. Ambele funcții accesează baza de
     date pentru a obține sau actualiza informațiile și returnează răspunsul.
-    \item \textbf{followUser/unfollowUser/isFollowing}: funcții care permit utilizatorului să urmărească
-    sau să nu un alt utilizator și să verifice dacă urmărește un alt utilizator. În mod natural,
+    \item \textbf{followUser/unfollowUser/isFollowing}: funcții care permit utilizatorului să adauge/șteargă
+    din lista de urmăriți un alt utilizator și să verifice dacă urmărește un alt utilizator. În mod natural,
     funcția intermediară impune ca utilizatorul să fie autentificat pentru a putea executa aceste cereri.
     \item \textbf{getFollowers/getFollowing}: funcții care returnează lista cu utilizatorii urmăriți de
     un utilizator sau lista cu utilizatorii care îl urmăresc pe un utilizator. 
@@ -533,7 +533,7 @@ Menționez aici câteva dintre funcțiile mai importante:
     videoclip anume după id-ul său. Funcțiile caută la rândul lor în baza de date după criteriile
     specificate și returnează răspunsul.
     \item \textbf{likeVideo/dislikeVideo/getLikes/getDislikes/increaseViewCount}: funcții care permit
-    interacțiunea cu un videoclip, adăugând sau ștergând id-ul utilizatorului care a dat apreciat sau nu
+    interacțiunea cu un videoclip, adăugând sau ștergând id-ul utilizatorului care a apreciat sau nu
     postarea din lista de referințe și care incrementează numărul de vizualizări ale videoclipului la
     fiecare accesare. De asemenea, sunt tratate aici și cazurile speciale în care utilizatorul
     dă dislike după ce a dat like sau invers și cazul în care utilizatorul retrage aprecierea.
@@ -554,13 +554,13 @@ cererilor. În cadrul aplicației noastre, am definit următoarele funcții util
 \begin{itemize}
     \item \textbf{getTranscription}: înainte de a trimite cererea către serverul de Flask pentru 
     recunoașterea vorbirii, e nevoie să extragem întâi secvența audio din videoclip deoarece 
-    modelul lucrează cu fișiere audio. Folosesc, pentru acest lucru, librăria \textit{ffmpeg-extract-audio}
+    modelul lucrează cu fișiere audio. Folosim, pentru acest lucru, librăria \textit{ffmpeg-extract-audio}
     care permite procesarea fișierelor video și extragerea secvenței audio. De asemenea, secvența
-    audio fiind destul de mare, creez un flux de date folosind \textit{fs.createReadStream} și 
-    atașez acest flux la cererea către serverul de Flask.
-    \item \textbf{getTopic}: după ce am obținut subtitrările videoclipului, folosesc un serviciu
+    audio fiind destul de mare, configurăm un flux de date folosind \textit{fs.createReadStream} și 
+    atașăm acest flux la cererea către serverul de Flask.
+    \item \textbf{getTopic}: după ce am obținut subtitrările videoclipului, folosim un serviciu
     extern pentru a clasifica fiecare videoclip în funcție de metadatele sale și a subtitrărilor.
-    Astfel, creez o cerere către serverul de Flask pentru clasificare și returnez topicul videoclipului.
+    Astfel, inițiem o cerere către serverul de Flask pentru clasificare și returnez topicul videoclipului.
 \end{itemize}
 
 \subsubsection{Configurări}
@@ -739,7 +739,7 @@ la 16kHz. Acest lucru se face folosind funcția \textit{resample} din librăria 
 \par
 Un aspect important, după cum am menționat și la seturile de date folosite, este că modelul a fost
 antrenat pe fișiere audio cu o durată de aproximativ 10 secunde. O secvență audio prea mare oricum
-nu ar încăpea în memoria serverului, așa că am ales să sparg secvența audio în segmente de câte 30 de
+nu ar încăpea în memoria plăcii video, așa că am ales să fragmentăm secvența audio în segmente de câte 30 de
 secunde folosind funcția \textit{stream} din librăria \textit{librosa}.
 
 \par
@@ -759,22 +759,23 @@ folosește următoarele etape:
 \begin{itemize}
     \item \textbf{Procesare}: modelul primește secvența audio și folosește procesorul specific de pe
     Hugging Face pentru a converti secvența audio în tensori. Vom numi acești tensori \textit{input\_values}.
-    \item \textbf{Predicție}: modelul primește \textit{input\_values} și returnează \textit{logits}, tot
+    \item \textbf{Predicție}: modelul primește valorile de intrare (\textit{input\_values}) și returnează \textit{logits}, tot
     sub forma de tensori reprezentând probabilitățile pentru fiecare literă din vocabular. Sunt calculate
-    apoi \textit{predicted\_ids}, fiind literele cu cele mai mari probabilități.
+    apoi id-urile prezise (\textit{predicted\_ids}), fiind literele cu cele mai mari probabilități.
     \item \textbf{Decodare}: folosind \textit{logits}, modelul folosește algoritmul de decodare pentru a
-    converti tensorii în text și obtinem \textit{transcription}.
+    converti tensorii în text și obtinem transcrierea (\textit{transcription}).
 \end{itemize}
 
-Astfel, obținem pentru fiecare bloc \textit{transcription}, \textit{input\_values} și \textit{predicted\_ids}.
+Astfel, obținem pentru fiecare bloc transcrierea (\textit{transcription}), valorile de intrare (\textit{input\_values})
+și id-urile prezise (\textit{predicted\_ids}).
 
 \par
 Pentru a crea subtitrările, folosim următoarele etape:
 
 \begin{itemize}
     \item \textbf{ids\_w\_time}: cunoscând durata întregului bloc (30 de secunde) și numărul de token-uri
-    prezis de model, putem estima momentul de timp al fiecărui token prin împărțirea indexului token-ului
-    la numărul total de token-uri și înmulțirea cu durata blocului. Putem elimina token-urile pentru [PAD].
+    prezise de model, putem estima momentul de timp al fiecărui token prin împărțirea indexului token-ului
+    la numărul total de token-uri și înmulțirea cu durata blocului. Putem elimina token-urile de tip [PAD].
     \item \textbf{split\_ids\_w\_time}: folosind token-ul de delimitare între cuvinte, putem crea câte un 
     grup de token-uri între fiecare delimitator. Practic, obținem cuvintele propriu-zise, dar acum știm și
     momentul de timp.
@@ -965,7 +966,7 @@ Fiecare document conține, pe lângă datele propriu-zise, câmpuri speciale pre
 Interacțiunea cu baza de date are loc cu ajutorul librăriei \textit{mongoose} care definește modelele
 în serverul Express și execută operații de tip CRUD (Creează, Citește, Actualizează, Șterge) în baza de date.
 \textit{mongoose} este un \textbf{ODM} (\textit{Object Data Modeling}) care oferă un nivel de abstractizare peste MongoDB
-și permite definirea de scheme pentru documente, validarea datelor și crearea de relații între colecții.
+și permite definirea schemelor pentru documente, validarea datelor și crearea relațiilor între colecții.
 
 \par
 Un alt aspect important pus la dispoziție de \textbf{MongoDB} îl reprezintă capacitatea de a crea replici
@@ -1171,9 +1172,9 @@ variabilele de mediu, volumele, dependințele între alte servicii, rețelele fo
 
 \subsubsection{Volume și rețele}
 \par
-În cazul în care aplicația are nevoie de o stocare persistentă, de pildă pentru bazele de date, se pot
-folosi volume Docker. Un volum Docker este, de fapt, un director din sistemul gazdă care este montat în
-container al cărui conținut este persistent chiar și după oprirea containerului.
+În cazul în care aplicația are nevoie de o stocare persistentă, de pildă pentru bazele de date, se poate
+folosi volum Docker. Un volum Docker este, de fapt, un director din sistemul gazdă care este montat în
+container, al cărui conținut este persistent, chiar și după oprirea containerului.
 
 \par
 De asemenea, Docker oferă și posibilitatea de a crea rețele virtuale prin intermediul cărora serviciile
