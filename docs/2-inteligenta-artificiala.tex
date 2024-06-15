@@ -76,8 +76,8 @@ Modelul \textit{wav2vec 2.0} este un model de învățare profundă alcătuit di
 componente principale: \textbf{Codificator de Caracteristici Latente} 
 (\textit{Latent Feature Encoder}), reprezentat de o \textit{Rețea Neuronală Convoluțională},
 \textbf{Rețea pentru Context} (\textit{Context Network}), constă în partea de Encodare
-a Transformer-ului, \textbf{Modulul de Cuantizare} (\textit{Quantization Module}),
-aplică funcția \textit{Gumbel Softmax} și \textbf{Pierderea Contrastivă}. (Fig. \ref{fig:wav2vec2-architecture})
+a Transformer-ului, \textbf{Modul de Cuantizare} (\textit{Quantization Module}),
+aplică funcția \textit{Gumbel Softmax} și \textbf{Pierdere Contrastivă}. (Fig. \ref{fig:wav2vec2-architecture})
 
 \begin{figure}[h]
     \centering
@@ -95,7 +95,7 @@ din convoluții 1-dimensionale, normalizare la nivel de strat și activări GELU
 \par
 Dimensiunea canalelor, a filtrului și a lungimii pasului sunt prezentate în figura de mai jos
 (Fig. \ref{fig:latent-feature-encoder}). În această etapă, modelul încearcă să înțeleagă legătura dintre
-valorile apropiate ale semnalului audio și să să extragă caracteristici latente care vor fi folosite ulterior. Arhitectura
+valorile apropiate ale semnalului audio și să extragă caracteristici latente care vor fi folosite ulterior. Arhitectura
 blocurilor convoluționale este structurată astfel:
 \begin{itemize}
     \item \textbf{Blocul 1}: dimensiunea filtrului 10, lungimea pasului 5, canale 512
@@ -153,9 +153,9 @@ oferind o reprezentare contextuală cât mai bună a semnalului audio.
 \vspace{1em}
 Din cauza naturii continue a semnalului audio, modelul \textit{wav2vec 2.0} nu poate folosi în mod direct
 un vocabular discret de simboluri, așa cum întâlnim în limbajul scris. Astfel, autorii modelului propun
-conceptul de \textbf{codebook} alcătuit \textbf{codewords} pentru a discretiza semnalul audio. Intuitiv,
+conceptul de \textbf{codebook} alcătuit din \textbf{codewords} pentru a discretiza semnalul audio. Intuitiv,
 ne putem gândi la \textit{codebook} ca la un vocabular de sunete fonetice reprezentative pentru semnalul
-audio. Deoarece un semnalul audio poate conține mai multe sunete fonetice, autorii propun folosirea
+audio. Deoarece semnalul audio poate conține mai multe sunete fonetice, autorii propun folosirea
 a G \textit{codebooks} fiecare cu câte V \textit{codewords} creând astfel o matrice denumită \textit{matricea
 de cuantizare}.
 \par
@@ -409,12 +409,12 @@ la pasul 5000, respectiv 5500.
 % - eventual fa discutie si despre fix spelling
 
 \subsection{Îmbunătățire cu un model de limbaj}
-Pentru a îmbunătăți recunoașterea vorbirii, am folosit un un model de limbaj bazat pe n-grame care 
+Pentru a îmbunătăți recunoașterea vorbirii, am folosit un model de limbaj bazat pe n-grame care 
 mărește performanța modelului de la \textbf{wer 4.2\%}  la \textbf{wer 2.9\%}, aducând
 o îmbunătățire de \textbf{1.3\%}.
 
 \subsubsection{Model de limbaj bazat pe n-grame}
-Un un model de limbaj bazat pe n-grame este un model statistic care estimează, în cazul nostru, probabilitatea
+Un model de limbaj bazat pe n-grame este un model statistic care estimează, în cazul nostru, probabilitatea
 apariției unui caracter având în vedere cele n-1 caractere anterioare. Modelul se bazează pe
 ipoteza \textbf{Markov de ordinul n}, conform căreia putem aproxima probabilitatea apariției unui caracter
 folosind doar ultimele n caractere. Formula de mai jos ilustrează această idee:
@@ -560,8 +560,8 @@ pentru rata de învățare $1 \times 10^{-4}$, motiv pentru care am ales să exp
 \vspace{-1em}
 
 \par
-Am încercat mai multe experimente plecând de la aceeași hiperparametri, cu rata de învățare $1 \times 10^{-5}$,
-pentru a vedea cum e comportă modelul la diferite inițializări ale ponderilor. În figura \ref{fig:eval_acc}
+Am încercat mai multe experimente plecând de la aceiași hiperparametri, cu rata de învățare $1 \times 10^{-5}$,
+pentru a vedea cum se comportă modelul la diferite inițializări ale ponderilor. În figura \ref{fig:eval_acc}
 se observă că acuratețile obținute sunt în intervalul 0.95-0.99. Am ales, în final, să folosesc modelul
 cu cele mai mari valori obținute pe setul de validare.
 
